@@ -211,10 +211,18 @@ class XlsxWriter:
             si = ET.SubElement(el, qn('si'))
             t = ET.SubElement(si, qn('t'))
             t.text = self._escape(s)
+            # preserve spaces for leading/trailing whitespace
+            if s and (s[0] == ' ' or s[-1] == ' '):
+                t.set('{http://www.w3.org/XML/1998/namespace}space', 'preserve')
         return ET.tostring(el, encoding='unicode', xml_declaration=True)
 
     def save(self, path):
         """Write xlsx file."""
+        # Generate all sheet XMLs FIRST to populate shared strings
+        sheet_xmls = {}
+        for name in self.sheets.keys():
+            sheet_xmls[name] = self._make_sheet_xml(name, self.sheets[name])
+
         with zipfile.ZipFile(path, 'w', zipfile.ZIP_DEFLATED) as zf:
             # [Content_Types].xml
             ct = ['<?xml version="1.0" encoding="UTF-8" standalone="yes"?>']
@@ -239,7 +247,7 @@ class XlsxWriter:
             # xl/styles.xml
             zf.writestr('xl/styles.xml', _make_styles_xml())
 
-            # xl/sharedStrings.xml
+            # xl/sharedStrings.xml (NOW populated after sheet generation)
             zf.writestr('xl/sharedStrings.xml', self._make_shared_strings_xml())
 
             # xl/workbook.xml
@@ -262,10 +270,9 @@ class XlsxWriter:
             wb_rels.append('</Relationships>')
             zf.writestr('xl/_rels/workbook.xml.rels', '\n'.join(wb_rels))
 
-            # Worksheets
+            # Worksheets (pre-generated above)
             for i, name in enumerate(self.sheets.keys(), 1):
-                xml = self._make_sheet_xml(name, self.sheets[name])
-                zf.writestr(f'xl/worksheets/sheet{i}.xml', xml)
+                zf.writestr(f'xl/worksheets/sheet{i}.xml', sheet_xmls[name])
 
         print(f'  -> {os.path.basename(path)}')
 
