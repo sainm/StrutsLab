@@ -4,6 +4,113 @@
   "http://jakarta.apache.org/commons/dtds/validator_1_3_0.dtd">
 <form-validation>
     <formset>
-        <!-- Validation rules filled per-module in later tasks -->
+        <!-- Equipment Master -->
+        <form name="eqpForm">
+            <field property="equipmentName" depends="required">
+                <arg0 key="label.equipmentName"/>
+            </field>
+            <field property="equipmentType" depends="required">
+                <arg0 key="label.equipmentType"/>
+            </field>
+            <field property="status" depends="required">
+                <arg0 key="label.status"/>
+            </field>
+            <field property="maintenanceRank" depends="required">
+                <arg0 key="label.maintenanceRank"/>
+            </field>
+            <field property="inspectionInterval" depends="intRange">
+                <arg0 key="label.inspectionInterval"/>
+                <arg1 key="${var:min}" resource="false"/>
+                <arg2 key="${var:max}" resource="false"/>
+                <var><var-name>min</var-name><var-value>1</var-value></var>
+                <var><var-name>max</var-name><var-value>120</var-value></var>
+            </field>
+        </form>
+
+        <!-- Check Item Template -->
+        <form name="chkItemForm">
+            <field property="templateName" depends="required">
+                <arg0 key="label.templateName"/>
+            </field>
+            <field property="equipmentType" depends="required">
+                <arg0 key="label.equipmentType"/>
+            </field>
+            <field property="inspectionKind" depends="required">
+                <arg0 key="label.inspectionKind"/>
+            </field>
+        </form>
+
+        <!-- Incident -->
+        <form name="incidentForm">
+            <field property="incidentType" depends="required">
+                <arg0 key="label.incidentType"/>
+            </field>
+            <field property="severity" depends="required">
+                <arg0 key="label.severity"/>
+            </field>
+            <field property="incidentPart" depends="required">
+                <arg0 key="label.incidentPart"/>
+            </field>
+            <field property="incidentDetail" depends="required,maxlength">
+                <arg0 key="label.incidentDetail"/>
+                <arg1 key="${var:maxlength}" resource="false"/>
+                <var><var-name>maxlength</var-name><var-value>2000</var-value></var>
+            </field>
+        </form>
+
+        <!-- Employee -->
+        <form name="empForm">
+            <field property="name" depends="required">
+                <arg0 key="label.empName"/>
+            </field>
+            <field property="nameKana" depends="mask">
+                <arg0 key="label.nameKana"/>
+                <var><var-name>mask</var-name><var-value>^[ァ-ヴー\s]+$</var-value></var>
+            </field>
+            <field property="loginId" depends="required">
+                <arg0 key="label.loginId"/>
+            </field>
+            <field property="password" depends="minlength">
+                <arg0 key="label.password"/>
+                <arg1 key="${var:minlength}" resource="false"/>
+                <var><var-name>minlength</var-name><var-value>8</var-value></var>
+            </field>
+        </form>
+
+        <!-- CAPA -->
+        <form name="capaForm">
+            <field property="why1" depends="required"><arg0 key="label.why1"/></field>
+            <field property="why2" depends="required"><arg0 key="label.why2"/></field>
+            <field property="why3" depends="required"><arg0 key="label.why3"/></field>
+            <field property="why4" depends="required"><arg0 key="label.why4"/></field>
+            <field property="why5" depends="required"><arg0 key="label.why5"/></field>
+            <field property="countermeasure" depends="required"><arg0 key="label.countermeasure"/></field>
+            <field property="verifyMethod" depends="required"><arg0 key="label.verifyMethod"/></field>
+            <field property="verifyDate" depends="required"><arg0 key="label.verifyDate"/></field>
+        </form>
+
+        <!-- Department -->
+        <form name="deptForm">
+            <field property="deptName" depends="required"><arg0 key="label.deptName"/></field>
+            <field property="deptType" depends="required"><arg0 key="label.deptType"/></field>
+            <field property="startDate" depends="required"><arg0 key="label.startDate"/></field>
+        </form>
+
+        <!-- Calendar -->
+        <form name="calendarRegForm">
+            <field property="dateFrom" depends="required"><arg0 key="label.dateFrom"/></field>
+            <field property="dateTo" depends="required"><arg0 key="label.dateTo"/></field>
+            <field property="holidayType" depends="required"><arg0 key="label.holidayType"/></field>
+        </form>
+
+        <!-- Parts -->
+        <form name="partsForm">
+            <field property="partName" depends="required"><arg0 key="label.partName"/></field>
+        </form>
+
+        <!-- Plan Wizard -->
+        <form name="planWizardForm">
+            <field property="planDate" depends="required"><arg0 key="label.planDate"/></field>
+        </form>
     </formset>
 </form-validation>
