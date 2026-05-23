@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.strutslab.dao.EmpDao">
+
+    <select id="findByLoginId" resultType="EmpDto">
+        SELECT * FROM employees WHERE login_id = #{loginId}
+    </select>
+
+    <select id="findById" resultType="EmpDto">
+        SELECT * FROM employees WHERE emp_no = #{empNo}
+    </select>
+
+    <select id="search" resultType="EmpDto">
+        SELECT e.*, d.dept_name
+        FROM employees e
+        LEFT JOIN departments d ON e.dept_code = d.dept_code
+        <where>
+            <if test="deptCode != null and deptCode != ''">
+                AND e.dept_code = #{deptCode}
+            </if>
+            <if test="position != null and position != ''">
+                AND e.position = #{position}
+            </if>
+            <if test="yearFrom != null and yearFrom != ''">
+                AND e.join_date &gt;= #{yearFrom}
+            </if>
+            <if test="yearTo != null and yearTo != ''">
+                AND e.join_date &lt;= #{yearTo}
+            </if>
+        </where>
+        ORDER BY e.emp_no
+        <if test="offset != null and limit != null">
+            LIMIT #{limit} OFFSET #{offset}
+        </if>
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT COUNT(*) FROM employees e
+        <where>
+            <if test="deptCode != null and deptCode != ''">
+                AND e.dept_code = #{deptCode}
+            </if>
+            <if test="position != null and position != ''">
+                AND e.position = #{position}
+            </if>
+            <if test="yearFrom != null and yearFrom != ''">
+                AND e.join_date &gt;= #{yearFrom}
+            </if>
+            <if test="yearTo != null and yearTo != ''">
+                AND e.join_date &lt;= #{yearTo}
+            </if>
+        </where>
+    </select>
+
+    <insert id="insert">
+        INSERT INTO employees (emp_no, name, name_kana, birth_date, join_date,
+            dept_code, position, assign_date, inspection_rank, inspection_cert_date,
+            inspection_cert_expire, login_id, password_hash, is_locked)
+        VALUES (#{empNo}, #{name}, #{nameKana}, #{birthDate}, #{joinDate},
+            #{deptCode}, #{position}, #{assignDate}, #{inspectionRank}, #{inspectionCertDate},
+            #{inspectionCertExpire}, #{loginId}, #{passwordHash}, #{isLocked})
+    </insert>
+
+    <update id="update">
+        UPDATE employees SET
+            name = #{name}, name_kana = #{nameKana}, birth_date = #{birthDate},
+            join_date = #{joinDate}, dept_code = #{deptCode}, position = #{position},
+            assign_date = #{assignDate}, inspection_rank = #{inspectionRank},
+            inspection_cert_date = #{inspectionCertDate}, inspection_cert_expire = #{inspectionCertExpire},
+            login_id = #{loginId}, is_locked = #{isLocked},
+            updated_at = CURRENT_TIMESTAMP
+        WHERE emp_no = #{empNo}
+    </update>
+</mapper>
