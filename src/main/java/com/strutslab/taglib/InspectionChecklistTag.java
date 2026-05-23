@@ -35,13 +35,17 @@ public class InspectionChecklistTag extends TagSupport {
         }
 
         // Build parent->children maps
-        Map<String, List<ChkItemDto>> l2ByParent = new HashMap<>();
+        Map<Integer, List<ChkItemDto>> l2ByParent = new HashMap<>();
         for (ChkItemDto item : level2) {
-            l2ByParent.computeIfAbsent(item.getParentItemId(), k -> new ArrayList<>()).add(item);
+            Integer pid = item.getParentItemId();
+            if (pid == null) continue;
+            l2ByParent.computeIfAbsent(pid, k -> new ArrayList<>()).add(item);
         }
-        Map<String, List<ChkItemDto>> l3ByParent = new HashMap<>();
+        Map<Integer, List<ChkItemDto>> l3ByParent = new HashMap<>();
         for (ChkItemDto item : level3) {
-            l3ByParent.computeIfAbsent(item.getParentItemId(), k -> new ArrayList<>()).add(item);
+            Integer pid = item.getParentItemId();
+            if (pid == null) continue;
+            l3ByParent.computeIfAbsent(pid, k -> new ArrayList<>()).add(item);
         }
 
         StringBuilder sb = new StringBuilder();

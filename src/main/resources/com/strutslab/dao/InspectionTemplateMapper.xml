@@ -62,7 +62,7 @@
         WHERE t.template_id = #{templateId}
     </select>
 
-    <insert id="insert">
+    <insert id="insert" useGeneratedKeys="true" keyProperty="templateId">
         INSERT INTO inspection_template (
             template_name, equipment_type, inspection_kind, sort_order
         ) VALUES (
@@ -104,6 +104,29 @@
 
     <delete id="delete">
         DELETE FROM inspection_template WHERE template_id = #{templateId}
+    </delete>
+
+    <!-- ==================== Item queries ==================== -->
+
+    <select id="findItemsByTemplate" resultType="com.strutslab.dto.ChkItemDto">
+        SELECT * FROM inspection_items
+        WHERE template_id = #{templateId}
+        ORDER BY item_level ASC, sort_order ASC
+    </select>
+
+    <insert id="insertItem" useGeneratedKeys="true" keyProperty="itemId">
+        INSERT INTO inspection_items (
+            template_id, parent_item_id, item_level, item_name,
+            judge_criteria, normal_range, unit, sort_order
+        ) VALUES (
+            #{templateId}, #{parentItemId}, #{itemLevel}, #{itemName},
+            #{judgeCriteria}, #{normalRange}, #{unit}, #{sortOrder}
+        )
+    </insert>
+
+    <delete id="deleteItemsByLevel">
+        DELETE FROM inspection_items
+        WHERE template_id = #{templateId} AND item_level = #{itemLevel}
     </delete>
 
 </mapper>

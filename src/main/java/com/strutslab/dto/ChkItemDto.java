@@ -1,18 +1,24 @@
 package com.strutslab.dto;
 
 public class ChkItemDto {
-    private String itemId;
-    private Integer itemLevel;
+    private int itemId;
+    private int templateId;
+    private Integer parentItemId;
+    private int itemLevel;
     private String itemName;
     private String judgeCriteria;
     private String normalRange;
     private String unit;
-    private String parentItemId;
+    private int sortOrder;
 
-    public String getItemId() { return itemId; }
-    public void setItemId(String v) { this.itemId = v; }
-    public Integer getItemLevel() { return itemLevel; }
-    public void setItemLevel(Integer v) { this.itemLevel = v; }
+    public int getItemId() { return itemId; }
+    public void setItemId(int v) { this.itemId = v; }
+    public int getTemplateId() { return templateId; }
+    public void setTemplateId(int v) { this.templateId = v; }
+    public Integer getParentItemId() { return parentItemId; }
+    public void setParentItemId(Integer v) { this.parentItemId = v; }
+    public int getItemLevel() { return itemLevel; }
+    public void setItemLevel(int v) { this.itemLevel = v; }
     public String getItemName() { return itemName; }
     public void setItemName(String v) { this.itemName = v; }
     public String getJudgeCriteria() { return judgeCriteria; }
@@ -21,6 +27,6 @@ public class ChkItemDto {
     public void setNormalRange(String v) { this.normalRange = v; }
     public String getUnit() { return unit; }
     public void setUnit(String v) { this.unit = v; }
-    public String getParentItemId() { return parentItemId; }
-    public void setParentItemId(String v) { this.parentItemId = v; }
+    public int getSortOrder() { return sortOrder; }
+    public void setSortOrder(int v) { this.sortOrder = v; }
 }
