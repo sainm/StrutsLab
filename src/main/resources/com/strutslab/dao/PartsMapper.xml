@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.strutslab.dao.PartsDao">
+
+    <select id="search" resultType="PartsDto">
+        SELECT p.*
+        FROM parts p
+        <where>
+            <if test="partType != null and partType != ''">
+                AND p.part_type = #{partType}
+            </if>
+            <if test="stockStatus != null and stockStatus != ''">
+                <if test="stockStatus == 'out'">
+                    AND p.current_stock = 0
+                </if>
+                <if test="stockStatus == 'low'">
+                    AND p.current_stock &gt; 0 AND p.current_stock &lt;= p.order_point
+                </if>
+                <if test="stockStatus == 'ok'">
+                    AND p.current_stock &gt; p.order_point
+                </if>
+            </if>
+            <if test="keyword != null and keyword != ''">
+                AND (p.part_code LIKE CONCAT('%', #{keyword}, '%')
+                     OR p.part_name LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+            <if test="equipmentType != null and equipmentType != ''">
+                AND p.part_code IN (
+                    SELECT per.part_code FROM part_equipment_relations per
+                    WHERE per.equipment_type = #{equipmentType}
+                )
+            </if>
+        </where>
+        ORDER BY p.part_code
+        <if test="offset != null and limit != null">
+            LIMIT #{limit} OFFSET #{offset}
+        </if>
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT COUNT(*) FROM parts p
+        <where>
+            <if test="partType != null and partType != ''">
+                AND p.part_type = #{partType}
+            </if>
+            <if test="stockStatus != null and stockStatus != ''">
+                <if test="stockStatus == 'out'">
+                    AND p.current_stock = 0
+                </if>
+                <if test="stockStatus == 'low'">
+                    AND p.current_stock &gt; 0 AND p.current_stock &lt;= p.order_point
+                </if>
+                <if test="stockStatus == 'ok'">
+                    AND p.current_stock &gt; p.order_point
+                </if>
+            </if>
+            <if test="keyword != null and keyword != ''">
+                AND (p.part_code LIKE CONCAT('%', #{keyword}, '%')
+                     OR p.part_name LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+            <if test="equipmentType != null and equipmentType != ''">
+                AND p.part_code IN (
+                    SELECT per.part_code FROM part_equipment_relations per
+                    WHERE per.equipment_type = #{equipmentType}
+                )
+            </if>
+        </where>
+    </select>
+
+    <select id="findById" resultType="PartsDto">
+        SELECT * FROM parts WHERE part_code = #{partCode}
+    </select>
+
+    <select id="findAll" resultType="PartsDto">
+        SELECT * FROM parts ORDER BY part_code
+    </select>
+
+    <insert id="insert">
+        INSERT INTO parts (part_code, part_name, part_type, unit, order_point,
+            safety_stock, current_stock, unit_price, supplier, note)
+        VALUES (#{partCode}, #{partName}, #{partType}, #{unit}, #{orderPoint},
+            #{safetyStock}, 0, #{unitPrice}, #{supplier}, #{note})
+    </insert>
+
+    <update id="update">
+        UPDATE parts SET
+            part_name = #{partName}, part_type = #{partType}, unit = #{unit},
+            order_point = #{orderPoint}, safety_stock = #{safetyStock},
+            unit_price = #{unitPrice}, supplier = #{supplier}, note = #{note},
+            updated_at = CURRENT_TIMESTAMP
+        WHERE part_code = #{partCode}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM parts WHERE part_code = #{partCode}
+    </delete>
+
+    <!-- Equipment Relations -->
+    <select id="findEquipmentRelations" resultType="java.util.LinkedHashMap">
+        SELECT * FROM part_equipment_relations WHERE part_code = #{partCode}
+    </select>
+
+    <insert id="insertEquipmentRelation">
+        INSERT INTO part_equipment_relations (part_code, equipment_type, equipment_code)
+        VALUES (#{partCode}, #{equipmentType}, #{equipmentCode})
+    </insert>
+
+    <delete id="deleteEquipmentRelations">
+        DELETE FROM part_equipment_relations WHERE part_code = #{partCode}
+    </delete>
+
+    <!-- Usage -->
+    <select id="searchUsage" resultType="PartsUsageDto">
+        SELECT u.*, p.part_name, e.equipment_name
+        FROM part_usages u
+        LEFT JOIN parts p ON u.part_code = p.part_code
+        LEFT JOIN equipment e ON u.equipment_code = e.equipment_code
+        <where>
+            <if test="dateFrom != null and dateFrom != ''">
+                AND u.usage_date &gt;= #{dateFrom}
+            </if>
+            <if test="dateTo != null and dateTo != ''">
+                AND u.usage_date &lt;= #{dateTo}
+            </if>
+            <if test="equipmentType != null and equipmentType != ''">
+                AND e.equipment_type = #{equipmentType}
+            </if>
+            <if test="partCode != null and partCode != ''">
+                AND u.part_code = #{partCode}
+            </if>
+        </where>
+        ORDER BY u.usage_date DESC, u.usage_id DESC
+        <if test="offset != null and limit != null">
+            LIMIT #{limit} OFFSET #{offset}
+        </if>
+    </select>
+
+    <select id="countUsage" resultType="int">
+        SELECT COUNT(*) FROM part_usages u
+        LEFT JOIN equipment e ON u.equipment_code = e.equipment_code
+        <where>
+            <if test="dateFrom != null and dateFrom != ''">
+                AND u.usage_date &gt;= #{dateFrom}
+            </if>
+            <if test="dateTo != null and dateTo != ''">
+                AND u.usage_date &lt;= #{dateTo}
+            </if>
+            <if test="equipmentType != null and equipmentType != ''">
+                AND e.equipment_type = #{equipmentType}
+            </if>
+            <if test="partCode != null and partCode != ''">
+                AND u.part_code = #{partCode}
+            </if>
+        </where>
+    </select>
+
+    <insert id="insertUsage">
+        INSERT INTO part_usages (part_code, equipment_code, usage_date, quantity,
+            stock_before, stock_after, purpose, used_by, order_no)
+        VALUES (#{partCode}, #{equipmentCode}, #{usageDate}, #{quantity},
+            #{stockBefore}, #{stockAfter}, #{purpose}, #{usedBy}, #{orderNo})
+    </insert>
+
+    <select id="findUsageById" resultType="PartsUsageDto">
+        SELECT u.*, p.part_name, e.equipment_name
+        FROM part_usages u
+        LEFT JOIN parts p ON u.part_code = p.part_code
+        LEFT JOIN equipment e ON u.equipment_code = e.equipment_code
+        WHERE u.usage_id = #{usageId}
+    </select>
+
+</mapper>

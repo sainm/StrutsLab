@@ -1,6 +1,7 @@
 package com.strutslab.taglib;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.jsp.JspException;
@@ -33,9 +34,11 @@ public class TimelineTag extends TagSupport {
         sb.append("  </thead>\n");
         sb.append("  <tbody>\n");
 
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         for (TimelineDto dto : timeline) {
+            String dt = dto.getActionDatetime() != null ? sdf.format(dto.getActionDatetime()) : "";
             sb.append("    <tr>");
-            sb.append("<td class=\"timeline-datetime\">").append(escapeHtml(dto.getActionDatetime())).append("</td>");
+            sb.append("<td class=\"timeline-datetime\">").append(escapeHtml(dt)).append("</td>");
             sb.append("<td class=\"timeline-user\">").append(escapeHtml(dto.getActionUser())).append("</td>");
             sb.append("<td class=\"timeline-content\">").append(escapeHtml(dto.getActionContent())).append("</td>");
             sb.append("<td class=\"timeline-status\">").append(escapeHtml(dto.getStatusFrom())).append("</td>");

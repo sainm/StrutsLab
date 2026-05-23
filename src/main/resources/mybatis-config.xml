@@ -33,5 +33,6 @@
         <mapper resource="com/strutslab/dao/EmployeeMapper.xml"/>
         <mapper resource="com/strutslab/dao/CalendarMapper.xml"/>
         <mapper resource="com/strutslab/dao/PartsMapper.xml"/>
+        <mapper resource="com/strutslab/dao/ReportMapper.xml"/>
     </mappers>
 </configuration>

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.strutslab.dao.CalendarDao">
+
+    <select id="findByYear" resultType="java.util.LinkedHashMap">
+        SELECT holiday_id AS holidayId, holiday_date AS holidayDate,
+               holiday_type AS holidayType, holiday_name AS holidayName,
+               is_transfer AS isTransfer, transfer_date AS transferDate
+        FROM holidays
+        WHERE holiday_date LIKE CONCAT(#{year}, '%')
+        ORDER BY holiday_date
+    </select>
+
+    <select id="findById" resultType="java.util.LinkedHashMap">
+        SELECT holiday_id AS holidayId, holiday_date AS holidayDate,
+               holiday_type AS holidayType, holiday_name AS holidayName,
+               is_transfer AS isTransfer, transfer_date AS transferDate
+        FROM holidays
+        WHERE holiday_id = #{holidayId}
+    </select>
+
+    <select id="findByDate" resultType="java.util.LinkedHashMap">
+        SELECT holiday_id AS holidayId, holiday_date AS holidayDate,
+               holiday_type AS holidayType, holiday_name AS holidayName,
+               is_transfer AS isTransfer, transfer_date AS transferDate
+        FROM holidays
+        WHERE holiday_date = #{holidayDate}
+    </select>
+
+    <select id="findBetween" resultType="java.util.LinkedHashMap">
+        SELECT holiday_id AS holidayId, holiday_date AS holidayDate,
+               holiday_type AS holidayType, holiday_name AS holidayName,
+               is_transfer AS isTransfer, transfer_date AS transferDate
+        FROM holidays
+        WHERE holiday_date &gt;= #{dateFrom} AND holiday_date &lt;= #{dateTo}
+        ORDER BY holiday_date
+    </select>
+
+    <insert id="insert">
+        INSERT INTO holidays (holiday_date, holiday_type, holiday_name, is_transfer, transfer_date)
+        VALUES (#{holidayDate}, #{holidayType}, #{holidayName}, #{isTransfer,jdbcType=BOOLEAN}, #{transferDate})
+    </insert>
+
+    <update id="update">
+        UPDATE holidays SET
+            holiday_type = #{holidayType},
+            holiday_name = #{holidayName},
+            is_transfer = #{isTransfer},
+            transfer_date = #{transferDate},
+            updated_at = CURRENT_TIMESTAMP
+        WHERE holiday_id = #{holidayId}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM holidays WHERE holiday_id = #{holidayId}
+    </delete>
+
+</mapper>

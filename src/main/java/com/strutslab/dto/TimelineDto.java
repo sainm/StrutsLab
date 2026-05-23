@@ -1,14 +1,22 @@
 package com.strutslab.dto;
 
+import java.sql.Timestamp;
+
 public class TimelineDto {
-    private String actionDatetime;
+    private int timelineId;
+    private String incidentNo;
+    private Timestamp actionDatetime;
     private String actionUser;
     private String actionContent;
     private String statusFrom;
     private String statusTo;
 
-    public String getActionDatetime() { return actionDatetime; }
-    public void setActionDatetime(String v) { this.actionDatetime = v; }
+    public int getTimelineId() { return timelineId; }
+    public void setTimelineId(int v) { this.timelineId = v; }
+    public String getIncidentNo() { return incidentNo; }
+    public void setIncidentNo(String v) { this.incidentNo = v; }
+    public Timestamp getActionDatetime() { return actionDatetime; }
+    public void setActionDatetime(Timestamp v) { this.actionDatetime = v; }
     public String getActionUser() { return actionUser; }
     public void setActionUser(String v) { this.actionUser = v; }
     public String getActionContent() { return actionContent; }

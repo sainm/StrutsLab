@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.strutslab.dao.ReportDao">
+
+    <!-- 1. Inspection completion rate per equipment type per month -->
+    <select id="computeCompletionRate" resultType="java.util.LinkedHashMap">
+        SELECT
+            e.equipment_type AS equipmentType,
+            SUBSTRING(p.planned_date, 1, 6) AS month,
+            COUNT(*) AS totalPlans,
+            SUM(CASE WHEN r.result_id IS NOT NULL THEN 1 ELSE 0 END) AS completedCount,
+            ROUND(100.0 * SUM(CASE WHEN r.result_id IS NOT NULL THEN 1 ELSE 0 END) / COUNT(*), 1) AS completionRate
+        FROM inspection_plans p
+        JOIN equipment e ON p.equipment_code = e.equipment_code
+        LEFT JOIN inspection_results r ON p.plan_id = r.plan_id
+        <where>
+            <if test="dateFrom != null and dateFrom != ''">
+                AND SUBSTRING(p.planned_date, 1, 6) &gt;= #{dateFrom}
+            </if>
+            <if test="dateTo != null and dateTo != ''">
+                AND SUBSTRING(p.planned_date, 1, 6) &lt;= #{dateTo}
+            </if>
+            <if test="equipmentType != null and equipmentType != ''">
+                AND e.equipment_type = #{equipmentType}
+            </if>
+        </where>
+        GROUP BY e.equipment_type, SUBSTRING(p.planned_date, 1, 6)
+        ORDER BY e.equipment_type, month
+    </select>
+
+    <!-- 2. Incident cross-tabulation (month x type) -->
+    <select id="computeIncidentCrossTab" resultType="java.util.LinkedHashMap">
+        SELECT
+            SUBSTRING(i.incident_datetime, 1, 7) AS month,
+            i.incident_type AS incidentType,
+            COUNT(*) AS count
+        FROM incidents i
+        <where>
+            <if test="dateFrom != null and dateFrom != ''">
+                AND SUBSTRING(i.incident_datetime, 1, 7) &gt;= #{dateFrom}
+            </if>
+            <if test="dateTo != null and dateTo != ''">
+                AND SUBSTRING(i.incident_datetime, 1, 7) &lt;= #{dateTo}
+            </if>
+            <if test="equipmentType != null and equipmentType != ''">
+                AND i.equipment_code IN (
+                    SELECT equipment_code FROM equipment WHERE equipment_type = #{equipmentType}
+                )
+            </if>
+        </where>
+        GROUP BY SUBSTRING(i.incident_datetime, 1, 7), i.incident_type
+        ORDER BY month, incident_type
+    </select>
+
+    <!-- 3. Equipment ranking (top 10 by incidents) -->
+    <select id="computeEquipmentRanking" resultType="java.util.LinkedHashMap">
+        SELECT
+            e.equipment_code AS equipmentCode,
+            e.equipment_name AS equipmentName,
+            e.equipment_type AS equipmentType,
+            COUNT(*) AS incidentCount
+        FROM incidents i
+        JOIN equipment e ON i.equipment_code = e.equipment_code
+        <where>
+            <if test="dateFrom != null and dateFrom != ''">
+                AND SUBSTRING(i.incident_datetime, 1, 7) &gt;= #{dateFrom}
+            </if>
+            <if test="dateTo != null and dateTo != ''">
+                AND SUBSTRING(i.incident_datetime, 1, 7) &lt;= #{dateTo}
+            </if>
+            <if test="equipmentType != null and equipmentType != ''">
+                AND e.equipment_type = #{equipmentType}
+            </if>
+        </where>
+        GROUP BY e.equipment_code, e.equipment_name, e.equipment_type
+        ORDER BY incidentCount DESC
+        LIMIT 10
+    </select>
+
+</mapper>

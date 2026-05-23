@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.strutslab.dao.IncidentDao">
+
+    <resultMap id="incidentMap" type="IncidentDto">
+        <id property="incidentNo" column="incident_no"/>
+        <result property="resultId" column="result_id"/>
+        <result property="incidentDatetime" column="incident_datetime"/>
+        <result property="finder" column="finder"/>
+        <result property="equipmentCode" column="equipment_code"/>
+        <result property="equipmentName" column="equipment_name"/>
+        <result property="weather" column="weather"/>
+        <result property="temperature" column="temperature"/>
+        <result property="incidentType" column="incident_type"/>
+        <result property="severity" column="severity"/>
+        <result property="incidentPart" column="incident_part"/>
+        <result property="incidentDetail" column="incident_detail"/>
+        <result property="tmpAction" column="tmp_action"/>
+        <result property="tmpActionPerson" column="tmp_action_person"/>
+        <result property="tmpActionDate" column="tmp_action_date"/>
+        <result property="cause" column="cause"/>
+        <result property="counterDetail" column="counter_detail"/>
+        <result property="status" column="status"/>
+    </resultMap>
+
+    <select id="search" resultMap="incidentMap">
+        SELECT i.*, e.equipment_name
+        FROM incidents i
+        LEFT JOIN equipment e ON i.equipment_code = e.equipment_code
+        <where>
+            <if test="incDateFrom != null and incDateFrom != ''">
+                AND i.incident_datetime &gt;= #{incDateFrom}
+            </if>
+            <if test="incDateTo != null and incDateTo != ''">
+                AND i.incident_datetime &lt;= #{incDateTo}
+            </if>
+            <if test="equipmentType != null and equipmentType != ''">
+                AND e.equipment_type = #{equipmentType}
+            </if>
+            <if test="incidentType != null and incidentType != ''">
+                AND i.incident_type = #{incidentType}
+            </if>
+            <if test="status != null and status != ''">
+                AND i.status = #{status}
+            </if>
+            <if test="severity != null and severity != ''">
+                AND i.severity = #{severity}
+            </if>
+            <if test="team != null and team != ''">
+                AND i.tmp_action_person LIKE CONCAT('%', #{team}, '%')
+            </if>
+            <if test="keyword != null and keyword != ''">
+                AND (i.incident_detail LIKE CONCAT('%', #{keyword}, '%')
+                     OR i.incident_part LIKE CONCAT('%', #{keyword}, '%')
+                     OR i.cause LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+        </where>
+        ORDER BY i.incident_datetime DESC
+        <if test="offset != null and limit != null">
+            LIMIT #{limit} OFFSET #{offset}
+        </if>
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT COUNT(*) FROM incidents i
+        LEFT JOIN equipment e ON i.equipment_code = e.equipment_code
+        <where>
+            <if test="incDateFrom != null and incDateFrom != ''">
+                AND i.incident_datetime &gt;= #{incDateFrom}
+            </if>
+            <if test="incDateTo != null and incDateTo != ''">
+                AND i.incident_datetime &lt;= #{incDateTo}
+            </if>
+            <if test="equipmentType != null and equipmentType != ''">
+                AND e.equipment_type = #{equipmentType}
+            </if>
+            <if test="incidentType != null and incidentType != ''">
+                AND i.incident_type = #{incidentType}
+            </if>
+            <if test="status != null and status != ''">
+                AND i.status = #{status}
+            </if>
+            <if test="severity != null and severity != ''">
+                AND i.severity = #{severity}
+            </if>
+            <if test="team != null and team != ''">
+                AND i.tmp_action_person LIKE CONCAT('%', #{team}, '%')
+            </if>
+            <if test="keyword != null and keyword != ''">
+                AND (i.incident_detail LIKE CONCAT('%', #{keyword}, '%')
+                     OR i.incident_part LIKE CONCAT('%', #{keyword}, '%')
+                     OR i.cause LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+        </where>
+    </select>
+
+    <select id="findById" resultMap="incidentMap">
+        SELECT i.*, e.equipment_name
+        FROM incidents i
+        LEFT JOIN equipment e ON i.equipment_code = e.equipment_code
+        WHERE i.incident_no = #{incidentNo}
+    </select>
+
+    <insert id="insert">
+        INSERT INTO incidents (
+            incident_no, result_id, incident_datetime, finder,
+            equipment_code, weather, temperature, incident_type,
+            severity, incident_part, incident_detail, tmp_action,
+            tmp_action_person, tmp_action_date, cause, counter_detail, status
+        ) VALUES (
+            #{incidentNo}, #{resultId}, #{incidentDatetime}, #{finder},
+            #{equipmentCode}, #{weather}, #{temperature}, #{incidentType},
+            #{severity}, #{incidentPart}, #{incidentDetail}, #{tmpAction},
+            #{tmpActionPerson}, #{tmpActionDate}, #{cause}, #{counterDetail}, #{status}
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE incidents SET
+            incident_datetime = #{incidentDatetime},
+            finder = #{finder},
+            equipment_code = #{equipmentCode},
+            weather = #{weather},
+            temperature = #{temperature},
+            incident_type = #{incidentType},
+            severity = #{severity},
+            incident_part = #{incidentPart},
+            incident_detail = #{incidentDetail},
+            tmp_action = #{tmpAction},
+            tmp_action_person = #{tmpActionPerson},
+            tmp_action_date = #{tmpActionDate},
+            cause = #{cause},
+            counter_detail = #{counterDetail},
+            status = #{status}
+        WHERE incident_no = #{incidentNo}
+    </update>
+
+    <update id="bulkUpdateStatus">
+        UPDATE incidents SET status = #{newStatus}
+        WHERE incident_no IN
+        <foreach collection="incidentNos" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
+
+    <select id="searchSimilar" resultMap="incidentMap">
+        SELECT i.*, e.equipment_name
+        FROM incidents i
+        LEFT JOIN equipment e ON i.equipment_code = e.equipment_code
+        <where>
+            <if test="type != null and type != ''">
+                AND i.incident_type = #{type}
+            </if>
+            <if test="part != null and part != ''">
+                AND i.incident_part LIKE CONCAT('%', #{part}, '%')
+            </if>
+        </where>
+        ORDER BY i.incident_datetime DESC
+        LIMIT 20
+    </select>
+
+    <select id="getTimeline" resultType="TimelineDto">
+        SELECT * FROM incident_timeline
+        WHERE incident_no = #{incidentNo}
+        ORDER BY action_datetime ASC
+    </select>
+
+    <insert id="insertTimeline">
+        INSERT INTO incident_timeline (
+            incident_no, action_datetime, action_user, action_content,
+            status_from, status_to
+        ) VALUES (
+            #{incidentNo}, #{actionDatetime}, #{actionUser}, #{actionContent},
+            #{statusFrom}, #{statusTo}
+        )
+    </insert>
+
+    <select id="generateIncidentNo" resultType="string">
+        SELECT CONCAT('INC-', DATE_FORMAT(CURRENT_DATE, '%Y%m%d'), '-', LPAD(
+            (SELECT COALESCE(MAX(CAST(SUBSTRING(incident_no, 15) AS UNSIGNED)), 0) + 1
+             FROM incidents
+             WHERE incident_no LIKE CONCAT('INC-', DATE_FORMAT(CURRENT_DATE, '%Y%m%d'), '-%')), 3, '0'))
+    </select>
+
+</mapper>

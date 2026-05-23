@@ -12,14 +12,22 @@ public class StatusBadgeTag extends TagSupport {
     private static final Map<String, String> STATUS_CSS_MAP = new HashMap<>();
     static {
         STATUS_CSS_MAP.put("未了", "badge-gray");
+        STATUS_CSS_MAP.put("調査中", "badge-yellow");
+        STATUS_CSS_MAP.put("対応中", "badge-orange");
         STATUS_CSS_MAP.put("一部完了", "badge-yellow");
         STATUS_CSS_MAP.put("完了", "badge-green");
+        STATUS_CSS_MAP.put("再発防止", "badge-blue");
+        STATUS_CSS_MAP.put("クローズ", "badge-green");
         STATUS_CSS_MAP.put("申請中", "badge-yellow");
         STATUS_CSS_MAP.put("承認済", "badge-green");
         STATUS_CSS_MAP.put("差戻", "badge-red");
         STATUS_CSS_MAP.put("在庫切れ", "badge-red");
         STATUS_CSS_MAP.put("僅少", "badge-yellow");
         STATUS_CSS_MAP.put("充足", "badge-green");
+        STATUS_CSS_MAP.put("軽微", "badge-gray");
+        STATUS_CSS_MAP.put("中", "badge-yellow");
+        STATUS_CSS_MAP.put("重大", "badge-orange");
+        STATUS_CSS_MAP.put("緊急", "badge-red");
     }
 
     private String status;

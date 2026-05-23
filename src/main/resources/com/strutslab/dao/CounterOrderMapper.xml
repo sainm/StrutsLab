@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.strutslab.dao.CounterDao">
+
+    <resultMap id="counterMap" type="com.strutslab.dto.CounterDto">
+        <id property="orderNo" column="order_no"/>
+        <result property="incidentNo" column="incident_no"/>
+        <result property="orderDate" column="order_date"/>
+        <result property="issuer" column="issuer"/>
+        <result property="overallDeadline" column="overall_deadline"/>
+        <result property="overallPriority" column="overall_priority"/>
+        <result property="status" column="status"/>
+    </resultMap>
+
+    <resultMap id="counterDetailMap" type="com.strutslab.dto.CounterDetailDto">
+        <id property="detailId" column="detail_id"/>
+        <result property="orderNo" column="order_no"/>
+        <result property="seqNo" column="seq_no"/>
+        <result property="workContent" column="work_content"/>
+        <result property="personCode" column="person_code"/>
+        <result property="personName" column="person_name"/>
+        <result property="deadline" column="deadline"/>
+        <result property="priority" column="priority"/>
+        <result property="status" column="status"/>
+        <result property="actualHours" column="actual_hours"/>
+        <result property="usedPartCode" column="used_part_code"/>
+        <result property="usedQuantity" column="used_quantity"/>
+        <result property="note" column="note"/>
+    </resultMap>
+
+    <!-- Search with filters -->
+    <select id="search" resultMap="counterMap">
+        SELECT * FROM counter_orders
+        <where>
+            <if test="dateFrom != null and dateFrom != ''">
+                AND order_date &gt;= #{dateFrom}
+            </if>
+            <if test="dateTo != null and dateTo != ''">
+                AND order_date &lt;= #{dateTo}
+            </if>
+            <if test="person != null and person != ''">
+                AND order_no IN (
+                    SELECT DISTINCT order_no FROM counter_details WHERE person_code = #{person}
+                )
+            </if>
+            <if test="status != null and status != ''">
+                AND status = #{status}
+            </if>
+            <if test="priority != null and priority != ''">
+                AND overall_priority = #{priority}
+            </if>
+        </where>
+        ORDER BY order_date DESC, order_no DESC
+    </select>
+
+    <!-- Count with filters -->
+    <select id="count" resultType="int">
+        SELECT COUNT(*) FROM counter_orders
+        <where>
+            <if test="dateFrom != null and dateFrom != ''">
+                AND order_date &gt;= #{dateFrom}
+            </if>
+            <if test="dateTo != null and dateTo != ''">
+                AND order_date &lt;= #{dateTo}
+            </if>
+            <if test="person != null and person != ''">
+                AND order_no IN (
+                    SELECT DISTINCT order_no FROM counter_details WHERE person_code = #{person}
+                )
+            </if>
+            <if test="status != null and status != ''">
+                AND status = #{status}
+            </if>
+            <if test="priority != null and priority != ''">
+                AND overall_priority = #{priority}
+            </if>
+        </where>
+    </select>
+
+    <!-- Find by ID -->
+    <select id="findById" resultMap="counterMap">
+        SELECT * FROM counter_orders WHERE order_no = #{orderNo}
+    </select>
+
+    <!-- Insert header -->
+    <insert id="insert">
+        INSERT INTO counter_orders (
+            order_no, incident_no, order_date, issuer,
+            overall_deadline, overall_priority, status
+        ) VALUES (
+            #{orderNo}, #{incidentNo}, #{orderDate}, #{issuer},
+            #{overallDeadline}, #{overallPriority}, #{status}
+        )
+    </insert>
+
+    <!-- Update header -->
+    <update id="update">
+        UPDATE counter_orders SET
+            incident_no = #{incidentNo},
+            order_date = #{orderDate},
+            issuer = #{issuer},
+            overall_deadline = #{overallDeadline},
+            overall_priority = #{overallPriority},
+            status = #{status}
+        WHERE order_no = #{orderNo}
+    </update>
+
+    <!-- Insert detail -->
+    <insert id="insertDetail" useGeneratedKeys="true" keyProperty="detailId" keyColumn="detail_id">
+        INSERT INTO counter_details (
+            order_no, seq_no, work_content, person_code, person_name,
+            deadline, priority, status
+        ) VALUES (
+            #{orderNo}, #{seqNo}, #{workContent}, #{personCode}, #{personName},
+            #{deadline}, #{priority}, #{status}
+        )
+    </insert>
+
+    <!-- Update detail -->
+    <update id="updateDetail">
+        UPDATE counter_details SET
+            work_content = #{workContent},
+            person_code = #{personCode},
+            person_name = #{personName},
+            deadline = #{deadline},
+            priority = #{priority},
+            status = #{status},
+            actual_hours = #{actualHours},
+            used_part_code = #{usedPartCode},
+            used_quantity = #{usedQuantity},
+            note = #{note}
+        WHERE detail_id = #{detailId}
+    </update>
+
+    <!-- Delete detail -->
+    <delete id="deleteDetail">
+        DELETE FROM counter_details WHERE detail_id = #{detailId}
+    </delete>
+
+    <!-- Find details by order no -->
+    <select id="findDetailsByOrderNo" resultMap="counterDetailMap">
+        SELECT * FROM counter_details WHERE order_no = #{orderNo}
+        ORDER BY seq_no ASC
+    </select>
+
+    <!-- Update detail status -->
+    <update id="updateDetailStatus">
+        UPDATE counter_details SET status = #{status} WHERE detail_id = #{detailId}
+    </update>
+
+    <!-- Check if all details are complete -->
+    <select id="areAllDetailsComplete" resultType="boolean">
+        SELECT CASE
+            WHEN COUNT(*) = 0 THEN FALSE
+            WHEN COUNT(*) = SUM(CASE WHEN status = '完了' THEN 1 ELSE 0 END) THEN TRUE
+            ELSE FALSE
+        END
+        FROM counter_details
+        WHERE order_no = #{orderNo}
+    </select>
+
+</mapper>
