@@ -4,6 +4,7 @@ import com.strutslab.dto.ExecItemResultDto;
 import com.strutslab.dto.ExecResultDto;
 import java.util.List;
 import java.util.Map;
+import org.apache.ibatis.annotations.Param;
 
 public interface ExecDao {
     int insertResult(ExecResultDto r);
@@ -13,7 +14,7 @@ public interface ExecDao {
     List<ExecResultDto> findPendingApprovals(Map<String, Object> params);
     void updateApprovalStatus(int resultId, String status, String rejectReason);
     void bulkApprove(int[] resultIds);
-    void bulkReject(int[] resultIds, String reason);
+    void bulkReject(@Param("resultIds") int[] resultIds, @Param("reason") String reason);
     int countPendingApprovals(Map<String, Object> params);
     void updateResult(ExecResultDto r);
     void deleteItemResults(int resultId);

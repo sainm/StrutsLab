@@ -11,6 +11,10 @@
         SELECT * FROM employees WHERE emp_no = #{empNo}
     </select>
 
+    <select id="findAll" resultType="EmpDto">
+        SELECT emp_no, name FROM employees ORDER BY emp_no
+    </select>
+
     <select id="search" resultType="EmpDto">
         SELECT e.*, d.dept_name
         FROM employees e

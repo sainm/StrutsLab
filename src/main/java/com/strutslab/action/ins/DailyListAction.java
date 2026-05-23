@@ -59,7 +59,7 @@ public class DailyListAction extends Action {
 
             // Load employee list for person filter
             List<Map<String, Object>> empList = sqlSession.selectList(
-                    "com.strutslab.dao.EmpDao.findAllSimple");
+                    "com.strutslab.dao.EmpDao.findAll");
             request.setAttribute("empList", empList);
         }
 

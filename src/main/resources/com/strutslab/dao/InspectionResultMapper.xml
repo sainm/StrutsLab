@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.strutslab.dao.ExecDao">
+
+    <resultMap id="execResultMap" type="com.strutslab.dto.ExecResultDto">
+        <id property="resultId" column="result_id"/>
+        <result property="planId" column="plan_id"/>
+        <result property="executedDate" column="executed_date"/>
+        <result property="executedBy" column="executed_by"/>
+        <result property="summaryJudge" column="summary_judge"/>
+        <result property="summaryNote" column="summary_note"/>
+        <result property="nextRecommendedDate" column="next_recommended_date"/>
+        <result property="approvalStatus" column="approval_status"/>
+        <result property="equipmentName" column="equipment_name"/>
+        <result property="equipmentCode" column="equipment_code"/>
+        <result property="inspectionKind" column="inspection_kind"/>
+        <result property="plannedTime" column="planned_time"/>
+        <result property="plannedDate" column="planned_date"/>
+        <result property="personCode" column="person_code"/>
+        <result property="templateName" column="template_name"/>
+        <result property="templateId" column="template_id"/>
+        <result property="rejectReason" column="reject_reason"/>
+    </resultMap>
+
+    <resultMap id="execItemResultMap" type="com.strutslab.dto.ExecItemResultDto">
+        <id property="resultItemId" column="result_item_id"/>
+        <result property="resultId" column="result_id"/>
+        <result property="itemId" column="item_id"/>
+        <result property="itemName" column="item_name"/>
+        <result property="judge" column="judge"/>
+        <result property="measuredValue" column="measured_value"/>
+        <result property="note" column="note"/>
+        <result property="itemLevel" column="item_level"/>
+        <result property="parentItemId" column="parent_item_id"/>
+        <result property="sortOrder" column="sort_order"/>
+    </resultMap>
+
+    <!-- Find plan by ID (for exec input loading) -->
+    <select id="findPlanById" resultMap="execResultMap">
+        SELECT
+            p.plan_id,
+            0 AS result_id,
+            p.planned_date,
+            NULL AS executed_date,
+            NULL AS executed_by,
+            NULL AS summary_judge,
+            NULL AS summary_note,
+            NULL AS next_recommended_date,
+            NULL AS approval_status,
+            e.equipment_name,
+            e.equipment_code,
+            t.inspection_kind,
+            p.planned_date AS planned_time,
+            p.person_code,
+            t.template_name,
+            p.template_id
+        FROM inspection_plans p
+        LEFT JOIN equipment e ON p.equipment_code = e.equipment_code
+        LEFT JOIN inspection_template t ON p.template_id = t.template_id
+        WHERE p.plan_id = #{planId}
+    </select>
+
+    <!-- Daily List: find plans by date, left join results -->
+    <select id="findByDate" resultMap="execResultMap">
+        SELECT
+            p.plan_id,
+            COALESCE(r.result_id, 0) AS result_id,
+            p.planned_date,
+            r.executed_date,
+            r.executed_by,
+            r.summary_judge,
+            r.summary_note,
+            r.next_recommended_date,
+            r.approval_status,
+            e.equipment_name,
+            e.equipment_code,
+            t.inspection_kind,
+            p.planned_date AS planned_time,
+            p.person_code,
+            t.template_name,
+            p.template_id
+        FROM inspection_plans p
+        LEFT JOIN inspection_results r ON p.plan_id = r.plan_id
+        LEFT JOIN equipment e ON p.equipment_code = e.equipment_code
+        LEFT JOIN inspection_template t ON p.template_id = t.template_id
+        <where>
+            p.planned_date = #{targetDate}
+            <if test="personCode != null and personCode != ''">
+                AND p.person_code = #{personCode}
+            </if>
+            <if test="statusFilter != null and statusFilter != ''">
+                <if test="statusFilter == '未了'">
+                    AND (r.result_id IS NULL OR r.approval_status IS NULL OR r.approval_status = '')
+                </if>
+                <if test="statusFilter == '一部完了'">
+                    AND r.result_id IS NOT NULL
+                    AND (r.approval_status = '一部完了' OR r.approval_status IS NULL)
+                </if>
+                <if test="statusFilter == '完了'">
+                    AND r.approval_status = '完了'
+                </if>
+            </if>
+        </where>
+        ORDER BY p.planned_date ASC, e.equipment_name ASC
+    </select>
+
+    <!-- Insert result header -->
+    <insert id="insertResult" useGeneratedKeys="true" keyProperty="resultId" keyColumn="result_id">
+        INSERT INTO inspection_results (
+            plan_id, executed_date, executed_by, summary_judge,
+            summary_note, next_recommended_date, approval_status
+        ) VALUES (
+            #{planId}, #{executedDate}, #{executedBy}, #{summaryJudge},
+            #{summaryNote}, #{nextRecommendedDate}, #{approvalStatus}
+        )
+    </insert>
+
+    <!-- Insert item result -->
+    <insert id="insertItemResult" useGeneratedKeys="true" keyProperty="resultItemId" keyColumn="result_item_id">
+        INSERT INTO inspection_items_results (
+            result_id, item_id, judge, measured_value, note
+        ) VALUES (
+            #{resultId}, #{itemId}, #{judge}, #{measuredValue}, #{note}
+        )
+    </insert>
+
+    <!-- Find result by ID (with plan & equipment info) -->
+    <select id="findById" resultMap="execResultMap">
+        SELECT
+            r.*,
+            p.planned_date,
+            p.person_code,
+            p.template_id,
+            e.equipment_name,
+            e.equipment_code,
+            t.inspection_kind,
+            t.template_name
+        FROM inspection_results r
+        JOIN inspection_plans p ON r.plan_id = p.plan_id
+        LEFT JOIN equipment e ON p.equipment_code = e.equipment_code
+        LEFT JOIN inspection_template t ON p.template_id = t.template_id
+        WHERE r.result_id = #{resultId}
+    </select>
+
+    <!-- Find item results by result ID (join with items for name) -->
+    <select id="findItemsByResultId" resultMap="execItemResultMap">
+        SELECT
+            ir.*,
+            i.item_name,
+            i.item_level,
+            i.parent_item_id,
+            i.sort_order
+        FROM inspection_items_results ir
+        JOIN inspection_items i ON ir.item_id = i.item_id
+        WHERE ir.result_id = #{resultId}
+        ORDER BY i.item_level ASC, i.sort_order ASC
+    </select>
+
+    <!-- Update approval status -->
+    <update id="updateApprovalStatus">
+        UPDATE inspection_results
+        SET approval_status = #{param2},
+            reject_reason = #{param3},
+            updated_at = CURRENT_TIMESTAMP
+        WHERE result_id = #{param1}
+    </update>
+
+    <!-- Bulk approve -->
+    <update id="bulkApprove">
+        UPDATE inspection_results
+        SET approval_status = '承認済',
+            updated_at = CURRENT_TIMESTAMP
+        WHERE result_id IN
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <!-- Bulk reject -->
+    <update id="bulkReject">
+        UPDATE inspection_results
+        SET approval_status = '差戻',
+            reject_reason = #{reason},
+            updated_at = CURRENT_TIMESTAMP
+        WHERE result_id IN
+        <foreach item="id" collection="resultIds" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <!-- Count pending approvals -->
+    <select id="countPendingApprovals" resultType="int">
+        SELECT COUNT(*)
+        FROM inspection_results r
+        JOIN inspection_plans p ON r.plan_id = p.plan_id
+        <where>
+            <if test="dateFrom != null and dateFrom != ''">
+                AND r.executed_date &gt;= #{dateFrom}
+            </if>
+            <if test="dateTo != null and dateTo != ''">
+                AND r.executed_date &lt;= #{dateTo}
+            </if>
+            <if test="status != null and status != ''">
+                AND r.approval_status = #{status}
+            </if>
+        </where>
+    </select>
+
+    <!-- Find pending approvals -->
+    <select id="findPendingApprovals" resultMap="execResultMap">
+        SELECT
+            r.*,
+            p.planned_date,
+            p.person_code,
+            e.equipment_name,
+            e.equipment_code,
+            t.inspection_kind,
+            t.template_name
+        FROM inspection_results r
+        JOIN inspection_plans p ON r.plan_id = p.plan_id
+        LEFT JOIN equipment e ON p.equipment_code = e.equipment_code
+        LEFT JOIN inspection_template t ON p.template_id = t.template_id
+        <where>
+            <if test="dateFrom != null and dateFrom != ''">
+                AND r.executed_date &gt;= #{dateFrom}
+            </if>
+            <if test="dateTo != null and dateTo != ''">
+                AND r.executed_date &lt;= #{dateTo}
+            </if>
+            <if test="team != null and team != ''">
+                AND p.team_code = #{team}
+            </if>
+            <if test="status != null and status != ''">
+                AND r.approval_status = #{status}
+            </if>
+        </where>
+        ORDER BY r.executed_date DESC, r.result_id DESC
+    </select>
+
+    <!-- Update result -->
+    <update id="updateResult">
+        UPDATE inspection_results SET
+            executed_date = #{executedDate},
+            executed_by = #{executedBy},
+            summary_judge = #{summaryJudge},
+            summary_note = #{summaryNote},
+            next_recommended_date = #{nextRecommendedDate},
+            approval_status = #{approvalStatus},
+            updated_at = CURRENT_TIMESTAMP
+        WHERE result_id = #{resultId}
+    </update>
+
+    <!-- Delete item results -->
+    <delete id="deleteItemResults">
+        DELETE FROM inspection_items_results WHERE result_id = #{resultId}
+    </delete>
+
+</mapper>

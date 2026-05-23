@@ -71,6 +71,7 @@ CREATE TABLE inspection_results (
     summary_note TEXT,
     next_recommended_date VARCHAR(8),
     approval_status VARCHAR(5),
+    reject_reason TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
