@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC
+  "-//Apache Software Foundation//DTD Tiles Configuration 1.3//EN"
+  "http://struts.apache.org/dtds/tiles-config_1_3.dtd">
+<tiles-definitions>
+    <!-- Base -->
+    <definition name=".base" path="/WEB-INF/jsp/tiles/baseLayout.jsp">
+        <put name="title" value="電力設備巡視点検管理システム"/>
+        <put name="header" value="/WEB-INF/jsp/common/header.jsp"/>
+        <put name="menu" value="/WEB-INF/jsp/common/menu.jsp"/>
+        <put name="body" value=""/>
+        <put name="footer" value="/WEB-INF/jsp/common/footer.jsp"/>
+    </definition>
+
+    <!-- List Layout -->
+    <definition name=".list" extends=".base">
+        <put name="body" value="/WEB-INF/jsp/tiles/listLayout.jsp"/>
+    </definition>
+
+    <!-- Input Layout -->
+    <definition name=".input" extends=".base">
+        <put name="body" value="/WEB-INF/jsp/tiles/inputLayout.jsp"/>
+    </definition>
+
+    <!-- Wizard Layout -->
+    <definition name=".wizard" extends=".base">
+        <put name="body" value="/WEB-INF/jsp/tiles/wizardLayout.jsp"/>
+    </definition>
+
+    <!-- Popup Layout -->
+    <definition name=".popup" path="/WEB-INF/jsp/tiles/popupLayout.jsp">
+        <put name="title" value="選択"/>
+        <put name="header" value="/WEB-INF/jsp/common/header.jsp"/>
+        <put name="body" value=""/>
+    </definition>
+
+    <!-- Print Layout -->
+    <definition name=".print" path="/WEB-INF/jsp/tiles/printLayout.jsp">
+        <put name="body" value=""/>
+    </definition>
+
+    <!-- === Master: Equipment === -->
+    <definition name="eqp.list.tiles" extends=".list">
+        <put name="title" value="設備マスタ一覧"/>
+        <put name="searchArea" value="/WEB-INF/jsp/mst/eqpListSearch.jsp"/>
+        <put name="listArea" value="/WEB-INF/jsp/mst/eqpListTable.jsp"/>
+    </definition>
+    <definition name="eqp.edit.tiles" extends=".input">
+        <put name="title" value="設備マスタ登録・編集"/>
+        <put name="formArea" value="/WEB-INF/jsp/mst/eqpEdit.jsp"/>
+    </definition>
+
+    <!-- === Master: Check Items === -->
+    <definition name="chkitem.list.tiles" extends=".list">
+        <put name="title" value="点検項目マスタ一覧"/>
+        <put name="searchArea" value="/WEB-INF/jsp/mst/chkItemListSearch.jsp"/>
+        <put name="listArea" value="/WEB-INF/jsp/mst/chkItemListTable.jsp"/>
+    </definition>
+    <definition name="chkitem.edit.tiles" extends=".input">
+        <put name="title" value="点検項目マスタ登録・編集"/>
+        <put name="formArea" value="/WEB-INF/jsp/mst/chkItemEdit.jsp"/>
+    </definition>
+
+    <!-- === Inspection === -->
+    <definition name="ins.plan.yearly.tiles" extends=".list">
+        <put name="title" value="年間点検計画一覧"/>
+        <put name="searchArea" value="/WEB-INF/jsp/ins/yearlyPlanSearch.jsp"/>
+        <put name="listArea" value="/WEB-INF/jsp/ins/yearlyPlanMatrix.jsp"/>
+    </definition>
+    <definition name="ins.plan.wiz1.tiles" extends=".wizard">
+        <put name="title" value="点検計画登録 ①設備選択"/>
+        <put name="wizardContent" value="/WEB-INF/jsp/ins/planWiz1.jsp"/>
+    </definition>
+    <definition name="ins.plan.wiz2.tiles" extends=".wizard">
+        <put name="title" value="点検計画登録 ②テンプレート選択"/>
+        <put name="wizardContent" value="/WEB-INF/jsp/ins/planWiz2.jsp"/>
+    </definition>
+    <definition name="ins.plan.wiz3.tiles" extends=".wizard">
+        <put name="title" value="点検計画登録 ③日程・担当者"/>
+        <put name="wizardContent" value="/WEB-INF/jsp/ins/planWiz3.jsp"/>
+    </definition>
+    <definition name="ins.plan.confirm.tiles" extends=".wizard">
+        <put name="title" value="点検計画登録 ④確認"/>
+        <put name="wizardContent" value="/WEB-INF/jsp/ins/planConfirm.jsp"/>
+    </definition>
+    <definition name="ins.daily.list.tiles" extends=".list">
+        <put name="title" value="点検実施一覧（当日）"/>
+        <put name="searchArea" value="/WEB-INF/jsp/ins/dailyListSearch.jsp"/>
+        <put name="listArea" value="/WEB-INF/jsp/ins/dailyListTable.jsp"/>
+    </definition>
+    <definition name="ins.exec.input.tiles" extends=".input">
+        <put name="title" value="点検実施入力"/>
+        <put name="formArea" value="/WEB-INF/jsp/ins/execInput.jsp"/>
+    </definition>
+    <definition name="ins.exec.detail.tiles" extends=".input">
+        <put name="title" value="点検実施詳細"/>
+        <put name="formArea" value="/WEB-INF/jsp/ins/execDetail.jsp"/>
+    </definition>
+    <definition name="ins.appr.list.tiles" extends=".list">
+        <put name="title" value="点検実施承認一覧"/>
+        <put name="searchArea" value="/WEB-INF/jsp/ins/approvalListSearch.jsp"/>
+        <put name="listArea" value="/WEB-INF/jsp/ins/approvalListTable.jsp"/>
+    </definition>
+
+    <!-- === Incident === -->
+    <definition name="inc.list.tiles" extends=".list">
+        <put name="title" value="異常報告一覧"/>
+        <put name="searchArea" value="/WEB-INF/jsp/inc/incListSearch.jsp"/>
+        <put name="listArea" value="/WEB-INF/jsp/inc/incListTable.jsp"/>
+    </definition>
+    <definition name="inc.create.tiles" extends=".input">
+        <put name="title" value="異常報告登録"/>
+        <put name="formArea" value="/WEB-INF/jsp/inc/incCreate.jsp"/>
+    </definition>
+    <definition name="inc.detail.tiles" extends=".input">
+        <put name="title" value="異常報告詳細"/>
+        <put name="formArea" value="/WEB-INF/jsp/inc/incDetail.jsp"/>
+    </definition>
+
+    <!-- === Counter === -->
+    <definition name="ctr.create.tiles" extends=".input">
+        <put name="title" value="対応指示登録"/>
+        <put name="formArea" value="/WEB-INF/jsp/counter/ctrCreate.jsp"/>
+    </definition>
+    <definition name="ctr.list.tiles" extends=".list">
+        <put name="title" value="対応指示一覧"/>
+        <put name="searchArea" value="/WEB-INF/jsp/counter/ctrListSearch.jsp"/>
+        <put name="listArea" value="/WEB-INF/jsp/counter/ctrListTable.jsp"/>
+    </definition>
+    <definition name="ctr.detail.tiles" extends=".input">
+        <put name="title" value="対応指示詳細"/>
+        <put name="formArea" value="/WEB-INF/jsp/counter/ctrDetail.jsp"/>
+    </definition>
+    <definition name="ctr.capa.tiles" extends=".input">
+        <put name="title" value="是正処置報告書"/>
+        <put name="formArea" value="/WEB-INF/jsp/counter/capaCreate.jsp"/>
+    </definition>
+
+    <!-- === Organization === -->
+    <definition name="org.dept.list.tiles" extends=".list">
+        <put name="title" value="部署マスタ一覧"/>
+        <put name="searchArea" value="/WEB-INF/jsp/org/deptListSearch.jsp"/>
+        <put name="listArea" value="/WEB-INF/jsp/org/deptListTree.jsp"/>
+    </definition>
+    <definition name="org.dept.edit.tiles" extends=".input">
+        <put name="title" value="部署マスタ登録・編集"/>
+        <put name="formArea" value="/WEB-INF/jsp/org/deptEdit.jsp"/>
+    </definition>
+    <definition name="org.emp.list.tiles" extends=".list">
+        <put name="title" value="担当者マスタ一覧"/>
+        <put name="searchArea" value="/WEB-INF/jsp/org/empListSearch.jsp"/>
+        <put name="listArea" value="/WEB-INF/jsp/org/empListTable.jsp"/>
+    </definition>
+    <definition name="org.emp.edit.tiles" extends=".input">
+        <put name="title" value="担当者マスタ登録・編集"/>
+        <put name="formArea" value="/WEB-INF/jsp/org/empEdit.jsp"/>
+    </definition>
+
+    <!-- === Calendar === -->
+    <definition name="cal.list.tiles" extends=".input">
+        <put name="title" value="休日カレンダー"/>
+        <put name="formArea" value="/WEB-INF/jsp/cal/calList.jsp"/>
+    </definition>
+    <definition name="cal.edit.tiles" extends=".input">
+        <put name="title" value="休日登録・編集"/>
+        <put name="formArea" value="/WEB-INF/jsp/cal/calEdit.jsp"/>
+    </definition>
+
+    <!-- === Parts === -->
+    <definition name="parts.list.tiles" extends=".list">
+        <put name="title" value="保守部品一覧"/>
+        <put name="searchArea" value="/WEB-INF/jsp/parts/prtListSearch.jsp"/>
+        <put name="listArea" value="/WEB-INF/jsp/parts/prtListTable.jsp"/>
+    </definition>
+    <definition name="parts.edit.tiles" extends=".input">
+        <put name="title" value="保守部品登録・編集"/>
+        <put name="formArea" value="/WEB-INF/jsp/parts/prtEdit.jsp"/>
+    </definition>
+    <definition name="parts.usage.tiles" extends=".list">
+        <put name="title" value="部品使用実績一覧"/>
+        <put name="searchArea" value="/WEB-INF/jsp/parts/prtUsageSearch.jsp"/>
+        <put name="listArea" value="/WEB-INF/jsp/parts/prtUsageTable.jsp"/>
+    </definition>
+
+    <!-- === Report === -->
+    <definition name="report.summary.tiles" extends=".input">
+        <put name="title" value="総合レポート"/>
+        <put name="formArea" value="/WEB-INF/jsp/report/summaryReport.jsp"/>
+    </definition>
+</tiles-definitions>
