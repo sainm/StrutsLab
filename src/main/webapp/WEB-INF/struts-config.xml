@@ -261,7 +261,7 @@
     </action-mappings>
 
     <!-- Message Resources -->
-    <message-resources parameter="ApplicationResources_ja"/>
+    <message-resources parameter="ApplicationResources"/>
 
     <!-- Plugins -->
     <plug-in className="org.apache.struts.validator.ValidatorPlugIn">

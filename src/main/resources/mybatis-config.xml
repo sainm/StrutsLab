@@ -22,16 +22,16 @@
         </environment>
     </environments>
     <mappers>
-        <mapper resource="com/struts-lab/dao/EquipmentMapper.xml"/>
-        <mapper resource="com/struts-lab/dao/InspectionTemplateMapper.xml"/>
-        <mapper resource="com/struts-lab/dao/InspectionPlanMapper.xml"/>
-        <mapper resource="com/struts-lab/dao/InspectionResultMapper.xml"/>
-        <mapper resource="com/struts-lab/dao/IncidentMapper.xml"/>
-        <mapper resource="com/struts-lab/dao/CounterOrderMapper.xml"/>
-        <mapper resource="com/struts-lab/dao/CapaMapper.xml"/>
-        <mapper resource="com/struts-lab/dao/DeptMapper.xml"/>
-        <mapper resource="com/struts-lab/dao/EmployeeMapper.xml"/>
-        <mapper resource="com/struts-lab/dao/CalendarMapper.xml"/>
-        <mapper resource="com/struts-lab/dao/PartsMapper.xml"/>
+        <mapper resource="com/strutslab/dao/EquipmentMapper.xml"/>
+        <mapper resource="com/strutslab/dao/InspectionTemplateMapper.xml"/>
+        <mapper resource="com/strutslab/dao/InspectionPlanMapper.xml"/>
+        <mapper resource="com/strutslab/dao/InspectionResultMapper.xml"/>
+        <mapper resource="com/strutslab/dao/IncidentMapper.xml"/>
+        <mapper resource="com/strutslab/dao/CounterOrderMapper.xml"/>
+        <mapper resource="com/strutslab/dao/CapaMapper.xml"/>
+        <mapper resource="com/strutslab/dao/DeptMapper.xml"/>
+        <mapper resource="com/strutslab/dao/EmployeeMapper.xml"/>
+        <mapper resource="com/strutslab/dao/CalendarMapper.xml"/>
+        <mapper resource="com/strutslab/dao/PartsMapper.xml"/>
     </mappers>
 </configuration>

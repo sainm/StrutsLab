@@ -1,0 +1,12 @@
+target/
+*.class
+*.jar
+*.pyc
+__pycache__/
+.idea/
+.classpath
+.project
+.settings/
+*.iml
+.DS_Store
+struts-lab-db.*
