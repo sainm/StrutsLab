@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.strutslab.dao.PlanDao">
+
+    <resultMap id="planMap" type="PlanDto">
+        <id property="planId" column="plan_id"/>
+        <result property="fiscalYear" column="fiscal_year"/>
+        <result property="equipmentCode" column="equipment_code"/>
+        <result property="equipmentName" column="equipment_name"/>
+        <result property="templateId" column="template_id"/>
+        <result property="plannedDate" column="planned_date"/>
+        <result property="teamCode" column="team_code"/>
+        <result property="personCode" column="person_code"/>
+        <result property="status" column="status"/>
+        <result property="isLocked" column="is_locked"/>
+        <result property="note" column="note"/>
+    </resultMap>
+
+    <select id="search" resultMap="planMap">
+        SELECT p.*, e.equipment_name
+        FROM inspection_plans p
+        LEFT JOIN equipment e ON p.equipment_code = e.equipment_code
+        <where>
+            <if test="fiscalYear != null and fiscalYear != ''">
+                AND p.fiscal_year = #{fiscalYear}
+            </if>
+            <if test="equipmentType != null and equipmentType != ''">
+                AND e.equipment_type = #{equipmentType}
+            </if>
+            <if test="teamCode != null and teamCode != ''">
+                AND p.team_code = #{teamCode}
+            </if>
+            <if test="equipmentCode != null and equipmentCode != ''">
+                AND p.equipment_code = #{equipmentCode}
+            </if>
+        </where>
+        ORDER BY p.planned_date ASC
+    </select>
+
+    <select id="countMonthly" resultType="int">
+        SELECT COUNT(*)
+        FROM inspection_plans p
+        LEFT JOIN equipment e ON p.equipment_code = e.equipment_code
+        <where>
+            <if test="fiscalYear != null and fiscalYear != ''">
+                AND p.fiscal_year = #{fiscalYear}
+            </if>
+            <if test="equipmentCode != null and equipmentCode != ''">
+                AND p.equipment_code = #{equipmentCode}
+            </if>
+            <if test="month != null and month != ''">
+                AND SUBSTR(p.planned_date, 5, 2) = #{month}
+            </if>
+        </where>
+    </select>
+
+    <select id="findById" resultMap="planMap">
+        SELECT p.*, e.equipment_name
+        FROM inspection_plans p
+        LEFT JOIN equipment e ON p.equipment_code = e.equipment_code
+        WHERE p.plan_id = #{planId}
+    </select>
+
+    <select id="findByYear" resultMap="planMap">
+        SELECT p.*, e.equipment_name
+        FROM inspection_plans p
+        LEFT JOIN equipment e ON p.equipment_code = e.equipment_code
+        WHERE p.fiscal_year = #{fiscalYear}
+        ORDER BY p.equipment_code, p.planned_date
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="planId">
+        INSERT INTO inspection_plans (
+            fiscal_year, equipment_code, template_id, planned_date,
+            team_code, person_code, status, is_locked, note
+        ) VALUES (
+            #{fiscalYear}, #{equipmentCode}, #{templateId}, #{plannedDate},
+            #{teamCode}, #{personCode}, #{status}, #{isLocked}, #{note}
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE inspection_plans SET
+            equipment_code = #{equipmentCode},
+            template_id = #{templateId},
+            planned_date = #{plannedDate},
+            team_code = #{teamCode},
+            person_code = #{personCode},
+            status = #{status},
+            note = #{note},
+            updated_at = CURRENT_TIMESTAMP
+        WHERE plan_id = #{planId}
+    </update>
+
+    <update id="lockYear">
+        UPDATE inspection_plans
+        SET is_locked = TRUE, updated_at = CURRENT_TIMESTAMP
+        WHERE fiscal_year = #{fiscalYear}
+    </update>
+
+    <update id="unlockYear">
+        UPDATE inspection_plans
+        SET is_locked = FALSE, updated_at = CURRENT_TIMESTAMP
+        WHERE fiscal_year = #{fiscalYear}
+    </update>
+
+</mapper>
