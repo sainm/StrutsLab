@@ -39,7 +39,7 @@ CREATE TABLE inspection_items (
     parent_item_id INT,
     item_level INT NOT NULL,
     item_name VARCHAR(200) NOT NULL,
-    judge_criteria VARCHAR(5),
+    judge_criteria VARCHAR(10),
     normal_range VARCHAR(100),
     unit VARCHAR(20),
     sort_order INT DEFAULT 0
@@ -233,7 +233,7 @@ CREATE TABLE employee_qualifications (
 CREATE TABLE holidays (
     holiday_id INT AUTO_INCREMENT PRIMARY KEY,
     holiday_date VARCHAR(8) NOT NULL UNIQUE,
-    holiday_type VARCHAR(5) NOT NULL,
+    holiday_type VARCHAR(10) NOT NULL,
     holiday_name VARCHAR(100),
     is_transfer BOOLEAN NOT NULL DEFAULT FALSE,
     transfer_date VARCHAR(8)
@@ -277,3 +277,62 @@ CREATE TABLE part_usages (
     order_no VARCHAR(20),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-- ========================
+-- Foreign Key Constraints
+-- ========================
+ALTER TABLE equipment ADD CONSTRAINT fk_eqp_parent FOREIGN KEY (parent_equipment_code) REFERENCES equipment(equipment_code);
+ALTER TABLE inspection_items ADD CONSTRAINT fk_item_template FOREIGN KEY (template_id) REFERENCES inspection_template(template_id);
+ALTER TABLE inspection_items ADD CONSTRAINT fk_item_parent FOREIGN KEY (parent_item_id) REFERENCES inspection_items(item_id);
+ALTER TABLE inspection_plans ADD CONSTRAINT fk_plan_equipment FOREIGN KEY (equipment_code) REFERENCES equipment(equipment_code);
+ALTER TABLE inspection_plans ADD CONSTRAINT fk_plan_template FOREIGN KEY (template_id) REFERENCES inspection_template(template_id);
+ALTER TABLE inspection_plans ADD CONSTRAINT fk_plan_person FOREIGN KEY (person_code) REFERENCES employees(emp_no);
+ALTER TABLE inspection_results ADD CONSTRAINT fk_res_plan FOREIGN KEY (plan_id) REFERENCES inspection_plans(plan_id);
+ALTER TABLE inspection_results ADD CONSTRAINT fk_res_person FOREIGN KEY (executed_by) REFERENCES employees(emp_no);
+ALTER TABLE inspection_items_results ADD CONSTRAINT fk_iir_result FOREIGN KEY (result_id) REFERENCES inspection_results(result_id);
+ALTER TABLE inspection_items_results ADD CONSTRAINT fk_iir_item FOREIGN KEY (item_id) REFERENCES inspection_items(item_id);
+ALTER TABLE inspection_photos ADD CONSTRAINT fk_photo_item FOREIGN KEY (result_item_id) REFERENCES inspection_items_results(result_item_id);
+ALTER TABLE incidents ADD CONSTRAINT fk_inc_result FOREIGN KEY (result_id) REFERENCES inspection_results(result_id);
+ALTER TABLE incidents ADD CONSTRAINT fk_inc_equipment FOREIGN KEY (equipment_code) REFERENCES equipment(equipment_code);
+ALTER TABLE incidents ADD CONSTRAINT fk_inc_person FOREIGN KEY (tmp_action_person) REFERENCES employees(emp_no);
+ALTER TABLE incident_timeline ADD CONSTRAINT fk_tl_inc FOREIGN KEY (incident_no) REFERENCES incidents(incident_no);
+ALTER TABLE incident_attachments ADD CONSTRAINT fk_att_inc FOREIGN KEY (incident_no) REFERENCES incidents(incident_no);
+ALTER TABLE counter_orders ADD CONSTRAINT fk_ctr_inc FOREIGN KEY (incident_no) REFERENCES incidents(incident_no);
+ALTER TABLE counter_order_details ADD CONSTRAINT fk_ctrd_order FOREIGN KEY (order_no) REFERENCES counter_orders(order_no);
+ALTER TABLE counter_order_details ADD CONSTRAINT fk_ctrd_person FOREIGN KEY (person_code) REFERENCES employees(emp_no);
+ALTER TABLE counter_order_details ADD CONSTRAINT fk_ctrd_part FOREIGN KEY (used_part_code) REFERENCES parts(part_code);
+ALTER TABLE capa_reports ADD CONSTRAINT fk_capa_inc FOREIGN KEY (incident_no) REFERENCES incidents(incident_no);
+ALTER TABLE departments ADD CONSTRAINT fk_dept_parent FOREIGN KEY (parent_dept_code) REFERENCES departments(dept_code);
+ALTER TABLE employees ADD CONSTRAINT fk_emp_dept FOREIGN KEY (dept_code) REFERENCES departments(dept_code);
+ALTER TABLE employee_qualifications ADD CONSTRAINT fk_qual_emp FOREIGN KEY (emp_no) REFERENCES employees(emp_no);
+ALTER TABLE part_equipment_relations ADD CONSTRAINT fk_per_part FOREIGN KEY (part_code) REFERENCES parts(part_code);
+ALTER TABLE part_equipment_relations ADD CONSTRAINT fk_per_eqp FOREIGN KEY (equipment_code) REFERENCES equipment(equipment_code);
+ALTER TABLE part_usages ADD CONSTRAINT fk_usage_part FOREIGN KEY (part_code) REFERENCES parts(part_code);
+ALTER TABLE part_usages ADD CONSTRAINT fk_usage_eqp FOREIGN KEY (equipment_code) REFERENCES equipment(equipment_code);
+ALTER TABLE part_usages ADD CONSTRAINT fk_usage_person FOREIGN KEY (used_by) REFERENCES employees(emp_no);
+ALTER TABLE part_usages ADD CONSTRAINT fk_usage_order FOREIGN KEY (order_no) REFERENCES counter_orders(order_no);
+
+-- ========================
+-- Indexes
+-- ========================
+CREATE INDEX idx_eqp_type ON equipment(equipment_type);
+CREATE INDEX idx_eqp_rank ON equipment(maintenance_rank);
+CREATE INDEX idx_eqp_status ON equipment(status);
+CREATE INDEX idx_item_tmpl ON inspection_items(template_id);
+CREATE INDEX idx_plan_year ON inspection_plans(fiscal_year);
+CREATE INDEX idx_plan_date ON inspection_plans(planned_date);
+CREATE INDEX idx_res_date ON inspection_results(executed_date);
+CREATE INDEX idx_res_approval ON inspection_results(approval_status);
+CREATE INDEX idx_inc_status ON incidents(status);
+CREATE INDEX idx_inc_date ON incidents(incident_datetime);
+CREATE INDEX idx_inc_type ON incidents(incident_type);
+CREATE INDEX idx_inc_severity ON incidents(severity);
+CREATE INDEX idx_ctr_status ON counter_orders(status);
+CREATE INDEX idx_dept_parent ON departments(parent_dept_code);
+CREATE INDEX idx_emp_dept ON employees(dept_code);
+CREATE INDEX idx_emp_login ON employees(login_id);
+CREATE INDEX idx_hol_date ON holidays(holiday_date);
+CREATE INDEX idx_hol_type ON holidays(holiday_type);
+CREATE INDEX idx_part_type ON parts(part_type);
+CREATE INDEX idx_usage_date ON part_usages(usage_date);
+CREATE INDEX idx_usage_part ON part_usages(part_code);
