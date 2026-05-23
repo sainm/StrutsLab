@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.strutslab.dao.EqpDao">
+
+    <select id="search" resultType="EqpDto">
+        SELECT e.*, p.equipment_name AS parent_equipment_name
+        FROM equipment e
+        LEFT JOIN equipment p ON e.parent_equipment_code = p.equipment_code
+        <where>
+            <if test="equipmentType != null and equipmentType != ''">
+                AND e.equipment_type = #{equipmentType}
+            </if>
+            <if test="voltageLevel != null and voltageLevel != ''">
+                AND e.voltage_level = #{voltageLevel}
+            </if>
+            <if test="yearFrom != null and yearFrom != ''">
+                AND e.install_date &gt;= #{yearFrom}
+            </if>
+            <if test="yearTo != null and yearTo != ''">
+                AND e.install_date &lt;= #{yearTo}
+            </if>
+            <if test="maintenanceRank != null and maintenanceRank != ''">
+                AND e.maintenance_rank = #{maintenanceRank}
+            </if>
+            <if test="deptName != null and deptName != ''">
+                AND e.location_address LIKE CONCAT('%', #{deptName}, '%')
+            </if>
+        </where>
+        ORDER BY e.equipment_code
+        <if test="offset != null and limit != null">
+            LIMIT #{limit} OFFSET #{offset}
+        </if>
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT COUNT(*) FROM equipment e
+        <where>
+            <if test="equipmentType != null and equipmentType != ''">
+                AND e.equipment_type = #{equipmentType}
+            </if>
+            <if test="voltageLevel != null and voltageLevel != ''">
+                AND e.voltage_level = #{voltageLevel}
+            </if>
+            <if test="yearFrom != null and yearFrom != ''">
+                AND e.install_date &gt;= #{yearFrom}
+            </if>
+            <if test="yearTo != null and yearTo != ''">
+                AND e.install_date &lt;= #{yearTo}
+            </if>
+            <if test="maintenanceRank != null and maintenanceRank != ''">
+                AND e.maintenance_rank = #{maintenanceRank}
+            </if>
+            <if test="deptName != null and deptName != ''">
+                AND e.location_address LIKE CONCAT('%', #{deptName}, '%')
+            </if>
+        </where>
+    </select>
+
+    <select id="findById" resultType="EqpDto">
+        SELECT e.*, p.equipment_name AS parent_equipment_name
+        FROM equipment e
+        LEFT JOIN equipment p ON e.parent_equipment_code = p.equipment_code
+        WHERE e.equipment_code = #{equipmentCode}
+    </select>
+
+    <select id="findAll" resultType="EqpDto">
+        SELECT * FROM equipment ORDER BY equipment_code
+    </select>
+
+    <insert id="insert">
+        INSERT INTO equipment (
+            equipment_code, equipment_name, equipment_type, voltage_level,
+            rated_capacity, rated_current, frequency, parent_equipment_code,
+            install_date, location_address, coordinates, maintenance_rank,
+            inspection_interval, last_inspection_date, next_inspection_date,
+            status, note
+        ) VALUES (
+            #{equipmentCode}, #{equipmentName}, #{equipmentType}, #{voltageLevel},
+            #{ratedCapacity}, #{ratedCurrent}, #{frequency}, #{parentEquipmentCode},
+            #{installDate}, #{locationAddress}, #{coordinates}, #{maintenanceRank},
+            #{inspectionInterval}, #{lastInspectionDate}, #{nextInspectionDate},
+            #{status}, #{note}
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE equipment SET
+            equipment_name = #{equipmentName},
+            equipment_type = #{equipmentType},
+            voltage_level = #{voltageLevel},
+            rated_capacity = #{ratedCapacity},
+            rated_current = #{ratedCurrent},
+            frequency = #{frequency},
+            parent_equipment_code = #{parentEquipmentCode},
+            install_date = #{installDate},
+            location_address = #{locationAddress},
+            coordinates = #{coordinates},
+            maintenance_rank = #{maintenanceRank},
+            inspection_interval = #{inspectionInterval},
+            last_inspection_date = #{lastInspectionDate},
+            next_inspection_date = #{nextInspectionDate},
+            status = #{status},
+            note = #{note},
+            updated_at = CURRENT_TIMESTAMP
+        WHERE equipment_code = #{equipmentCode}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM equipment WHERE equipment_code = #{equipmentCode}
+    </delete>
+
+</mapper>
