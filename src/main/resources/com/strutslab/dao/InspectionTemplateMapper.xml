@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.strutslab.dao.ChkItemDao">
+
+    <resultMap id="chkTmplMap" type="com.strutslab.dto.ChkTmplDto">
+        <id property="templateId" column="template_id"/>
+        <result property="templateName" column="template_name"/>
+        <result property="equipmentType" column="equipment_type"/>
+        <result property="inspectionKind" column="inspection_kind"/>
+        <result property="itemCount" column="item_count"/>
+        <result property="lastUpdateDate" column="updated_at"/>
+        <result property="sortOrder" column="sort_order"/>
+    </resultMap>
+
+    <select id="search" resultMap="chkTmplMap">
+        SELECT
+            t.template_id,
+            t.template_name,
+            t.equipment_type,
+            t.inspection_kind,
+            (SELECT COUNT(*) FROM inspection_items i WHERE i.template_id = t.template_id) AS item_count,
+            t.updated_at,
+            t.sort_order
+        FROM inspection_template t
+        <where>
+            <if test="equipmentType != null and equipmentType != ''">
+                AND t.equipment_type = #{equipmentType}
+            </if>
+            <if test="inspectionKind != null and inspectionKind != ''">
+                AND t.inspection_kind = #{inspectionKind}
+            </if>
+        </where>
+        ORDER BY t.sort_order ASC, t.template_id ASC
+        <if test="offset != null and limit != null">
+            LIMIT #{limit} OFFSET #{offset}
+        </if>
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT COUNT(*) FROM inspection_template t
+        <where>
+            <if test="equipmentType != null and equipmentType != ''">
+                AND t.equipment_type = #{equipmentType}
+            </if>
+            <if test="inspectionKind != null and inspectionKind != ''">
+                AND t.inspection_kind = #{inspectionKind}
+            </if>
+        </where>
+    </select>
+
+    <select id="findById" resultMap="chkTmplMap">
+        SELECT
+            t.template_id,
+            t.template_name,
+            t.equipment_type,
+            t.inspection_kind,
+            (SELECT COUNT(*) FROM inspection_items i WHERE i.template_id = t.template_id) AS item_count,
+            t.updated_at,
+            t.sort_order
+        FROM inspection_template t
+        WHERE t.template_id = #{templateId}
+    </select>
+
+    <insert id="insert">
+        INSERT INTO inspection_template (
+            template_name, equipment_type, inspection_kind, sort_order
+        ) VALUES (
+            #{templateName}, #{equipmentType}, #{inspectionKind}, #{sortOrder}
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE inspection_template SET
+            template_name = #{templateName},
+            equipment_type = #{equipmentType},
+            inspection_kind = #{inspectionKind},
+            updated_at = CURRENT_TIMESTAMP
+        WHERE template_id = #{templateId}
+    </update>
+
+    <insert id="copyTemplate">
+        INSERT INTO inspection_template (
+            template_name, equipment_type, inspection_kind, sort_order
+        )
+        SELECT
+            CONCAT(template_name, '_コピー'),
+            equipment_type,
+            inspection_kind,
+            (SELECT COALESCE(MAX(sort_order), 0) + 1 FROM inspection_template)
+        FROM inspection_template
+        WHERE template_id = #{id}
+    </insert>
+
+    <update id="swapOrder">
+        UPDATE inspection_template
+        SET sort_order =
+            CASE template_id
+                WHEN #{id1} THEN (SELECT sort_order FROM inspection_template WHERE template_id = #{id2})
+                WHEN #{id2} THEN (SELECT sort_order FROM inspection_template WHERE template_id = #{id1})
+            END
+        WHERE template_id IN (#{id1}, #{id2})
+    </update>
+
+    <delete id="delete">
+        DELETE FROM inspection_template WHERE template_id = #{templateId}
+    </delete>
+
+</mapper>
