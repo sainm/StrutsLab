@@ -4,6 +4,9 @@
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
          version="3.1">
     <display-name>StrutsLab - 電力設備巡視点検管理システム</display-name>
+    <listener>
+        <listener-class>com.strutslab.db.DbInitializer</listener-class>
+    </listener>
     <servlet>
         <servlet-name>action</servlet-name>
         <servlet-class>org.apache.struts.action.ActionServlet</servlet-class>
