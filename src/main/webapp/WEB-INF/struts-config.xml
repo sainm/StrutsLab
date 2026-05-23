@@ -156,19 +156,20 @@
             <forward name="success" path="inc.list.tiles"/>
         </action>
         <action path="/inc/create" type="com.strutslab.action.inc.IncidentCreateAction"
-                name="incidentForm" scope="request" validate="true"
-                input="/WEB-INF/jsp/inc/incCreate.jsp">
+                name="incidentForm" scope="request" validate="false"
+                parameter="method" input="/WEB-INF/jsp/inc/incCreate.jsp">
             <forward name="success" path="/inc/list.do" redirect="true"/>
             <forward name="input" path="inc.create.tiles"/>
             <forward name="similar" path="inc.create.tiles"/>
         </action>
         <action path="/inc/detail" type="com.strutslab.action.inc.IncidentDetailAction"
-                name="incidentForm" scope="request" validate="true"
+                name="incidentForm" scope="request" validate="false"
                 parameter="method" input="/WEB-INF/jsp/inc/incDetail.jsp">
             <forward name="success" path="inc.detail.tiles"/>
             <forward name="investigate" path="inc.detail.tiles"/>
             <forward name="counter" path="inc.detail.tiles"/>
             <forward name="complete" path="inc.detail.tiles"/>
+            <forward name="closeIncident" path="inc.detail.tiles"/>
             <forward name="capa" path="/counter/capa/create.do"/>
         </action>
 
