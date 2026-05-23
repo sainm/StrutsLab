@@ -261,6 +261,9 @@
         </action>
     </action-mappings>
 
+    <!-- Controller: Tiles Request Processor -->
+    <controller processorClass="org.apache.struts.tiles.TilesRequestProcessor"/>
+
     <!-- Message Resources -->
     <message-resources parameter="ApplicationResources"/>
 

@@ -1,13 +1,13 @@
 -- Equipment Master
 CREATE TABLE equipment (
-    equipment_code VARCHAR(10) PRIMARY KEY,
+    equipment_code VARCHAR(20) PRIMARY KEY,
     equipment_name VARCHAR(100) NOT NULL,
     equipment_type VARCHAR(10) NOT NULL,
     voltage_level VARCHAR(10),
     rated_capacity INT,
     rated_current INT,
     frequency VARCHAR(5),
-    parent_equipment_code VARCHAR(10),
+    parent_equipment_code VARCHAR(20),
     install_date VARCHAR(6),
     location_address VARCHAR(200),
     coordinates VARCHAR(50),
@@ -49,11 +49,11 @@ CREATE TABLE inspection_items (
 CREATE TABLE inspection_plans (
     plan_id INT AUTO_INCREMENT PRIMARY KEY,
     fiscal_year VARCHAR(4) NOT NULL,
-    equipment_code VARCHAR(10) NOT NULL,
+    equipment_code VARCHAR(20) NOT NULL,
     template_id INT,
     planned_date VARCHAR(8) NOT NULL,
     team_code VARCHAR(10),
-    person_code VARCHAR(10),
+    person_code VARCHAR(20),
     status VARCHAR(10) NOT NULL DEFAULT '予定',
     is_locked BOOLEAN NOT NULL DEFAULT FALSE,
     note TEXT,
@@ -66,7 +66,7 @@ CREATE TABLE inspection_results (
     result_id INT AUTO_INCREMENT PRIMARY KEY,
     plan_id INT NOT NULL,
     executed_date VARCHAR(8) NOT NULL,
-    executed_by VARCHAR(10),
+    executed_by VARCHAR(20),
     summary_judge VARCHAR(5),
     summary_note TEXT,
     next_recommended_date VARCHAR(8),
@@ -102,7 +102,7 @@ CREATE TABLE incidents (
     result_id INT,
     incident_datetime TIMESTAMP NOT NULL,
     finder VARCHAR(50) NOT NULL,
-    equipment_code VARCHAR(10) NOT NULL,
+    equipment_code VARCHAR(20) NOT NULL,
     weather VARCHAR(5),
     temperature INT,
     incident_type VARCHAR(10) NOT NULL,
@@ -110,7 +110,7 @@ CREATE TABLE incidents (
     incident_part VARCHAR(200) NOT NULL,
     incident_detail TEXT NOT NULL,
     tmp_action TEXT,
-    tmp_action_person VARCHAR(10),
+    tmp_action_person VARCHAR(20),
     tmp_action_date VARCHAR(8),
     cause TEXT,
     counter_detail TEXT,
@@ -159,12 +159,12 @@ CREATE TABLE counter_order_details (
     order_no VARCHAR(20) NOT NULL,
     seq_no INT NOT NULL,
     work_content VARCHAR(500) NOT NULL,
-    person_code VARCHAR(10),
+    person_code VARCHAR(20),
     deadline VARCHAR(8),
     priority VARCHAR(3),
     status VARCHAR(3) NOT NULL DEFAULT '未了',
     actual_hours DECIMAL(5,1),
-    used_part_code VARCHAR(10),
+    used_part_code VARCHAR(20),
     used_quantity INT,
     note TEXT
 );
@@ -188,9 +188,9 @@ CREATE TABLE capa_reports (
 
 -- Departments (hierarchical)
 CREATE TABLE departments (
-    dept_code VARCHAR(10) PRIMARY KEY,
+    dept_code VARCHAR(20) PRIMARY KEY,
     dept_name VARCHAR(100) NOT NULL,
-    parent_dept_code VARCHAR(10),
+    parent_dept_code VARCHAR(20),
     dept_level INT NOT NULL,
     dept_type VARCHAR(5) NOT NULL,
     start_date VARCHAR(8) NOT NULL,
@@ -203,12 +203,12 @@ CREATE TABLE departments (
 
 -- Employees
 CREATE TABLE employees (
-    emp_no VARCHAR(10) PRIMARY KEY,
+    emp_no VARCHAR(20) PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     name_kana VARCHAR(100),
     birth_date VARCHAR(8),
     join_date VARCHAR(6),
-    dept_code VARCHAR(10),
+    dept_code VARCHAR(20),
     position VARCHAR(10),
     assign_date VARCHAR(8),
     inspection_rank CHAR(1),
@@ -224,7 +224,7 @@ CREATE TABLE employees (
 -- Employee Qualifications
 CREATE TABLE employee_qualifications (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    emp_no VARCHAR(10) NOT NULL,
+    emp_no VARCHAR(20) NOT NULL,
     qualification_code VARCHAR(10) NOT NULL,
     cert_date VARCHAR(8),
     expire_date VARCHAR(8)
@@ -242,7 +242,7 @@ CREATE TABLE holidays (
 
 -- Parts
 CREATE TABLE parts (
-    part_code VARCHAR(10) PRIMARY KEY,
+    part_code VARCHAR(20) PRIMARY KEY,
     part_name VARCHAR(100) NOT NULL,
     part_type VARCHAR(10),
     unit VARCHAR(5),
@@ -259,22 +259,22 @@ CREATE TABLE parts (
 -- Part-Equipment Relations
 CREATE TABLE part_equipment_relations (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    part_code VARCHAR(10) NOT NULL,
+    part_code VARCHAR(20) NOT NULL,
     equipment_type VARCHAR(10),
-    equipment_code VARCHAR(10)
+    equipment_code VARCHAR(20)
 );
 
 -- Part Usages
 CREATE TABLE part_usages (
     usage_id INT AUTO_INCREMENT PRIMARY KEY,
-    part_code VARCHAR(10) NOT NULL,
-    equipment_code VARCHAR(10),
+    part_code VARCHAR(20) NOT NULL,
+    equipment_code VARCHAR(20),
     usage_date VARCHAR(8) NOT NULL,
     quantity INT NOT NULL,
     stock_before INT NOT NULL,
     stock_after INT NOT NULL,
     purpose VARCHAR(3) NOT NULL,
-    used_by VARCHAR(10),
+    used_by VARCHAR(20),
     order_no VARCHAR(20),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
