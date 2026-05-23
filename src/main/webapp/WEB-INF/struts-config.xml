@@ -6,50 +6,50 @@
     <!-- Form Beans -->
     <form-beans>
         <!-- Login -->
-        <form-bean name="loginForm" type="com.struts-lab.form.common.LoginForm"/>
+        <form-bean name="loginForm" type="com.strutslab.form.common.LoginForm"/>
 
         <!-- Master: Equipment -->
-        <form-bean name="eqpSearchForm" type="com.struts-lab.form.mst.EqpSearchForm"/>
-        <form-bean name="eqpForm" type="com.struts-lab.form.mst.EqpForm"/>
+        <form-bean name="eqpSearchForm" type="com.strutslab.form.mst.EqpSearchForm"/>
+        <form-bean name="eqpForm" type="com.strutslab.form.mst.EqpForm"/>
 
         <!-- Master: Check Items -->
-        <form-bean name="chkItemSearchForm" type="com.struts-lab.form.mst.CheckItemSearchForm"/>
-        <form-bean name="chkItemForm" type="com.struts-lab.form.mst.CheckItemForm"/>
+        <form-bean name="chkItemSearchForm" type="com.strutslab.form.mst.CheckItemSearchForm"/>
+        <form-bean name="chkItemForm" type="com.strutslab.form.mst.CheckItemForm"/>
 
         <!-- Inspection -->
-        <form-bean name="yearlyPlanForm" type="com.struts-lab.form.ins.YearlyPlanForm"/>
-        <form-bean name="planWizardForm" type="com.struts-lab.form.ins.PlanWizardForm"/>
-        <form-bean name="dailyForm" type="com.struts-lab.form.ins.DailyForm"/>
-        <form-bean name="execForm" type="com.struts-lab.form.ins.ExecForm"/>
-        <form-bean name="approvalForm" type="com.struts-lab.form.ins.ApprovalForm"/>
+        <form-bean name="yearlyPlanForm" type="com.strutslab.form.ins.YearlyPlanForm"/>
+        <form-bean name="planWizardForm" type="com.strutslab.form.ins.PlanWizardForm"/>
+        <form-bean name="dailyForm" type="com.strutslab.form.ins.DailyForm"/>
+        <form-bean name="execForm" type="com.strutslab.form.ins.ExecForm"/>
+        <form-bean name="approvalForm" type="com.strutslab.form.ins.ApprovalForm"/>
 
         <!-- Incident -->
-        <form-bean name="incidentSearchForm" type="com.struts-lab.form.inc.IncidentSearchForm"/>
-        <form-bean name="incidentForm" type="com.struts-lab.form.inc.IncidentForm"/>
+        <form-bean name="incidentSearchForm" type="com.strutslab.form.inc.IncidentSearchForm"/>
+        <form-bean name="incidentForm" type="com.strutslab.form.inc.IncidentForm"/>
 
         <!-- Counter -->
-        <form-bean name="counterSearchForm" type="com.struts-lab.form.counter.CounterSearchForm"/>
-        <form-bean name="counterForm" type="com.struts-lab.form.counter.CounterForm"/>
-        <form-bean name="counterDetailForm" type="com.struts-lab.form.counter.CounterDetailForm"/>
-        <form-bean name="capaForm" type="com.struts-lab.form.counter.CapaForm"/>
+        <form-bean name="counterSearchForm" type="com.strutslab.form.counter.CounterSearchForm"/>
+        <form-bean name="counterForm" type="com.strutslab.form.counter.CounterForm"/>
+        <form-bean name="counterDetailForm" type="com.strutslab.form.counter.CounterDetailForm"/>
+        <form-bean name="capaForm" type="com.strutslab.form.counter.CapaForm"/>
 
         <!-- Organization -->
-        <form-bean name="deptSearchForm" type="com.struts-lab.form.org.DeptSearchForm"/>
-        <form-bean name="deptForm" type="com.struts-lab.form.org.DeptForm"/>
-        <form-bean name="empSearchForm" type="com.struts-lab.form.org.EmpSearchForm"/>
-        <form-bean name="empForm" type="com.struts-lab.form.org.EmpForm"/>
+        <form-bean name="deptSearchForm" type="com.strutslab.form.org.DeptSearchForm"/>
+        <form-bean name="deptForm" type="com.strutslab.form.org.DeptForm"/>
+        <form-bean name="empSearchForm" type="com.strutslab.form.org.EmpSearchForm"/>
+        <form-bean name="empForm" type="com.strutslab.form.org.EmpForm"/>
 
         <!-- Calendar -->
-        <form-bean name="calendarForm" type="com.struts-lab.form.cal.CalendarForm"/>
-        <form-bean name="calendarRegForm" type="com.struts-lab.form.cal.CalendarRegForm"/>
+        <form-bean name="calendarForm" type="com.strutslab.form.cal.CalendarForm"/>
+        <form-bean name="calendarRegForm" type="com.strutslab.form.cal.CalendarRegForm"/>
 
         <!-- Parts -->
-        <form-bean name="partsSearchForm" type="com.struts-lab.form.parts.PartsSearchForm"/>
-        <form-bean name="partsForm" type="com.struts-lab.form.parts.PartsForm"/>
-        <form-bean name="partsUsageSearchForm" type="com.struts-lab.form.parts.PartsUsageSearchForm"/>
+        <form-bean name="partsSearchForm" type="com.strutslab.form.parts.PartsSearchForm"/>
+        <form-bean name="partsForm" type="com.strutslab.form.parts.PartsForm"/>
+        <form-bean name="partsUsageSearchForm" type="com.strutslab.form.parts.PartsUsageSearchForm"/>
 
         <!-- Report -->
-        <form-bean name="reportForm" type="com.struts-lab.form.report.ReportForm"/>
+        <form-bean name="reportForm" type="com.strutslab.form.report.ReportForm"/>
     </form-beans>
 
     <!-- Global Forwards -->
@@ -62,41 +62,41 @@
     <!-- Action Mappings (filled per-module) -->
     <action-mappings>
         <!-- Common -->
-        <action path="/login" type="com.struts-lab.action.common.LoginAction"
+        <action path="/login" type="com.strutslab.action.common.LoginAction"
                 name="loginForm" scope="request" validate="false">
             <forward name="success" path="/WEB-INF/jsp/menu.jsp"/>
             <forward name="input" path="/WEB-INF/jsp/login.jsp"/>
         </action>
-        <action path="/logout" type="com.struts-lab.action.common.LogoutAction">
+        <action path="/logout" type="com.strutslab.action.common.LogoutAction">
             <forward name="success" path="/WEB-INF/jsp/login.jsp"/>
         </action>
 
         <!-- Master: Equipment -->
-        <action path="/mst/eqp/list" type="com.struts-lab.action.mst.EqpListAction"
+        <action path="/mst/eqp/list" type="com.strutslab.action.mst.EqpListAction"
                 name="eqpSearchForm" scope="session" validate="false">
             <forward name="success" path="eqp.list.tiles"/>
             <forward name="edit" path="/mst/eqp/edit.do"/>
             <forward name="new" path="/mst/eqp/edit.do?method=new"/>
         </action>
-        <action path="/mst/eqp/save" type="com.struts-lab.action.mst.EqpSaveAction"
+        <action path="/mst/eqp/save" type="com.strutslab.action.mst.EqpSaveAction"
                 name="eqpForm" scope="request" validate="true"
                 parameter="method" input="/WEB-INF/jsp/mst/eqpEdit.jsp">
             <forward name="success" path="/mst/eqp/list.do" redirect="true"/>
             <forward name="input" path="eqp.edit.tiles"/>
         </action>
-        <action path="/mst/eqp/edit" type="com.struts-lab.action.mst.EqpSaveAction"
+        <action path="/mst/eqp/edit" type="com.strutslab.action.mst.EqpSaveAction"
                 name="eqpForm" scope="request" validate="false"
                 parameter="method">
             <forward name="success" path="eqp.edit.tiles"/>
         </action>
 
         <!-- Master: Check Items -->
-        <action path="/mst/chkitem/list" type="com.struts-lab.action.mst.CheckItemListAction"
+        <action path="/mst/chkitem/list" type="com.strutslab.action.mst.CheckItemListAction"
                 name="chkItemSearchForm" scope="session" validate="false">
             <forward name="success" path="chkitem.list.tiles"/>
             <forward name="edit" path="chkitem.edit.tiles"/>
         </action>
-        <action path="/mst/chkitem/save" type="com.struts-lab.action.mst.CheckItemSaveAction"
+        <action path="/mst/chkitem/save" type="com.strutslab.action.mst.CheckItemSaveAction"
                 name="chkItemForm" scope="request" validate="true"
                 parameter="method" input="/WEB-INF/jsp/mst/chkItemEdit.jsp">
             <forward name="success" path="/mst/chkitem/list.do" redirect="true"/>
@@ -104,13 +104,13 @@
         </action>
 
         <!-- Inspection: Yearly Plan -->
-        <action path="/ins/plan/yearly" type="com.struts-lab.action.ins.YearlyPlanAction"
+        <action path="/ins/plan/yearly" type="com.strutslab.action.ins.YearlyPlanAction"
                 name="yearlyPlanForm" scope="request" validate="false">
             <forward name="success" path="ins.plan.yearly.tiles"/>
         </action>
 
         <!-- Inspection: Plan Wizard 4 steps -->
-        <action path="/ins/plan/wizard" type="com.struts-lab.action.ins.PlanWizardAction"
+        <action path="/ins/plan/wizard" type="com.strutslab.action.ins.PlanWizardAction"
                 name="planWizardForm" scope="session" validate="true"
                 parameter="step" input="/WEB-INF/jsp/ins/planWiz1.jsp">
             <forward name="step1" path="ins.plan.wiz1.tiles"/>
@@ -121,14 +121,14 @@
         </action>
 
         <!-- Inspection: Daily List -->
-        <action path="/ins/daily" type="com.struts-lab.action.ins.DailyListAction"
+        <action path="/ins/daily" type="com.strutslab.action.ins.DailyListAction"
                 name="dailyForm" scope="request" validate="false">
             <forward name="success" path="ins.daily.list.tiles"/>
             <forward name="exec" path="/ins/exec/input.do"/>
         </action>
 
         <!-- Inspection: Exec Input -->
-        <action path="/ins/exec/input" type="com.struts-lab.action.ins.ExecInputAction"
+        <action path="/ins/exec/input" type="com.strutslab.action.ins.ExecInputAction"
                 name="execForm" scope="request" validate="true"
                 input="/WEB-INF/jsp/ins/execInput.jsp">
             <forward name="success" path="/ins/daily.do" redirect="true"/>
@@ -137,7 +137,7 @@
         </action>
 
         <!-- Inspection: Exec Detail/Modify -->
-        <action path="/ins/exec/detail" type="com.struts-lab.action.ins.ExecDetailAction"
+        <action path="/ins/exec/detail" type="com.strutslab.action.ins.ExecDetailAction"
                 name="execForm" scope="request" validate="true"
                 input="/WEB-INF/jsp/ins/execDetail.jsp">
             <forward name="success" path="ins.exec.detail.tiles"/>
@@ -145,24 +145,24 @@
         </action>
 
         <!-- Inspection: Approval List -->
-        <action path="/ins/approval/list" type="com.struts-lab.action.ins.ApprovalListAction"
+        <action path="/ins/approval/list" type="com.strutslab.action.ins.ApprovalListAction"
                 name="approvalForm" scope="request" validate="false">
             <forward name="success" path="ins.appr.list.tiles"/>
         </action>
 
         <!-- Incident -->
-        <action path="/inc/list" type="com.struts-lab.action.inc.IncidentListAction"
+        <action path="/inc/list" type="com.strutslab.action.inc.IncidentListAction"
                 name="incidentSearchForm" scope="session" validate="false">
             <forward name="success" path="inc.list.tiles"/>
         </action>
-        <action path="/inc/create" type="com.struts-lab.action.inc.IncidentCreateAction"
+        <action path="/inc/create" type="com.strutslab.action.inc.IncidentCreateAction"
                 name="incidentForm" scope="request" validate="true"
                 input="/WEB-INF/jsp/inc/incCreate.jsp">
             <forward name="success" path="/inc/list.do" redirect="true"/>
             <forward name="input" path="inc.create.tiles"/>
             <forward name="similar" path="inc.create.tiles"/>
         </action>
-        <action path="/inc/detail" type="com.struts-lab.action.inc.IncidentDetailAction"
+        <action path="/inc/detail" type="com.strutslab.action.inc.IncidentDetailAction"
                 name="incidentForm" scope="request" validate="true"
                 parameter="method" input="/WEB-INF/jsp/inc/incDetail.jsp">
             <forward name="success" path="inc.detail.tiles"/>
@@ -173,7 +173,7 @@
         </action>
 
         <!-- Counter -->
-        <action path="/counter/create" type="com.struts-lab.action.counter.CounterCreateAction"
+        <action path="/counter/create" type="com.strutslab.action.counter.CounterCreateAction"
                 name="counterForm" scope="request" validate="true"
                 parameter="method" input="/WEB-INF/jsp/counter/ctrCreate.jsp">
             <forward name="success" path="/counter/list.do" redirect="true"/>
@@ -181,18 +181,18 @@
             <forward name="addRow" path="ctr.create.tiles"/>
             <forward name="delRow" path="ctr.create.tiles"/>
         </action>
-        <action path="/counter/list" type="com.struts-lab.action.counter.CounterListAction"
+        <action path="/counter/list" type="com.strutslab.action.counter.CounterListAction"
                 name="counterSearchForm" scope="session" validate="false">
             <forward name="success" path="ctr.list.tiles"/>
         </action>
-        <action path="/counter/detail" type="com.struts-lab.action.counter.CounterDetailAction"
+        <action path="/counter/detail" type="com.strutslab.action.counter.CounterDetailAction"
                 name="counterDetailForm" scope="request" validate="true"
                 parameter="method" input="/WEB-INF/jsp/counter/ctrDetail.jsp">
             <forward name="success" path="/counter/list.do" redirect="true"/>
             <forward name="input" path="ctr.detail.tiles"/>
             <forward name="complete" path="ctr.detail.tiles"/>
         </action>
-        <action path="/counter/capa/create" type="com.struts-lab.action.counter.CapaAction"
+        <action path="/counter/capa/create" type="com.strutslab.action.counter.CapaAction"
                 name="capaForm" scope="request" validate="true"
                 input="/WEB-INF/jsp/counter/capaCreate.jsp">
             <forward name="success" path="/counter/list.do" redirect="true"/>
@@ -200,23 +200,23 @@
         </action>
 
         <!-- Organization -->
-        <action path="/org/dept/list" type="com.struts-lab.action.org.DeptListAction"
+        <action path="/org/dept/list" type="com.strutslab.action.org.DeptListAction"
                 name="deptSearchForm" scope="session" validate="false">
             <forward name="success" path="org.dept.list.tiles"/>
             <forward name="edit" path="org.dept.edit.tiles"/>
         </action>
-        <action path="/org/dept/save" type="com.struts-lab.action.org.DeptSaveAction"
+        <action path="/org/dept/save" type="com.strutslab.action.org.DeptSaveAction"
                 name="deptForm" scope="request" validate="true"
                 parameter="method" input="/WEB-INF/jsp/org/deptEdit.jsp">
             <forward name="success" path="/org/dept/list.do" redirect="true"/>
             <forward name="input" path="org.dept.edit.tiles"/>
         </action>
-        <action path="/org/emp/list" type="com.struts-lab.action.org.EmpListAction"
+        <action path="/org/emp/list" type="com.strutslab.action.org.EmpListAction"
                 name="empSearchForm" scope="session" validate="false">
             <forward name="success" path="org.emp.list.tiles"/>
             <forward name="edit" path="org.emp.edit.tiles"/>
         </action>
-        <action path="/org/emp/save" type="com.struts-lab.action.org.EmpSaveAction"
+        <action path="/org/emp/save" type="com.strutslab.action.org.EmpSaveAction"
                 name="empForm" scope="request" validate="true"
                 parameter="method" input="/WEB-INF/jsp/org/empEdit.jsp">
             <forward name="success" path="/org/emp/list.do" redirect="true"/>
@@ -224,12 +224,12 @@
         </action>
 
         <!-- Calendar -->
-        <action path="/cal/list" type="com.struts-lab.action.cal.CalendarListAction"
+        <action path="/cal/list" type="com.strutslab.action.cal.CalendarListAction"
                 name="calendarForm" scope="request" validate="false">
             <forward name="success" path="cal.list.tiles"/>
             <forward name="edit" path="cal.edit.tiles"/>
         </action>
-        <action path="/cal/save" type="com.struts-lab.action.cal.CalendarSaveAction"
+        <action path="/cal/save" type="com.strutslab.action.cal.CalendarSaveAction"
                 name="calendarRegForm" scope="request" validate="true"
                 parameter="method" input="/WEB-INF/jsp/cal/calEdit.jsp">
             <forward name="success" path="/cal/list.do" redirect="true"/>
@@ -237,24 +237,24 @@
         </action>
 
         <!-- Parts -->
-        <action path="/parts/list" type="com.struts-lab.action.parts.PartsListAction"
+        <action path="/parts/list" type="com.strutslab.action.parts.PartsListAction"
                 name="partsSearchForm" scope="session" validate="false">
             <forward name="success" path="parts.list.tiles"/>
             <forward name="edit" path="parts.edit.tiles"/>
         </action>
-        <action path="/parts/save" type="com.struts-lab.action.parts.PartsSaveAction"
+        <action path="/parts/save" type="com.strutslab.action.parts.PartsSaveAction"
                 name="partsForm" scope="request" validate="true"
                 parameter="method" input="/WEB-INF/jsp/parts/prtEdit.jsp">
             <forward name="success" path="/parts/list.do" redirect="true"/>
             <forward name="input" path="parts.edit.tiles"/>
         </action>
-        <action path="/parts/usage" type="com.struts-lab.action.parts.PartsUsageAction"
+        <action path="/parts/usage" type="com.strutslab.action.parts.PartsUsageAction"
                 name="partsUsageSearchForm" scope="request" validate="false">
             <forward name="success" path="parts.usage.tiles"/>
         </action>
 
         <!-- Report -->
-        <action path="/report/summary" type="com.struts-lab.action.report.SummaryReportAction"
+        <action path="/report/summary" type="com.strutslab.action.report.SummaryReportAction"
                 name="reportForm" scope="request" validate="false">
             <forward name="success" path="report.summary.tiles"/>
         </action>
