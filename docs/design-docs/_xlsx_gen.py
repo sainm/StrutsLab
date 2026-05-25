@@ -1,344 +1,233 @@
 #!/usr/bin/env python3
-"""XLSX generator with styles using only stdlib (xml + zipfile)."""
+"""XLSX generator using openpyxl with OperaMind-style formatting.
 
-import zipfile
-import xml.etree.ElementTree as ET
+Style reference (matches OperaMind generate_design_docs.py):
+  - Headers: dark navy #1E293B bg, white bold Yu Gothic 11pt
+  - Titles:  navy #1E293B bold Yu Gothic 16pt
+  - Labels:  light gray #F1F5F9 bg, slate bold Yu Gothic 10pt
+  - Values:  navy #1E293B Yu Gothic 10pt
+  - Sections: light blue #DBEAFE bg, indigo bold Yu Gothic 11pt
+  - Borders: thin all sides, wrap text + top align
+"""
+
+from openpyxl import Workbook as OpxlWorkbook
+from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
+from openpyxl.utils import get_column_letter
+from datetime import datetime
 import os
-import re
 
-NS = 'http://schemas.openxmlformats.org/spreadsheetml/2006/main'
-NS_R = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships'
+DATE = datetime.now().strftime("%Y/%m/%d")
+VERSION = "1.0"
 
-ET.register_namespace('', NS)
-ET.register_namespace('r', NS_R)
+# ── OperaMind-style constants ──────────────────────────────────
+HEADER_FILL  = PatternFill(start_color="1E293B", end_color="1E293B", fill_type="solid")
+HEADER_FONT  = Font(name="游ゴシック", bold=True, size=11, color="FFFFFF")
+TITLE_FONT   = Font(name="游ゴシック", bold=True, size=16, color="1E293B")
+LABEL_FILL   = PatternFill(start_color="F1F5F9", end_color="F1F5F9", fill_type="solid")
+LABEL_FONT   = Font(name="游ゴシック", bold=True, size=10, color="475569")
+VALUE_FONT   = Font(name="游ゴシック", size=10, color="1E293B")
+SECTION_FILL = PatternFill(start_color="DBEAFE", end_color="DBEAFE", fill_type="solid")
+SECTION_FONT = Font(name="游ゴシック", bold=True, size=11, color="1E40AF")
+GREEN_FILL   = PatternFill(start_color="DCFCE7", end_color="DCFCE7", fill_type="solid")
+THIN = Border(
+    left=Side(style="thin"), right=Side(style="thin"),
+    top=Side(style="thin"), bottom=Side(style="thin"),
+)
+WRAP   = Alignment(wrap_text=True, vertical="top")
+CENTER = Alignment(horizontal="center", vertical="center")
 
-def qn(tag):
-    return f'{{{NS}}}{tag}'
+# ── Style IDs (backward-compatible) ────────────────────────────
+STYLE_HEADER     = 0   # bold white on dark navy, centered
+STYLE_NORMAL     = 1   # value font, thin border, wrap
+STYLE_TITLE      = 2   # bold 16pt navy, for title row
+STYLE_DOCINFO_K  = 3   # bold label on light gray
+STYLE_SECTION    = 4   # bold indigo on light blue
+STYLE_BOLD       = 5   # bold + border, no fill
 
-def qnr(tag):
-    return f'{{{NS_R}}}{tag}'
-
-# ============ Styles ============
-
-STYLE_HEADER = 0     # Bold, light blue bg, border
-STYLE_NORMAL = 1     # Normal, border
-STYLE_TITLE = 2      # Bold large, light blue bg, border, merged
-STYLE_DOCINFO_K = 3  # Bold, light gray bg, border
-STYLE_DOCINFO_V = 4  # Normal, border
-STYLE_SECTION = 5    # Bold, light green bg, border
-
-def _make_styles_xml():
-    """Generate styles.xml with fonts, fills, borders, cellXfs."""
-    el = ET.Element('styleSheet')
-
-    # Fonts (index)
-    fonts = ET.SubElement(el, qn('fonts'), {'count': '3'})
-    # Font 0: default
-    et_fn0 = ET.SubElement(fonts, qn('font'))
-    ET.SubElement(et_fn0, qn('sz'), {'val': '11'})
-    ET.SubElement(et_fn0, qn('name'), {'val': 'MS PGothic'})
-    # Font 1: bold
-    et_fn1 = ET.SubElement(fonts, qn('font'))
-    ET.SubElement(et_fn1, qn('b'))
-    ET.SubElement(et_fn1, qn('sz'), {'val': '11'})
-    ET.SubElement(et_fn1, qn('name'), {'val': 'MS PGothic'})
-    # Font 2: bold large
-    et_fn2 = ET.SubElement(fonts, qn('font'))
-    ET.SubElement(et_fn2, qn('b'))
-    ET.SubElement(et_fn2, qn('sz'), {'val': '14'})
-    ET.SubElement(et_fn2, qn('name'), {'val': 'MS PGothic'})
-
-    # Fills (index)
-    fills = ET.SubElement(el, qn('fills'), {'count': '5'})
-    # Fill 0: none
-    f0 = ET.SubElement(fills, qn('fill'))
-    pf0 = ET.SubElement(f0, qn('patternFill'), {'patternType': 'none'})
-    # Fill 1: gray125
-    f1 = ET.SubElement(fills, qn('fill'))
-    pf1 = ET.SubElement(f1, qn('patternFill'), {'patternType': 'gray125'})
-    # Fill 2: light blue bg
-    f2 = ET.SubElement(fills, qn('fill'))
-    pf2 = ET.SubElement(f2, qn('patternFill'), {'patternType': 'solid'})
-    ET.SubElement(pf2, qn('fgColor'), {'rgb': '00DDDDEE'})
-    ET.SubElement(pf2, qn('bgColor'), {'indexed': '64'})
-    # Fill 3: light gray bg
-    f3 = ET.SubElement(fills, qn('fill'))
-    pf3 = ET.SubElement(f3, qn('patternFill'), {'patternType': 'solid'})
-    ET.SubElement(pf3, qn('fgColor'), {'rgb': '00F4F4F4'})
-    ET.SubElement(pf3, qn('bgColor'), {'indexed': '64'})
-    # Fill 4: light green bg
-    f4 = ET.SubElement(fills, qn('fill'))
-    pf4 = ET.SubElement(f4, qn('patternFill'), {'patternType': 'solid'})
-    ET.SubElement(pf4, qn('fgColor'), {'rgb': '00DDFFDD'})
-    ET.SubElement(pf4, qn('bgColor'), {'indexed': '64'})
-
-    # Borders (index)
-    borders = ET.SubElement(el, qn('borders'), {'count': '3'})
-    # Border 0: none
-    ET.SubElement(borders, qn('border'))
-    # Border 1: thin all around
-    thin_border = ET.SubElement(borders, qn('border'))
-    for pos in ['left', 'right', 'top', 'bottom']:
-        ET.SubElement(thin_border, qn(pos), {'style': 'thin'})
-    # Border 2: thin bottom only
-    bottom_border = ET.SubElement(borders, qn('border'))
-    ET.SubElement(bottom_border, qn('bottom'), {'style': 'thin'})
-
-    # Cell Style Xfs (index → fontId, fillId, borderId)
-    cell_xfs = ET.SubElement(el, qn('cellXfs'), {'count': '6'})
-    # 0: Header = bold + blue bg + border
-    ET.SubElement(cell_xfs, qn('xf'), {
-        'fontId': '1', 'fillId': '2', 'borderId': '1',
-        'applyFont': '1', 'applyFill': '1', 'applyBorder': '1'
-    })
-    # 1: Normal = default + border
-    ET.SubElement(cell_xfs, qn('xf'), {
-        'fontId': '0', 'fillId': '0', 'borderId': '1',
-        'applyBorder': '1'
-    })
-    # 2: Title = bold large + blue bg + border
-    ET.SubElement(cell_xfs, qn('xf'), {
-        'fontId': '2', 'fillId': '2', 'borderId': '1',
-        'applyFont': '1', 'applyFill': '1', 'applyBorder': '1'
-    })
-    # 3: DocInfo Key = bold + gray bg + border
-    ET.SubElement(cell_xfs, qn('xf'), {
-        'fontId': '1', 'fillId': '3', 'borderId': '1',
-        'applyFont': '1', 'applyFill': '1', 'applyBorder': '1'
-    })
-    # 4: Section = bold + green bg + border
-    ET.SubElement(cell_xfs, qn('xf'), {
-        'fontId': '1', 'fillId': '4', 'borderId': '1',
-        'applyFont': '1', 'applyFill': '1', 'applyBorder': '1'
-    })
-    # 5: bold + border (no bg)
-    ET.SubElement(cell_xfs, qn('xf'), {
-        'fontId': '1', 'fillId': '0', 'borderId': '1',
-        'applyFont': '1', 'applyBorder': '1'
-    })
-
-    return ET.tostring(el, encoding='unicode', xml_declaration=True)
-
-
+# ── XlsxWriter ─────────────────────────────────────────────────
 class XlsxWriter:
+    """Collect sheets as list-of-rows data, then render via openpyxl on save()."""
+
     def __init__(self):
-        self.sheets = {}     # name -> list of list of (str, style_id)
-        self.col_widths = {} # name -> list of int
-        self.merged = {}     # name -> list of str like "A1:B2"
-        self._strings = []   # shared strings
-        self._str_idx = {}   # string -> index
+        self._wb = OpxlWorkbook()
+        self._wb.remove(self._wb.active)
+        self._sheets = {}       # name → list of rows
+        self._col_widths = {}   # name → list of int
+        self._sheet_order = []
 
-    def _get_str_idx(self, s):
-        s = str(s) if s else ''
-        if s not in self._str_idx:
-            self._str_idx[s] = len(self._strings)
-            self._strings.append(s)
-        return self._str_idx[s]
-
-    def add_sheet(self, name, data, col_widths=None, merged=None):
-        """data is list of list of str or list of list of (str, style_id)."""
-        self.sheets[name] = data
+    def add_sheet(self, name, data, col_widths=None):
+        """Register a sheet.  *data* is a list of rows; each row is a list of
+        ``(text, style_id)`` tuples (or bare str, defaulting to STYLE_NORMAL).
+        A row may also be a ``(list_of_tuples, merge_range_str)`` pair.  """
+        self._sheet_order.append(name)
+        self._sheets[name] = data
         if col_widths:
-            self.col_widths[name] = col_widths
-        if merged:
-            self.merged[name] = merged
+            self._col_widths[name] = col_widths
 
-    def _col_letter(self, n):
-        s = ''
-        while n >= 0:
-            s = chr(ord('A') + n % 26) + s
-            n = n // 26 - 1
-        return s
+    # ── internal helpers ───────────────────────────────────
 
-    def _escape(self, s):
-        return str(s).replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;').replace('"', '&quot;')
-
-    def _make_sheet_xml(self, name, rows):
-        el = ET.Element(qn('worksheet'))
-
-        sv = ET.SubElement(el, qn('sheetViews'))
-        ET.SubElement(sv, qn('sheetView'), {'tabSelected': '1', 'workbookViewId': '0'})
-
-        ET.SubElement(el, qn('sheetFormatPr'), {'defaultRowHeight': '18'})
-
-        # cols
-        if name in self.col_widths:
-            cols_el = ET.SubElement(el, qn('cols'))
-            for i, w in enumerate(self.col_widths[name], 1):
-                ET.SubElement(cols_el, qn('col'), {
-                    'min': str(i), 'max': str(i), 'width': str(w), 'customWidth': '1'
-                })
-
-        sheet_data = ET.SubElement(el, qn('sheetData'))
-        for ri, row_data in enumerate(rows, 1):
-            row_el = ET.SubElement(sheet_data, qn('row'), {'r': str(ri), 'ht': '20'})
-            for ci, cell_data in enumerate(row_data):
-                if isinstance(cell_data, tuple):
-                    text, style = cell_data
-                else:
-                    text, style = cell_data, 1  # default: normal+border
-
-                col_letter = self._col_letter(ci)
-                ref = f'{col_letter}{ri}'
-                idx = self._get_str_idx(text)
-                c_el = ET.SubElement(row_el, qn('c'), {
-                    'r': ref, 't': 's', 's': str(style)
-                })
-                v_el = ET.SubElement(c_el, qn('v'))
-                v_el.text = str(idx)
-
-        # Merged cells
-        if name in self.merged and self.merged[name]:
-            mc_el = ET.SubElement(el, qn('mergeCells'), {
-                'count': str(len(self.merged[name]))
-            })
-            for m in self.merged[name]:
-                ET.SubElement(mc_el, qn('mergeCell'), {'ref': m})
-
-        ET.SubElement(el, qn('pageMargins'), {
-            'left': '0.7', 'right': '0.7', 'top': '0.75',
-            'bottom': '0.75', 'header': '0.3', 'footer': '0.3'
-        })
-
-        return ET.tostring(el, encoding='unicode', xml_declaration=True)
-
-    def _make_shared_strings_xml(self):
-        el = ET.Element(qn('sst'), {
-            'count': str(len(self._strings)),
-            'uniqueCount': str(len(self._strings))
-        })
-        for s in self._strings:
-            si = ET.SubElement(el, qn('si'))
-            t = ET.SubElement(si, qn('t'))
-            t.text = self._escape(s)
-            # preserve spaces for leading/trailing whitespace
-            if s and (s[0] == ' ' or s[-1] == ' '):
-                t.set('{http://www.w3.org/XML/1998/namespace}space', 'preserve')
-        return ET.tostring(el, encoding='unicode', xml_declaration=True)
+    @staticmethod
+    def _apply(cell, style_id):
+        if style_id == STYLE_HEADER:
+            cell.font = HEADER_FONT; cell.fill = HEADER_FILL
+            cell.alignment = CENTER; cell.border = THIN
+        elif style_id == STYLE_TITLE:
+            cell.font = TITLE_FONT; cell.border = THIN
+        elif style_id == STYLE_DOCINFO_K:
+            cell.font = LABEL_FONT; cell.fill = LABEL_FILL; cell.border = THIN
+        elif style_id == STYLE_SECTION:
+            cell.font = SECTION_FONT; cell.fill = SECTION_FILL; cell.border = THIN
+        elif style_id == STYLE_BOLD:
+            cell.font = Font(name="游ゴシック", bold=True, size=10, color="1E293B")
+            cell.border = THIN
+        else:   # STYLE_NORMAL
+            cell.font = VALUE_FONT; cell.alignment = WRAP; cell.border = THIN
 
     def save(self, path):
-        """Write xlsx file."""
-        # Generate all sheet XMLs FIRST to populate shared strings
-        sheet_xmls = {}
-        for name in self.sheets.keys():
-            sheet_xmls[name] = self._make_sheet_xml(name, self.sheets[name])
+        """Render all sheets into an .xlsx file."""
+        for sheet_name in self._sheet_order:
+            data = self._sheets[sheet_name]
+            ws = self._wb.create_sheet(title=sheet_name)
 
-        with zipfile.ZipFile(path, 'w', zipfile.ZIP_DEFLATED) as zf:
-            # [Content_Types].xml
-            ct = ['<?xml version="1.0" encoding="UTF-8" standalone="yes"?>']
-            ct.append('<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">')
-            ct.append('<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>')
-            ct.append('<Default Extension="xml" ContentType="application/xml"/>')
-            ct.append('<Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/>')
-            ct.append('<Override PartName="/xl/sharedStrings.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sharedStrings+xml"/>')
-            for i in range(len(self.sheets)):
-                ct.append(f'<Override PartName="/xl/worksheets/sheet{i+1}.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>')
-            ct.append('<Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>')
-            ct.append('</Types>')
-            zf.writestr('[Content_Types].xml', '\n'.join(ct))
+            if sheet_name in self._col_widths:
+                for i, w in enumerate(self._col_widths[sheet_name], 1):
+                    ws.column_dimensions[get_column_letter(i)].width = w
 
-            # _rels/.rels
-            rels = ['<?xml version="1.0" encoding="UTF-8" standalone="yes"?>']
-            rels.append('<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">')
-            rels.append('<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/>')
-            rels.append('</Relationships>')
-            zf.writestr('_rels/.rels', '\n'.join(rels))
+            if not data:
+                continue
 
-            # xl/styles.xml
-            zf.writestr('xl/styles.xml', _make_styles_xml())
+            merges = []
+            for ri, row_data in enumerate(data, 1):
+                merge_range = None
+                if isinstance(row_data, tuple):
+                    row_data, merge_range = row_data
 
-            # xl/sharedStrings.xml (NOW populated after sheet generation)
-            zf.writestr('xl/sharedStrings.xml', self._make_shared_strings_xml())
+                for ci, cell_data in enumerate(row_data, 1):
+                    if isinstance(cell_data, tuple):
+                        text, style = cell_data
+                    else:
+                        text, style = str(cell_data) if cell_data else "", STYLE_NORMAL
+                    cell = ws.cell(row=ri, column=ci, value=str(text) if text else "")
+                    XlsxWriter._apply(cell, style)
 
-            # xl/workbook.xml
-            wb = ['<?xml version="1.0" encoding="UTF-8" standalone="yes"?>']
-            wb.append(f'<workbook xmlns="{NS}" xmlns:r="{NS_R}">')
-            wb.append('<sheets>')
-            for i, name in enumerate(self.sheets.keys(), 1):
-                wb.append(f'<sheet name="{self._escape(name)}" sheetId="{i}" r:id="rId{i}"/>')
-            wb.append('</sheets>')
-            wb.append('</workbook>')
-            zf.writestr('xl/workbook.xml', '\n'.join(wb))
+                if merge_range:
+                    # merge_range strings from T() use row 1 → fix to actual row
+                    merges.append(_fix_merge_row(merge_range, ri))
+                else:
+                    # auto-merge: if leading cell is TITLE or SECTION,
+                    # merge all consecutive cells with the same style
+                    if row_data and isinstance(row_data[0], tuple):
+                        first_style = row_data[0][1]
+                        if first_style in (STYLE_TITLE, STYLE_SECTION):
+                            end = 1
+                            for cd in row_data[1:]:
+                                if isinstance(cd, tuple) and cd[1] == first_style:
+                                    end += 1
+                                else:
+                                    break
+                            if end > 1:
+                                sc = get_column_letter(1)
+                                ec = get_column_letter(end)
+                                merges.append(f"{sc}{ri}:{ec}{ri}")
 
-            # xl/_rels/workbook.xml.rels
-            wb_rels = ['<?xml version="1.0" encoding="UTF-8" standalone="yes"?>']
-            wb_rels.append('<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">')
-            for i in range(len(self.sheets)):
-                wb_rels.append(f'<Relationship Id="rId{i+1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet{i+1}.xml"/>')
-            wb_rels.append('<Relationship Id="rIdStyles" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>')
-            wb_rels.append('<Relationship Id="rIdSharedStrings" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings" Target="sharedStrings.xml"/>')
-            wb_rels.append('</Relationships>')
-            zf.writestr('xl/_rels/workbook.xml.rels', '\n'.join(wb_rels))
+                # row heights
+                if row_data and isinstance(row_data[0], tuple):
+                    s = row_data[0][1]
+                    if s == STYLE_TITLE:
+                        ws.row_dimensions[ri].height = 36
+                    elif s == STYLE_SECTION:
+                        ws.row_dimensions[ri].height = 22
 
-            # Worksheets (pre-generated above)
-            for i, name in enumerate(self.sheets.keys(), 1):
-                zf.writestr(f'xl/worksheets/sheet{i}.xml', sheet_xmls[name])
+            for m in merges:
+                ws.merge_cells(m)
 
-        print(f'  -> {os.path.basename(path)}')
+        self._wb.save(path)
+        print(f"  -> {os.path.basename(path)}")
 
 
-# ============ Helpers ============
+def _fix_merge_row(m, row):
+    """Replace row numbers in merge-range string with *row*."""
+    import re
+    return re.sub(r'\d+', str(row), m)
+
+
+# ── Row helpers (backward-compatible names) ────────────────────
 
 def H(items):
-    """Header row: bold + blue bg + border."""
-    return [(str(x), STYLE_HEADER) for x in items]
+    """Header row: dark navy bg, white bold, centered."""
+    return [(str(x) if x else "", STYLE_HEADER) for x in items]
 
 def R(items):
-    """Normal data row: border."""
-    return [(str(x), STYLE_NORMAL) for x in items]
+    """Normal data row: thin border, value font, wrap."""
+    return [(str(x) if x else "", STYLE_NORMAL) for x in items]
 
 def K(items):
-    """Key column (bold gray bg) + value columns."""
-    return [(str(items[0]), STYLE_DOCINFO_K)] + [(str(x), STYLE_NORMAL) for x in items[1:]]
+    """Key-value row: first cell label-style, rest normal."""
+    out = [(str(items[0]) if items[0] else "", STYLE_DOCINFO_K)]
+    for x in items[1:]:
+        out.append((str(x) if x else "", STYLE_NORMAL))
+    return out
 
 def T(text, cols=8):
-    """Title row: bold large + blue bg, merged across cols."""
-    a = 'A'
-    b = chr(ord('A') + cols - 1)
-    return [(text, STYLE_TITLE)], f'{a}1:{b}1'
+    """Title row: bold 16pt, auto-merged across *cols*."""
+    row = [(text, STYLE_TITLE)] + [("", STYLE_TITLE)] * (cols - 1)
+    sc = get_column_letter(1)
+    ec = get_column_letter(cols)
+    return (row, f"{sc}1:{ec}1")
 
 def S(text, cols=8):
-    """Section header: bold + green bg."""
-    return [(text, STYLE_SECTION)] + [('', STYLE_SECTION)] * (cols - 1)
+    """Section header: bold indigo on light-blue bg."""
+    return [(text, STYLE_SECTION)] + [("", STYLE_SECTION)] * (cols - 1)
 
 def E(n=8):
-    """Empty row."""
-    return [('', STYLE_NORMAL)] * n
+    """Empty row (thin border on every cell)."""
+    return [("", STYLE_NORMAL)] * n
+
+# Aliases used by older gen scripts
+hdr_row = H
+empty_row = E
+
+# ── Standard blocks ────────────────────────────────────────────
 
 def doc_info_8():
-    """Standard 8-column doc info."""
+    """8-column document metadata block (OperaMind-style)."""
     return [
-        R(['文書管理情報', '', '', '', '', '', '', '']),
-        K(['システムID', 'STRUTSLAB-001', '', '', 'システム名', '電力設備巡視点検管理システム', '', '']),
-        K(['サブシステム名', '', '', '', '開発言語', 'Java 1.8 / Struts1 / MyBatis', '', '']),
-        K(['データベース', 'H2 Database（ファイルモード）', '', '', '文書番号', '', '', '']),
-        K(['版数', '1.0', '', '', '作成日', '2026/05/23', '', '']),
-        K(['作成者', 'システム開発部', '', '', '承認者', '', '', '']),
+        S("文書管理情報", 8),
+        K(["システムID", "STRUTSLAB-001", "", "", "システム名",
+           "電力設備巡視点検管理システム", "", ""]),
+        K(["サブシステム名", "", "", "", "開発言語",
+           "Java 1.8 / Struts1 / MyBatis", "", ""]),
+        K(["データベース", "H2 Database（ファイルモード）", "", "",
+           "文書番号", "", "", ""]),
+        K(["版数", VERSION, "", "", "作成日", DATE, "", ""]),
+        K(["作成者", "システム開発部", "", "", "承認者", "", "", ""]),
     ]
 
+# legacy uppercase alias
+DOC_INFO_8 = doc_info_8
+
 def doc_info_6():
-    """Standard 6-column doc info."""
+    """6-column document metadata block (OperaMind-style)."""
     return [
-        R(['文書管理情報', '', '', '', '', '']),
-        K(['システムID', 'STRUTSLAB-001', '', '', 'サブシステム名', '']),
-        K(['画面ID', '', '', '', '画面名', '']),
-        K(['プログラムID', '', '', '', '文書番号', '']),
-        K(['版数', '1.0', '', '', '作成日', '2026/05/23']),
-        K(['作成者', 'システム開発部', '', '', '区分', '新規']),
+        S("文書管理情報", 6),
+        K(["システムID", "STRUTSLAB-001", "", "", "サブシステム名", ""]),
+        K(["画面ID", "", "", "", "画面名", ""]),
+        K(["プログラムID", "", "", "", "文書番号", ""]),
+        K(["版数", VERSION, "", "", "作成日", DATE]),
+        K(["作成者", "システム開発部", "", "", "区分", "新規"]),
     ]
 
 REVISION_HISTORY = [
-    H(['版数', '改訂日', '改訂内容', '改訂者', '承認者', '区分', '備考']),
-    R(['1.0', '2026/05/23', '初版作成', 'システム開発部', '', '新規', '']),
+    T("改訂履歷", 7),
+    H(["版数", "改訂日", "改訂内容", "改訂者", "承認者", "区分", "備考"]),
+    R([VERSION, DATE, "初版作成", "システム開発部", "", "新規", ""]),
 ]
 
-
-def make_standard_workbook(main_sheet_name, main_data, **extra_sheets):
-    """Standard 3-sheet: revision history + empty + main data."""
+def make_standard_workbook(main_sheet_name, main_data, main_col_widths=None, **extra_sheets):
+    """Create workbook with 改訂履歷 + main sheet + optional extras."""
     w = XlsxWriter()
-    w.add_sheet('改訂履歴', REVISION_HISTORY, col_widths=[5, 12, 30, 15, 15, 8, 20])
-    w.add_sheet('Sheet2', [])
-    w.add_sheet(main_sheet_name, main_data)
+    w.add_sheet("改訂履歷", REVISION_HISTORY, col_widths=[8, 14, 40, 18, 18, 10, 24])
+    w.add_sheet(main_sheet_name, main_data, col_widths=main_col_widths)
     for sname, sdata in extra_sheets.items():
         w.add_sheet(sname, sdata)
     return w

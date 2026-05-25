@@ -8,7 +8,7 @@ def screen_sheet(name, sid, pg, sub, layout, els, tbl=None, smap=None, tests=Non
     t,m = T(f'画面設計書 — {name}')
     d.append(t)
     d += [
-        R(['文書管理情報', '', '', '', '', '', '', '']),
+        S('文書管理情報', 8),
         K(['システムID', 'STRUTSLAB-001', '', '', 'サブシステム名', sub, '', '']),
         K(['画面ID', sid, '', '', '画面名', name, '', '']),
         K(['プログラムID', pg, '', '', '文書番号', f'DOC-SCR-{sid}', '', '']),
@@ -34,7 +34,7 @@ def pg_doc(pg_id, pg_name, sub, overview, io_def, logic, valid_rules, transition
     t,m = T(f'プログラム設計書 — {pg_name}')
     d.append(t)
     d += [
-        R(['文書管理情報', '', '', '', '', '', '', '']),
+        S('文書管理情報', 8),
         K(['システムID', 'STRUTSLAB-001', '', '', 'サブシステム名', sub, '', '']),
         K(['プログラムID', pg_id, '', '', 'プログラム名', pg_name, '', '']),
         K(['文書番号', f'DOC-PG-{pg_id}', '', '', '版数', '1.0', '', '']),
