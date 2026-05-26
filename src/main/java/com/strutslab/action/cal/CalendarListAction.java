@@ -18,7 +18,8 @@ import com.strutslab.service.cal.CalendarService;
 
 public class CalendarListAction extends Action {
 
-    private static final SimpleDateFormat YEAR_FMT = new SimpleDateFormat("yyyy");
+    private static final ThreadLocal<SimpleDateFormat> YEAR_FMT =
+            ThreadLocal.withInitial(() -> new SimpleDateFormat("yyyy"));
     private final CalendarService service = new CalendarService();
 
     @Override
@@ -29,7 +30,7 @@ public class CalendarListAction extends Action {
 
         String year = calForm.getYear();
         if (year == null || year.isEmpty()) {
-            year = YEAR_FMT.format(new Date());
+            year = YEAR_FMT.get().format(new Date());
             calForm.setYear(year);
         }
 

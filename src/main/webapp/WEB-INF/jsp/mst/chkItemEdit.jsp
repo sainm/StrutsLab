@@ -77,8 +77,8 @@
                onclick="document.forms[0].method.value='addCat2';
                         var inp=document.createElement('input');inp.type='hidden';inp.name='cat1Idx';inp.value='<%= HtmlUtil.escape(ciStr) %>';
                         document.forms[0].appendChild(inp);document.forms[0].submit();"/>
-        <input type="button" value="削除"
-               onclick="if(confirm('この大分類を削除しますか？')){/* TODO: server-side delete for cat1 */}" style="color:#c33;"/>
+        <input type="button" value="削除" style="color:#c33;"
+               onclick="if(confirm('この大分類を削除しますか？')){document.forms[0].method.value='delCat1';var inp=document.createElement('input');inp.type='hidden';inp.name='cat1Idx';inp.value='<%= HtmlUtil.escape(ciStr) %>';document.forms[0].appendChild(inp);document.forms[0].submit();}"/>
     </div>
 <%
             String[][] c2All = form.getCat2Names();
@@ -99,7 +99,7 @@
                         var i2=document.createElement('input');i2.type='hidden';i2.name='cat2Idx';i2.value='<%= HtmlUtil.escape(cjStr) %>';
                         f.appendChild(i1);f.appendChild(i2);f.submit();"/>
         <input type="button" value="削除" style="color:#c33;"
-               onclick="if(confirm('この中分類を削除しますか？')){/* TODO: server-side delete for cat2 */}"/>
+               onclick="if(confirm('この中分類を削除しますか？')){document.forms[0].method.value='delCat2';var f=document.forms[0];var i1=document.createElement('input');i1.type='hidden';i1.name='cat1Idx';i1.value='<%= HtmlUtil.escape(ci2Str) %>';var i2=document.createElement('input');i2.type='hidden';i2.name='cat2Idx';i2.value='<%= HtmlUtil.escape(cjStr) %>';f.appendChild(i1);f.appendChild(i2);f.submit();}"/>
     </div>
 <%
                     // Render items belonging to this cat2 (using tracking arrays)

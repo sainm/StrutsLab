@@ -17,6 +17,36 @@ public class CheckItemSaveAction extends DispatchAction {
 
     private final CheckItemSaveService service = new CheckItemSaveService();
 
+    @Override
+    protected ActionForward dispatchMethod(ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response, String name)
+            throws Exception {
+        if ("new".equals(name)) {
+            return newTemplate(mapping, form, request, response);
+        }
+        return super.dispatchMethod(mapping, form, request, response, name);
+    }
+
+    public ActionForward newTemplate(ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        CheckItemForm f = (CheckItemForm) form;
+        f.setTemplateId(0);
+        f.setTemplateName(null);
+        f.setEquipmentType(null);
+        f.setInspectionKind(null);
+        f.setCat1Names(new String[]{"大分類1"});
+        f.setCat1Ids(new int[]{0});
+        f.setCat2Names(new String[][]{new String[]{}});
+        f.setItemNames(new String[0]);
+        f.setItemJudgeCriterias(new String[0]);
+        f.setItemNormalRanges(new String[0]);
+        f.setItemUnits(new String[0]);
+        f.setItemIds(new int[0]);
+        f.setItemCat1Idxs(new int[0]);
+        f.setItemCat2Idxs(new int[0]);
+        return mapping.findForward("success");
+    }
+
     public ActionForward unspecified(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         CheckItemForm f = (CheckItemForm) form;
@@ -122,6 +152,54 @@ public class CheckItemSaveAction extends DispatchAction {
         return mapping.getInputForward();
     }
 
+    public ActionForward delCat1(ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        CheckItemForm f = (CheckItemForm) form;
+        String idxStr = request.getParameter("cat1Idx");
+        int ci;
+        try {
+            ci = (idxStr != null) ? Integer.parseInt(idxStr) : 0;
+        } catch (NumberFormatException e) { return mapping.getInputForward(); }
+
+        int[] cat1Ids = f.getCat1Ids();
+        String[] cat1Names = f.getCat1Names();
+        String[][] cat2Names = f.getCat2Names();
+        if (cat1Names == null || ci >= cat1Names.length) return mapping.getInputForward();
+
+        f.setCat1Ids(removeAt(cat1Ids, ci));
+        f.setCat1Names(removeAt(cat1Names, ci));
+        f.setCat2Names(remove2dAt(cat2Names, ci));
+
+        // Remove all items under this cat1
+        removeItemsUnderCat1(f, ci);
+
+        return mapping.getInputForward();
+    }
+
+    public ActionForward delCat2(ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        CheckItemForm f = (CheckItemForm) form;
+        String cat1IdxStr = request.getParameter("cat1Idx");
+        String cat2IdxStr = request.getParameter("cat2Idx");
+        int ci, cj;
+        try {
+            ci = (cat1IdxStr != null) ? Integer.parseInt(cat1IdxStr) : 0;
+            cj = (cat2IdxStr != null) ? Integer.parseInt(cat2IdxStr) : 0;
+        } catch (NumberFormatException e) { return mapping.getInputForward(); }
+
+        String[][] c2 = f.getCat2Names();
+        if (c2 == null || ci >= c2.length || c2[ci] == null || cj >= c2[ci].length)
+            return mapping.getInputForward();
+
+        c2[ci] = removeAt(c2[ci], cj);
+        f.setCat2Names(c2);
+
+        // Remove all items under this cat2
+        removeItemsUnderCat2(f, ci, cj);
+
+        return mapping.getInputForward();
+    }
+
     public ActionForward delRow(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         CheckItemForm f = (CheckItemForm) form;
@@ -143,7 +221,7 @@ public class CheckItemSaveAction extends DispatchAction {
         return mapping.getInputForward();
     }
 
-    // -- form array helpers (UI state management) --
+    // -- form array helpers --
 
     private static String[] append(String[] arr, String val) {
         if (arr == null) return new String[]{val};
@@ -176,6 +254,58 @@ public class CheckItemSaveAction extends DispatchAction {
         System.arraycopy(arr, 0, n, 0, idx);
         System.arraycopy(arr, idx + 1, n, idx, arr.length - idx - 1);
         return n;
+    }
+
+    private static String[][] remove2dAt(String[][] arr, int idx) {
+        if (arr == null || idx < 0 || idx >= arr.length) return arr;
+        String[][] n = new String[arr.length - 1][];
+        System.arraycopy(arr, 0, n, 0, idx);
+        System.arraycopy(arr, idx + 1, n, idx, arr.length - idx - 1);
+        return n;
+    }
+
+    private void removeItemsUnderCat1(CheckItemForm f, int ci) {
+        int[] ic1 = f.getItemCat1Idxs();
+        int[] ic2 = f.getItemCat2Idxs();
+        if (ic1 == null) return;
+
+        int len = ic1.length;
+        for (int i = len - 1; i >= 0; i--) {
+            if (ic1[i] == ci) {
+                f.setItemNames(removeAt(f.getItemNames(), i));
+                f.setItemJudgeCriterias(removeAt(f.getItemJudgeCriterias(), i));
+                f.setItemNormalRanges(removeAt(f.getItemNormalRanges(), i));
+                f.setItemUnits(removeAt(f.getItemUnits(), i));
+                f.setItemIds(removeAt(f.getItemIds(), i));
+                f.setItemCat1Idxs(removeAt(f.getItemCat1Idxs(), i));
+                f.setItemCat2Idxs(removeAt(f.getItemCat2Idxs(), i));
+            } else if (ic1[i] > ci) {
+                // Adjust index for cat1s after the removed one
+                int[] newIc1 = f.getItemCat1Idxs();
+                newIc1[i]--;
+            }
+        }
+    }
+
+    private void removeItemsUnderCat2(CheckItemForm f, int ci, int cj) {
+        int[] ic1 = f.getItemCat1Idxs();
+        int[] ic2 = f.getItemCat2Idxs();
+        if (ic1 == null || ic2 == null) return;
+
+        for (int i = ic1.length - 1; i >= 0; i--) {
+            if (ic1[i] == ci && ic2[i] == cj) {
+                f.setItemNames(removeAt(f.getItemNames(), i));
+                f.setItemJudgeCriterias(removeAt(f.getItemJudgeCriterias(), i));
+                f.setItemNormalRanges(removeAt(f.getItemNormalRanges(), i));
+                f.setItemUnits(removeAt(f.getItemUnits(), i));
+                f.setItemIds(removeAt(f.getItemIds(), i));
+                f.setItemCat1Idxs(removeAt(f.getItemCat1Idxs(), i));
+                f.setItemCat2Idxs(removeAt(f.getItemCat2Idxs(), i));
+            } else if (ic1[i] == ci && ic2[i] > cj) {
+                int[] newIc2 = f.getItemCat2Idxs();
+                newIc2[i]--;
+            }
+        }
     }
 
     private static int[] removeAt(int[] arr, int idx) {

@@ -9,6 +9,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
 
+import com.strutslab.dto.ChkTmplDto;
 import com.strutslab.dto.EqpDto;
 import com.strutslab.form.ins.PlanWizardForm;
 import com.strutslab.service.ins.PlanWizardService;
@@ -19,6 +20,7 @@ public class PlanWizardAction extends DispatchAction {
 
     public ActionForward unspecified(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
+        request.getSession().removeAttribute("planWizardForm");
         return step1(mapping, form, request, response);
     }
 
@@ -47,6 +49,7 @@ public class PlanWizardAction extends DispatchAction {
         EqpDto eqp = service.loadEquipment(wf.getSelectedEqpCode());
         if (eqp != null) {
             wf.setSelectedEqpName(eqp.getEquipmentName());
+            request.setAttribute("selectedEqpName", eqp.getEquipmentName());
             request.setAttribute("tmplList", service.loadTemplates(eqp.getEquipmentType()));
         }
 
@@ -69,9 +72,20 @@ public class PlanWizardAction extends DispatchAction {
             return mapping.findForward("step2");
         }
 
-        wf.setSelectedTmplName(service.loadTemplate(wf.getSelectedTmplId()).getTemplateName());
+        ChkTmplDto tmpl = service.loadTemplate(wf.getSelectedTmplId());
+        if (tmpl == null) {
+            request.setAttribute("errorMessage",
+                getResources(request).getMessage("errors.template.required"));
+            String eqpType = service.getEquipmentType(wf.getSelectedEqpCode());
+            request.setAttribute("tmplList", service.loadTemplates(eqpType));
+            wf.setStep(2);
+            saveWizardForm(request, wf);
+            return mapping.findForward("step2");
+        }
+        wf.setSelectedTmplName(tmpl.getTemplateName());
         wf.setStep(3);
         saveWizardForm(request, wf);
+        request.setAttribute("empList", service.loadEmployees());
         return mapping.findForward("step3");
     }
 
@@ -97,19 +111,28 @@ public class PlanWizardAction extends DispatchAction {
 
         wf.setStep(4);
         saveWizardForm(request, wf);
+        request.setAttribute("selEqpName", wf.getSelectedEqpName());
+        request.setAttribute("selTmplName", wf.getSelectedTmplName());
+        request.setAttribute("planDate", wf.getPlanDate());
+        request.setAttribute("teamCode", wf.getTeamCode());
+        request.setAttribute("personCode", wf.getPersonCode());
+        request.setAttribute("note", wf.getNote());
         return mapping.findForward("confirm");
     }
 
     public ActionForward save(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         PlanWizardForm wf = getWizardForm(request, form);
-        service.savePlan(wf);
+        service.savePlan(wf, "予定");
         request.getSession().removeAttribute("planWizardForm");
         return mapping.findForward("success");
     }
 
     public ActionForward tempSave(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
+        PlanWizardForm wf = getWizardForm(request, form);
+        service.savePlan(wf, "一時保存");
+        request.getSession().removeAttribute("planWizardForm");
         return mapping.findForward("success");
     }
 
@@ -121,12 +144,18 @@ public class PlanWizardAction extends DispatchAction {
             session.setAttribute("planWizardForm", wf);
         } else {
             PlanWizardForm incoming = (PlanWizardForm) form;
-            wf.setSelectedEqpCode(incoming.getSelectedEqpCode());
-            wf.setSelectedTmplId(incoming.getSelectedTmplId());
-            wf.setPlanDate(incoming.getPlanDate());
-            wf.setTeamCode(incoming.getTeamCode());
-            wf.setPersonCode(incoming.getPersonCode());
-            wf.setNote(incoming.getNote());
+            if (incoming.getSelectedEqpCode() != null && !incoming.getSelectedEqpCode().isEmpty())
+                wf.setSelectedEqpCode(incoming.getSelectedEqpCode());
+            if (incoming.getSelectedTmplId() > 0)
+                wf.setSelectedTmplId(incoming.getSelectedTmplId());
+            if (incoming.getPlanDate() != null && !incoming.getPlanDate().isEmpty())
+                wf.setPlanDate(incoming.getPlanDate());
+            if (incoming.getTeamCode() != null && !incoming.getTeamCode().isEmpty())
+                wf.setTeamCode(incoming.getTeamCode());
+            if (incoming.getPersonCode() != null && !incoming.getPersonCode().isEmpty())
+                wf.setPersonCode(incoming.getPersonCode());
+            if (incoming.getNote() != null && !incoming.getNote().isEmpty())
+                wf.setNote(incoming.getNote());
         }
         return wf;
     }

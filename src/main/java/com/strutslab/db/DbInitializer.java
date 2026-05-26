@@ -16,17 +16,17 @@ public class DbInitializer implements ServletContextListener {
         try (Connection conn = MyBatisUtil.getSqlSessionFactory().openSession().getConnection()) {
             ScriptRunner runner = new ScriptRunner(conn);
             runner.setAutoCommit(true);
-            runner.setStopOnError(true);
+            runner.setStopOnError(false);
 
-            Reader schemaReader = new InputStreamReader(
-                getClass().getClassLoader().getResourceAsStream("db/schema.sql"), "UTF-8");
-            runner.runScript(schemaReader);
-            schemaReader.close();
+            try (Reader schemaReader = new InputStreamReader(
+                    getClass().getClassLoader().getResourceAsStream("db/schema.sql"), "UTF-8")) {
+                runner.runScript(schemaReader);
+            }
 
-            Reader seedReader = new InputStreamReader(
-                getClass().getClassLoader().getResourceAsStream("db/seed.sql"), "UTF-8");
-            runner.runScript(seedReader);
-            seedReader.close();
+            try (Reader seedReader = new InputStreamReader(
+                    getClass().getClassLoader().getResourceAsStream("db/seed.sql"), "UTF-8")) {
+                runner.runScript(seedReader);
+            }
 
             System.out.println("[StrutsLab] Database initialized successfully.");
         } catch (Exception e) {

@@ -16,6 +16,11 @@ public class CalendarSaveAction extends DispatchAction {
 
     private final CalendarService service = new CalendarService();
 
+    public ActionForward unspecified(ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        return mapping.findForward("success");
+    }
+
     public ActionForward bulkRegister(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         CalendarRegForm regForm = (CalendarRegForm) form;

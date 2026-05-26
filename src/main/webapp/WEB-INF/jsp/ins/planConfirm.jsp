@@ -3,12 +3,18 @@
 <%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean" %>
 <%@ page import="com.strutslab.util.HtmlUtil" %>
 <%
-    String selEqpName = request.getParameter("selectedEqpName") != null ? request.getParameter("selectedEqpName") : "";
-    String selTmplName = request.getParameter("selectedTmplName") != null ? request.getParameter("selectedTmplName") : "";
-    String planDate = request.getParameter("planDate") != null ? request.getParameter("planDate") : "";
-    String teamCode = request.getParameter("teamCode") != null ? request.getParameter("teamCode") : "";
-    String personCode = request.getParameter("personCode") != null ? request.getParameter("personCode") : "";
-    String note = request.getParameter("note") != null ? request.getParameter("note") : "";
+    String selEqpName = (String) request.getAttribute("selEqpName");
+    if (selEqpName == null) selEqpName = "";
+    String selTmplName = (String) request.getAttribute("selTmplName");
+    if (selTmplName == null) selTmplName = "";
+    String planDate = (String) request.getAttribute("planDate");
+    if (planDate == null) planDate = "";
+    String teamCode = (String) request.getAttribute("teamCode");
+    if (teamCode == null) teamCode = "";
+    String personCode = (String) request.getAttribute("personCode");
+    if (personCode == null) personCode = "";
+    String note = (String) request.getAttribute("note");
+    if (note == null) note = "";
     String ctx = request.getContextPath();
 %>
 
@@ -52,9 +58,9 @@
 
 <div class="button-area" style="text-align:center;margin-top:16px;">
     <input type="button" value="戻る" class="btn btn-secondary"
-        onclick="location.href='<%= ctx %>/ins/plan/wizard.do?step=step3';" style="margin-right:16px;"/>
+        onclick="location.href='<%= ctx %>/ins/plan/wizard.do?method=step3';" style="margin-right:16px;"/>
     <input type="button" value="一時保存" class="btn btn-info"
-        onclick="location.href='<%= ctx %>/ins/plan/wizard.do?step=tempSave';" style="margin-right:16px;"/>
+        onclick="location.href='<%= ctx %>/ins/plan/wizard.do?method=tempSave';" style="margin-right:16px;"/>
     <input type="button" value="確定" class="btn btn-success"
-        onclick="if(confirm('点検計画を登録しますか？')){location.href='<%= ctx %>/ins/plan/wizard.do?step=save';}"/>
+        onclick="if(confirm('点検計画を登録しますか？')){location.href='<%= ctx %>/ins/plan/wizard.do?method=save';}"/>
 </div>

@@ -48,7 +48,7 @@
                 else { badgeColor = "#090"; badgeText = "十分"; }
     %>
         <tr>
-            <td><a href="<%=ctx%>/parts/save.do?partCode=<%= java.net.URLEncoder.encode(code, "UTF-8") %>"><%= HtmlUtil.escape(code) %></a></td>
+            <td><a href="<%=ctx%>/parts/edit.do?partCode=<%= java.net.URLEncoder.encode(code, "UTF-8") %>"><%= HtmlUtil.escape(code) %></a></td>
             <td><%= HtmlUtil.escape(name) %></td>
             <td><%= HtmlUtil.escape(type) %></td>
             <td><%= HtmlUtil.escape(unit) %></td>
@@ -73,7 +73,7 @@
     <input type="button" value="使用実績" class="btn btn-info"
         onclick="location.href='<%=ctx%>/parts/usage.do'"/>
     <input type="button" value="新規登録" class="btn btn-success"
-        onclick="location.href='<%=ctx%>/parts/save.do?method=new'"/>
+        onclick="location.href='<%=ctx%>/parts/edit.do?method=new'"/>
 </div>
 </form>
 </div>

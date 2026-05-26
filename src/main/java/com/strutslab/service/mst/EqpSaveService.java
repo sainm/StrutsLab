@@ -94,7 +94,8 @@ public class EqpSaveService {
             if (uploadFile != null && uploadFile.getFileSize() > 0) {
                 File dir = new File(uploadDir);
                 if (!dir.exists()) dir.mkdirs();
-                String fileName = dto.getEquipmentCode() + "_" + uploadFile.getFileName();
+                String safeName = uploadFile.getFileName().replaceAll("[\\\\/:*?\"<>|]", "_");
+                String fileName = dto.getEquipmentCode() + "_" + safeName;
                 File dest = new File(dir, fileName);
                 try (InputStream is = uploadFile.getInputStream();
                         FileOutputStream fos = new FileOutputStream(dest)) {
@@ -130,7 +131,7 @@ public class EqpSaveService {
         dto.setRatedCapacity(form.getRatedCapacity());
         dto.setRatedCurrent(form.getRatedCurrent());
         dto.setFrequency(form.getFrequency());
-        dto.setParentEquipmentCode(form.getParentEquipmentCode());
+        dto.setParentEquipmentCode(emptyToNull(form.getParentEquipmentCode()));
         dto.setInstallDate(form.getInstallDate());
         dto.setLocationAddress(form.getLocationAddress());
         dto.setCoordinates(form.getCoordinates());
@@ -158,5 +159,9 @@ public class EqpSaveService {
             }
         }
         return String.format("EQ-%04d", maxNum + 1);
+    }
+
+    private String emptyToNull(String s) {
+        return s != null && s.isEmpty() ? null : s;
     }
 }

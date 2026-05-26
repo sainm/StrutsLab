@@ -1,8 +1,8 @@
 package com.strutslab.form.ins;
 
-import org.apache.struts.action.ActionForm;
+import org.apache.struts.validator.ValidatorForm;
 
-public class PlanWizardForm extends ActionForm {
+public class PlanWizardForm extends ValidatorForm {
     private int step;
     private String selectedEqpCode;
     private int selectedTmplId;

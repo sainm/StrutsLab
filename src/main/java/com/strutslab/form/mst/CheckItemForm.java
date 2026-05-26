@@ -1,36 +1,32 @@
 package com.strutslab.form.mst;
 
+import java.util.Enumeration;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.struts.action.ActionMapping;
 import org.apache.struts.validator.ValidatorForm;
 
 public class CheckItemForm extends ValidatorForm {
-    // Template basic info
     private int templateId;
     private String templateName;
     private String equipmentType;
     private String inspectionKind;
 
-    // Level 1 : 大分類
     private String[] cat1Names;
     private int[] cat1Ids;
-
-    // Level 2 : 中分類 (indexed by cat1)
     private String[][] cat2Names;
 
-    // Level 3 : 項目 (flat list, traversed in tree order)
     private String[] itemNames;
     private String[] itemJudgeCriterias;
     private String[] itemNormalRanges;
     private String[] itemUnits;
     private int[] itemIds;
 
-    // Parent tracking for items (which cat1/cat2 each item belongs to)
     private int[] itemCat1Idxs;
     private int[] itemCat2Idxs;
 
-    // Action method
     private String method;
-
-    // ---- Getters / Setters ----
 
     public int getTemplateId() { return templateId; }
     public void setTemplateId(int v) { this.templateId = v; }
@@ -76,4 +72,42 @@ public class CheckItemForm extends ValidatorForm {
 
     public String getMethod() { return method; }
     public void setMethod(String v) { this.method = v; }
+
+    @Override
+    public void reset(ActionMapping mapping, HttpServletRequest request) {
+        super.reset(mapping, request);
+
+        int cat1Count = countIndexedParams(request, "cat1Names");
+        cat1Names = new String[cat1Count];
+        cat1Ids = new int[cat1Count];
+        cat2Names = new String[cat1Count][];
+
+        int itemCount = countIndexedParams(request, "itemNames");
+        itemNames = new String[itemCount];
+        itemJudgeCriterias = new String[itemCount];
+        itemNormalRanges = new String[itemCount];
+        itemUnits = new String[itemCount];
+        itemIds = new int[itemCount];
+        itemCat1Idxs = new int[itemCount];
+        itemCat2Idxs = new int[itemCount];
+    }
+
+    private int countIndexedParams(HttpServletRequest request, String prefix) {
+        int max = -1;
+        String pattern = prefix + "[";
+        Enumeration<String> names = request.getParameterNames();
+        while (names.hasMoreElements()) {
+            String name = names.nextElement();
+            if (name.startsWith(pattern)) {
+                int end = name.indexOf(']', pattern.length());
+                if (end > 0) {
+                    try {
+                        int idx = Integer.parseInt(name.substring(pattern.length(), end));
+                        if (idx > max) max = idx;
+                    } catch (NumberFormatException e) { }
+                }
+            }
+        }
+        return max + 1;
+    }
 }

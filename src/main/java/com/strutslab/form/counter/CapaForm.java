@@ -1,8 +1,8 @@
 package com.strutslab.form.counter;
 
-import org.apache.struts.action.ActionForm;
+import org.apache.struts.validator.ValidatorForm;
 
-public class CapaForm extends ActionForm {
+public class CapaForm extends ValidatorForm {
     private String incidentNo;
     private String why1;
     private String why2;

@@ -1,9 +1,9 @@
 package com.strutslab.form.inc;
 
-import org.apache.struts.action.ActionForm;
 import org.apache.struts.upload.FormFile;
+import org.apache.struts.validator.ValidatorForm;
 
-public class IncidentForm extends ActionForm {
+public class IncidentForm extends ValidatorForm {
     private String incidentNo;
     private Integer resultId;
     private String incidentDateTime;

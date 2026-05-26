@@ -119,7 +119,8 @@ public class ExecInputService {
                     if (photoArr != null) {
                         for (FormFile f : photoArr) {
                             if (f != null && f.getFileSize() > 0) {
-                                String fileName = System.currentTimeMillis() + "_" + f.getFileName();
+                                String safeName = f.getFileName().replaceAll("[\\\\/:*?\"<>|]", "_");
+                                String fileName = System.currentTimeMillis() + "_" + safeName;
                                 File dest = new File(photoDir, fileName);
                                 try (InputStream is = f.getInputStream();
                                         FileOutputStream fos = new FileOutputStream(dest)) {

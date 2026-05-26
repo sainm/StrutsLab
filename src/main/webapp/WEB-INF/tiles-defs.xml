@@ -187,4 +187,8 @@
         <put name="title" value="総合レポート"/>
         <put name="formArea" value="/WEB-INF/jsp/report/summaryReport.jsp"/>
     </definition>
+    <definition name="report.print.tiles" extends=".print">
+        <put name="title" value="総合レポート（印刷）"/>
+        <put name="body" value="/WEB-INF/jsp/report/summaryReportPrint.jsp"/>
+    </definition>
 </tiles-definitions>

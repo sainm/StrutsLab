@@ -16,10 +16,11 @@ import com.strutslab.dto.ExecResultDto;
 
 public class DailyListService {
 
-    private static final SimpleDateFormat DATE_FMT = new SimpleDateFormat("yyyyMMdd");
+    private static final ThreadLocal<SimpleDateFormat> DATE_FMT =
+            ThreadLocal.withInitial(() -> new SimpleDateFormat("yyyyMMdd"));
 
     public String getDefaultTargetDate() {
-        return DATE_FMT.format(new Date());
+        return DATE_FMT.get().format(new Date());
     }
 
     public List<ExecResultDto> search(String targetDate, String statusFilter, String personCode) {

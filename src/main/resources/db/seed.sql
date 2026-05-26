@@ -66,6 +66,46 @@ INSERT INTO parts (part_code, part_name, part_type, unit, order_point, safety_st
 ('P-OIL-001', '絶縁油 高圧用', '絶縁油', 'L', 100, 50, 500, 300, '日本絶縁油株式会社'),
 ('P-BSH-001', 'ブッシング 66kV用', 'ブッシング', '式', 2, 1, 5, 150000, '高圧機器工業株式会社');
 
+-- Sample inspection plans (for daily list & approval list)
+INSERT INTO inspection_plans (fiscal_year, equipment_code, template_id, planned_date, team_code, person_code, status, is_locked, note)
+SELECT '2026', 'TR-0001', 1, '20260526', 'A班', 'EMP-0001', '実施済', FALSE, '自動生成テストデータ'
+WHERE NOT EXISTS (SELECT 1 FROM inspection_plans WHERE equipment_code = 'TR-0001' AND planned_date = '20260526');
+
+INSERT INTO inspection_plans (fiscal_year, equipment_code, template_id, planned_date, team_code, person_code, status, is_locked, note)
+SELECT '2026', 'CB-0001', 2, '20260526', 'B班', 'EMP-0002', '実施済', FALSE, '自動生成テストデータ'
+WHERE NOT EXISTS (SELECT 1 FROM inspection_plans WHERE equipment_code = 'CB-0001' AND planned_date = '20260526');
+
+INSERT INTO inspection_plans (fiscal_year, equipment_code, template_id, planned_date, team_code, person_code, status, is_locked, note)
+SELECT '2026', 'DS-0001', 1, '20260526', 'A班', NULL, '予定', FALSE, '自動生成テストデータ'
+WHERE NOT EXISTS (SELECT 1 FROM inspection_plans WHERE equipment_code = 'DS-0001' AND planned_date = '20260526');
+
+INSERT INTO inspection_plans (fiscal_year, equipment_code, template_id, planned_date, team_code, person_code, status, is_locked, note)
+SELECT '2026', 'TR-0002', 1, '20260525', 'A班', 'EMP-0001', '実施済', FALSE, '自動生成テストデータ'
+WHERE NOT EXISTS (SELECT 1 FROM inspection_plans WHERE equipment_code = 'TR-0002' AND planned_date = '20260525');
+
+INSERT INTO inspection_plans (fiscal_year, equipment_code, template_id, planned_date, team_code, person_code, status, is_locked, note)
+SELECT '2026', 'CBL-0001', 2, '20260527', 'C班', 'EMP-0003', '予定', FALSE, '自動生成テストデータ'
+WHERE NOT EXISTS (SELECT 1 FROM inspection_plans WHERE equipment_code = 'CBL-0001' AND planned_date = '20260527');
+
+-- Sample inspection results (for approval list)
+INSERT INTO inspection_results (plan_id, executed_date, executed_by, summary_judge, summary_note, approval_status)
+SELECT p.plan_id, '20260526', 'EMP-0001', '良', '', '承認待ち'
+FROM inspection_plans p
+WHERE p.equipment_code = 'TR-0001' AND p.planned_date = '20260526'
+AND NOT EXISTS (SELECT 1 FROM inspection_results WHERE plan_id = p.plan_id);
+
+INSERT INTO inspection_results (plan_id, executed_date, executed_by, summary_judge, summary_note, approval_status)
+SELECT p.plan_id, '20260526', 'EMP-0002', '良', '', '承認待ち'
+FROM inspection_plans p
+WHERE p.equipment_code = 'CB-0001' AND p.planned_date = '20260526'
+AND NOT EXISTS (SELECT 1 FROM inspection_results WHERE plan_id = p.plan_id);
+
+INSERT INTO inspection_results (plan_id, executed_date, executed_by, summary_judge, summary_note, approval_status)
+SELECT p.plan_id, '20260525', 'EMP-0001', '要', '', '承認待ち'
+FROM inspection_plans p
+WHERE p.equipment_code = 'TR-0002' AND p.planned_date = '20260525'
+AND NOT EXISTS (SELECT 1 FROM inspection_results WHERE plan_id = p.plan_id);
+
 -- Sample holiday
 INSERT INTO holidays (holiday_date, holiday_type, holiday_name, is_transfer) VALUES
 ('20260101', '法定休日', '元日', FALSE),

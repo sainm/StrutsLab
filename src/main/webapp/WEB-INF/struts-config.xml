@@ -80,7 +80,7 @@
         </action>
         <action path="/mst/eqp/save" type="com.strutslab.action.mst.EqpSaveAction"
                 name="eqpForm" scope="request" validate="true"
-                parameter="method" input="/WEB-INF/jsp/mst/eqpEdit.jsp">
+                parameter="method" input="eqp.edit.tiles">
             <forward name="success" path="/mst/eqp/list.do" redirect="true"/>
             <forward name="input" path="eqp.edit.tiles"/>
         </action>
@@ -102,8 +102,8 @@
             <forward name="success" path="chkitem.edit.tiles"/>
         </action>
         <action path="/mst/chkitem/save" type="com.strutslab.action.mst.CheckItemSaveAction"
-                name="chkItemForm" scope="request" validate="true"
-                parameter="method" input="/WEB-INF/jsp/mst/chkItemEdit.jsp">
+                name="chkItemForm" scope="request" validate="false"
+                parameter="method" input="chkitem.edit.tiles">
             <forward name="success" path="/mst/chkitem/list.do" redirect="true"/>
             <forward name="input" path="chkitem.edit.tiles"/>
         </action>
@@ -116,8 +116,8 @@
 
         <!-- Inspection: Plan Wizard 4 steps -->
         <action path="/ins/plan/wizard" type="com.strutslab.action.ins.PlanWizardAction"
-                name="planWizardForm" scope="session" validate="true"
-                parameter="step" input="/WEB-INF/jsp/ins/planWiz1.jsp">
+                name="planWizardForm" scope="session" validate="false"
+                parameter="method" input="ins.plan.wiz1.tiles">
             <forward name="step1" path="ins.plan.wiz1.tiles"/>
             <forward name="step2" path="ins.plan.wiz2.tiles"/>
             <forward name="step3" path="ins.plan.wiz3.tiles"/>
@@ -135,7 +135,7 @@
         <!-- Inspection: Exec Input -->
         <action path="/ins/exec/input" type="com.strutslab.action.ins.ExecInputAction"
                 name="execForm" scope="request" validate="true"
-                input="/WEB-INF/jsp/ins/execInput.jsp">
+                input="ins.exec.input.tiles">
             <forward name="success" path="/ins/daily.do" redirect="true"/>
             <forward name="input" path="ins.exec.input.tiles"/>
             <forward name="incident" path="/inc/create.do"/>
@@ -144,8 +144,9 @@
         <!-- Inspection: Exec Detail/Modify -->
         <action path="/ins/exec/detail" type="com.strutslab.action.ins.ExecDetailAction"
                 name="execForm" scope="request" validate="true"
-                input="/WEB-INF/jsp/ins/execDetail.jsp">
+                input="ins.exec.detail.tiles">
             <forward name="success" path="ins.exec.detail.tiles"/>
+            <forward name="input" path="ins.exec.detail.tiles"/>
             <forward name="modify" path="ins.exec.detail.tiles"/>
         </action>
 
@@ -162,14 +163,14 @@
         </action>
         <action path="/inc/create" type="com.strutslab.action.inc.IncidentCreateAction"
                 name="incidentForm" scope="request" validate="false"
-                parameter="method" input="/WEB-INF/jsp/inc/incCreate.jsp">
+                parameter="method" input="inc.create.tiles">
             <forward name="success" path="/inc/list.do" redirect="true"/>
             <forward name="input" path="inc.create.tiles"/>
             <forward name="similar" path="inc.create.tiles"/>
         </action>
         <action path="/inc/detail" type="com.strutslab.action.inc.IncidentDetailAction"
                 name="incidentForm" scope="request" validate="false"
-                parameter="method" input="/WEB-INF/jsp/inc/incDetail.jsp">
+                parameter="method" input="inc.detail.tiles">
             <forward name="success" path="inc.detail.tiles"/>
             <forward name="investigate" path="inc.detail.tiles"/>
             <forward name="counter" path="inc.detail.tiles"/>
@@ -180,8 +181,8 @@
 
         <!-- Counter -->
         <action path="/counter/create" type="com.strutslab.action.counter.CounterCreateAction"
-                name="counterForm" scope="request" validate="true"
-                parameter="method" input="/WEB-INF/jsp/counter/ctrCreate.jsp">
+                name="counterForm" scope="request" validate="false"
+                parameter="method" input="ctr.create.tiles">
             <forward name="success" path="/counter/list.do" redirect="true"/>
             <forward name="input" path="ctr.create.tiles"/>
             <forward name="addRow" path="ctr.create.tiles"/>
@@ -193,14 +194,14 @@
         </action>
         <action path="/counter/detail" type="com.strutslab.action.counter.CounterDetailAction"
                 name="counterDetailForm" scope="request" validate="true"
-                parameter="method" input="/WEB-INF/jsp/counter/ctrDetail.jsp">
+                parameter="method" input="ctr.detail.tiles">
             <forward name="success" path="/counter/list.do" redirect="true"/>
             <forward name="input" path="ctr.detail.tiles"/>
             <forward name="complete" path="ctr.detail.tiles"/>
         </action>
         <action path="/counter/capa/create" type="com.strutslab.action.counter.CapaAction"
-                name="capaForm" scope="request" validate="true"
-                input="/WEB-INF/jsp/counter/capaCreate.jsp">
+                name="capaForm" scope="request" validate="false"
+                input="ctr.capa.tiles">
             <forward name="success" path="/counter/list.do" redirect="true"/>
             <forward name="input" path="ctr.capa.tiles"/>
         </action>
@@ -213,7 +214,7 @@
         </action>
         <action path="/org/dept/save" type="com.strutslab.action.org.DeptSaveAction"
                 name="deptForm" scope="request" validate="true"
-                parameter="method" input="/WEB-INF/jsp/org/deptEdit.jsp">
+                parameter="method" input="org.dept.edit.tiles">
             <forward name="success" path="/org/dept/list.do" redirect="true"/>
             <forward name="input" path="org.dept.edit.tiles"/>
         </action>
@@ -224,7 +225,7 @@
         </action>
         <action path="/org/emp/save" type="com.strutslab.action.org.EmpSaveAction"
                 name="empForm" scope="request" validate="true"
-                parameter="method" input="/WEB-INF/jsp/org/empEdit.jsp">
+                parameter="method" input="org.emp.edit.tiles">
             <forward name="success" path="/org/emp/list.do" redirect="true"/>
             <forward name="input" path="org.emp.edit.tiles"/>
         </action>
@@ -237,7 +238,7 @@
         </action>
         <action path="/cal/save" type="com.strutslab.action.cal.CalendarSaveAction"
                 name="calendarRegForm" scope="request" validate="true"
-                parameter="method" input="/WEB-INF/jsp/cal/calEdit.jsp">
+                parameter="method" input="cal.edit.tiles">
             <forward name="success" path="/cal/list.do" redirect="true"/>
             <forward name="input" path="cal.edit.tiles"/>
         </action>
@@ -250,9 +251,14 @@
         </action>
         <action path="/parts/save" type="com.strutslab.action.parts.PartsSaveAction"
                 name="partsForm" scope="request" validate="true"
-                parameter="method" input="/WEB-INF/jsp/parts/prtEdit.jsp">
+                parameter="method" input="parts.edit.tiles">
             <forward name="success" path="/parts/list.do" redirect="true"/>
             <forward name="input" path="parts.edit.tiles"/>
+        </action>
+        <action path="/parts/edit" type="com.strutslab.action.parts.PartsSaveAction"
+                name="partsForm" scope="request" validate="false"
+                parameter="method">
+            <forward name="success" path="parts.edit.tiles"/>
         </action>
         <action path="/parts/usage" type="com.strutslab.action.parts.PartsUsageAction"
                 name="partsUsageSearchForm" scope="request" validate="false">
@@ -263,6 +269,10 @@
         <action path="/report/summary" type="com.strutslab.action.report.SummaryReportAction"
                 name="reportForm" scope="request" validate="false">
             <forward name="success" path="report.summary.tiles"/>
+        </action>
+        <action path="/report/print" type="com.strutslab.action.report.SummaryReportAction"
+                name="reportForm" scope="request" validate="false">
+            <forward name="success" path="report.print.tiles"/>
         </action>
     </action-mappings>
 

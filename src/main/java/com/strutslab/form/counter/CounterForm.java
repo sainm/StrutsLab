@@ -1,8 +1,8 @@
 package com.strutslab.form.counter;
 
-import org.apache.struts.action.ActionForm;
+import org.apache.struts.validator.ValidatorForm;
 
-public class CounterForm extends ActionForm {
+public class CounterForm extends ValidatorForm {
     private String orderNo;
     private String incidentNo;
     private String orderDate;

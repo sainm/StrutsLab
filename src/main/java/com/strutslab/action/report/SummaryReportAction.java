@@ -18,7 +18,8 @@ import com.strutslab.service.report.ReportService;
 
 public class SummaryReportAction extends Action {
 
-    private static final SimpleDateFormat MONTH_FMT = new SimpleDateFormat("yyyyMM");
+    private static final ThreadLocal<SimpleDateFormat> MONTH_FMT =
+            ThreadLocal.withInitial(() -> new SimpleDateFormat("yyyyMM"));
     private final ReportService service = new ReportService();
 
     @Override
@@ -28,10 +29,10 @@ public class SummaryReportAction extends Action {
         ReportForm reportForm = (ReportForm) form;
 
         if (reportForm.getDateFrom() == null || reportForm.getDateFrom().isEmpty()) {
-            reportForm.setDateFrom(MONTH_FMT.format(new Date()).substring(0, 4) + "01");
+            reportForm.setDateFrom(MONTH_FMT.get().format(new Date()).substring(0, 4) + "01");
         }
         if (reportForm.getDateTo() == null || reportForm.getDateTo().isEmpty()) {
-            reportForm.setDateTo(MONTH_FMT.format(new Date()));
+            reportForm.setDateTo(MONTH_FMT.get().format(new Date()));
         }
 
         if ("true".equals(request.getParameter("csv"))) {

@@ -1,7 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://struts.apache.org/tags-html" prefix="html" %>
 <%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean" %>
-<%@ page import="com.strutslab.util.HtmlUtil" %>
+<%@ page import="java.util.List, com.strutslab.dto.EmpDto, com.strutslab.util.HtmlUtil" %>
 <%
     String errMsg = (String) request.getAttribute("errorMessage");
     String planDate = request.getParameter("planDate") != null ? request.getParameter("planDate") : "";
@@ -25,6 +25,7 @@
 
 <html:form action="/ins/plan/wizard" method="post">
 <html:hidden property="step" value="3"/>
+<input type="hidden" name="method" value=""/>
 
 <h2>日程設定</h2>
 <table class="form-table">
@@ -51,9 +52,18 @@
         <td>
             <select name="personCode">
                 <option value="">-- 選択 --</option>
-                <option value="EMP001" <%= "EMP001".equals(personCode) ? "selected" : "" %>>田中 太郎</option>
-                <option value="EMP002" <%= "EMP002".equals(personCode) ? "selected" : "" %>>山田 花子</option>
-                <option value="EMP003" <%= "EMP003".equals(personCode) ? "selected" : "" %>>佐藤 次郎</option>
+<%
+    List<EmpDto> empList = (List<EmpDto>) request.getAttribute("empList");
+    if (empList != null) {
+        for (EmpDto emp : empList) {
+            String empNo = emp.getEmpNo() != null ? emp.getEmpNo() : "";
+            String empName = emp.getName() != null ? emp.getName() : "";
+%>
+                <option value="<%= HtmlUtil.escape(empNo) %>" <%= empNo.equals(personCode) ? "selected" : "" %>><%= HtmlUtil.escape(empNo) %> - <%= HtmlUtil.escape(empName) %></option>
+<%
+        }
+    }
+%>
             </select>
         </td>
     </tr>
@@ -67,7 +77,7 @@
 
 <div class="button-area" style="text-align:center;margin-top:16px;">
     <input type="button" value="戻る" class="btn btn-secondary"
-        onclick="location.href='<%= request.getContextPath() %>/ins/plan/wizard.do?step=step2';" style="margin-right:16px;"/>
-    <html:submit property="step" value="確認画面へ" styleClass="btn btn-primary"/>
+        onclick="location.href='<%= request.getContextPath() %>/ins/plan/wizard.do?method=step2';" style="margin-right:16px;"/>
+    <input type="submit" value="確認画面へ" class="btn btn-primary" onclick="this.form.method.value='confirm';"/>
 </div>
 </html:form>

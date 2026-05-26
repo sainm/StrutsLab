@@ -1,5 +1,4 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
-<%@ taglib uri="http://struts.apache.org/tags-html" prefix="html" %>
 <%@ page import="java.util.List, java.util.Map, com.strutslab.util.HtmlUtil" %>
 <%
     String ctx = request.getContextPath();
@@ -9,58 +8,30 @@
     if (completionMatrix == null) completionMatrix = java.util.Collections.emptyList();
     if (crossTab == null) crossTab = java.util.Collections.emptyList();
     if (ranking == null) ranking = java.util.Collections.emptyList();
-%>
-<%
+
     com.strutslab.form.report.ReportForm reportForm = (com.strutslab.form.report.ReportForm) request.getAttribute("reportForm");
     String dateFrom = reportForm != null && reportForm.getDateFrom() != null ? reportForm.getDateFrom() : "";
     String dateTo = reportForm != null && reportForm.getDateTo() != null ? reportForm.getDateTo() : "";
-    String eqType = reportForm != null && reportForm.getEquipmentType() != null ? reportForm.getEquipmentType() : "";
-    String team = reportForm != null && reportForm.getTeam() != null ? reportForm.getTeam() : "";
 %>
 
-<html:form action="/report/summary" method="post">
-<div class="search-form">
-<table class="form-table">
-    <tr>
-        <th>対象期間</th>
-        <td>
-            <input type="text" name="dateFrom" value="<%= HtmlUtil.escape(dateFrom) %>" size="6" maxlength="6" placeholder="YYYYMM"> 〜
-            <input type="text" name="dateTo" value="<%= HtmlUtil.escape(dateTo) %>" size="6" maxlength="6" placeholder="YYYYMM">
-        </td>
-        <th>設備種別</th>
-        <td>
-            <select name="equipmentType">
-                <option value="">-- 全て --</option>
-                <option value="変圧器" <%= "変圧器".equals(eqType) ? "selected" : "" %>>変圧器</option>
-                <option value="遮断器" <%= "遮断器".equals(eqType) ? "selected" : "" %>>遮断器</option>
-                <option value="開閉器" <%= "開閉器".equals(eqType) ? "selected" : "" %>>開閉器</option>
-                <option value="ケーブル" <%= "ケーブル".equals(eqType) ? "selected" : "" %>>ケーブル</option>
-            </select>
-        </td>
-    </tr>
-    <tr>
-        <th>担当チーム</th>
-        <td>
-            <input type="text" name="team" value="<%= HtmlUtil.escape(team) %>" size="20">
-        </td>
-        <td colspan="2"></td>
-    </tr>
-</table>
-<div class="button-area">
-    <html:submit value="表示" styleClass="btn btn-primary"/>
+<div style="padding:16px;">
+
+<div class="no-print" style="text-align:right;margin-bottom:12px;">
+    <input type="button" value="印刷" class="btn btn-primary" onclick="window.print();"/>
+    <input type="button" value="閉じる" class="btn btn-secondary" onclick="window.close();"/>
 </div>
-</div>
-</html:form>
+
+<h1 style="text-align:center;margin-bottom:4px;">総合レポート</h1>
+<p style="text-align:center;color:#666;margin-bottom:20px;"><%= HtmlUtil.escape(dateFrom) %> 〜 <%= HtmlUtil.escape(dateTo) %></p>
 
 <!-- Section 1: 実施率推移 -->
-<h2 style="margin-top:24px;">点検実施率推移</h2>
+<h2>点検実施率推移</h2>
 <%
     if (completionMatrix.isEmpty()) {
 %>
     <p>データがありません。</p>
 <%
     } else {
-        // Group by equipment type and month
         java.util.Map<String, java.util.Map<String, Map<String, Object>>> matrix = new java.util.LinkedHashMap<String, java.util.Map<String, Map<String, Object>>>();
         java.util.Set<String> months = new java.util.LinkedHashSet<String>();
         for (Map<String, Object> row : completionMatrix) {
@@ -112,7 +83,6 @@
     <p>データがありません。</p>
 <%
     } else {
-        // Cross-tab: month x type
         java.util.Map<String, java.util.Map<String, Object>> crossMap = new java.util.LinkedHashMap<String, java.util.Map<String, Object>>();
         java.util.Set<String> crossMonths = new java.util.LinkedHashSet<String>();
         java.util.Set<String> crossTypes = new java.util.LinkedHashSet<String>();
@@ -187,9 +157,4 @@
     }
 %>
 
-<div style="text-align:center;margin-top:16px;">
-    <input type="button" value="CSV出力" class="btn btn-primary"
-        onclick="location.href='<%=ctx%>/report/summary.do?csv=true&dateFrom=<%= HtmlUtil.escape(dateFrom) %>&dateTo=<%= HtmlUtil.escape(dateTo) %>'"/>
-    <input type="button" value="印刷用表示" class="btn btn-secondary"
-        onclick="window.open('<%=ctx%>/report/print.do?dateFrom=<%= HtmlUtil.escape(dateFrom) %>&dateTo=<%= HtmlUtil.escape(dateTo) %>&equipmentType=<%= HtmlUtil.escape(eqType) %>','printWin','width=900,height=700');"/>
 </div>

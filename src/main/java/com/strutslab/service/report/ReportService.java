@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.ibatis.session.SqlSession;
 
+import com.strutslab.dao.ReportDao;
 import com.strutslab.db.MyBatisUtil;
 import com.strutslab.form.report.ReportForm;
 
@@ -16,22 +17,22 @@ public class ReportService {
 
     public List<Map<String, Object>> computeCompletionRate(ReportForm form) {
         try (SqlSession sqlSession = MyBatisUtil.getSqlSessionFactory().openSession()) {
-            Map<String, Object> params = buildParams(form);
-            return sqlSession.selectList("com.strutslab.dao.ReportDao.computeCompletionRate", params);
+            ReportDao dao = sqlSession.getMapper(ReportDao.class);
+            return dao.computeCompletionRate(buildParams(form));
         }
     }
 
     public List<Map<String, Object>> computeIncidentCrossTab(ReportForm form) {
         try (SqlSession sqlSession = MyBatisUtil.getSqlSessionFactory().openSession()) {
-            Map<String, Object> params = buildParams(form);
-            return sqlSession.selectList("com.strutslab.dao.ReportDao.computeIncidentCrossTab", params);
+            ReportDao dao = sqlSession.getMapper(ReportDao.class);
+            return dao.computeIncidentCrossTab(buildParams(form));
         }
     }
 
     public List<Map<String, Object>> computeEquipmentRanking(ReportForm form) {
         try (SqlSession sqlSession = MyBatisUtil.getSqlSessionFactory().openSession()) {
-            Map<String, Object> params = buildParams(form);
-            return sqlSession.selectList("com.strutslab.dao.ReportDao.computeEquipmentRanking", params);
+            ReportDao dao = sqlSession.getMapper(ReportDao.class);
+            return dao.computeEquipmentRanking(buildParams(form));
         }
     }
 

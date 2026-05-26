@@ -1,9 +1,9 @@
 package com.strutslab.form.parts;
 
-import org.apache.struts.action.ActionForm;
 import org.apache.struts.upload.FormFile;
+import org.apache.struts.validator.ValidatorForm;
 
-public class PartsForm extends ActionForm {
+public class PartsForm extends ValidatorForm {
     private String partCode;
     private String partName;
     private String partType;

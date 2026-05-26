@@ -172,7 +172,8 @@ public class PartsService {
                 String uploadDir = uploadRoot + "/attachments/parts/";
                 File dir = new File(uploadDir);
                 if (!dir.exists()) dir.mkdirs();
-                String fileName = dto.getPartCode() + "_" + uploadFile.getFileName();
+                String safeName = uploadFile.getFileName().replaceAll("[\\\\/:*?\"<>|]", "_");
+                String fileName = dto.getPartCode() + "_" + safeName;
                 File dest = new File(dir, fileName);
                 try (InputStream is = uploadFile.getInputStream();
                         FileOutputStream fos = new FileOutputStream(dest)) {

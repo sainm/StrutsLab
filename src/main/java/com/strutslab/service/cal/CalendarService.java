@@ -15,7 +15,8 @@ import com.strutslab.db.MyBatisUtil;
 
 public class CalendarService {
 
-    private static final SimpleDateFormat DATE_FMT = new SimpleDateFormat("yyyyMMdd");
+    private static final ThreadLocal<SimpleDateFormat> DATE_FMT =
+            ThreadLocal.withInitial(() -> new SimpleDateFormat("yyyyMMdd"));
 
     public List<Map<String, Object>> findHolidaysByYear(String year) {
         try (SqlSession sqlSession = MyBatisUtil.getSqlSessionFactory().openSession()) {
@@ -111,7 +112,7 @@ public class CalendarService {
 
     public BulkResult bulkRegister(String dateFrom, String dateTo,
             String holidayType, String holidayName) throws Exception {
-        String today = DATE_FMT.format(new Date());
+        String today = DATE_FMT.get().format(new Date());
         if (dateFrom.compareTo(today) < 0) {
             return new BulkResult(0, 0, null, "過去の日付は一括登録できません。");
         }
@@ -119,8 +120,8 @@ public class CalendarService {
         try (SqlSession sqlSession = MyBatisUtil.getSqlSessionFactory().openSession()) {
             CalendarDao dao = sqlSession.getMapper(CalendarDao.class);
 
-            Date from = DATE_FMT.parse(dateFrom);
-            Date to = DATE_FMT.parse(dateTo);
+            Date from = DATE_FMT.get().parse(dateFrom);
+            Date to = DATE_FMT.get().parse(dateTo);
 
             Calendar cal = Calendar.getInstance();
             cal.setTime(from);
@@ -130,7 +131,7 @@ public class CalendarService {
             StringBuilder errors = new StringBuilder();
 
             while (!cal.getTime().after(to)) {
-                String dateStr = DATE_FMT.format(cal.getTime());
+                String dateStr = DATE_FMT.get().format(cal.getTime());
 
                 Map<String, Object> existing = dao.findByDate(dateStr);
                 if (existing != null) {
@@ -157,7 +158,7 @@ public class CalendarService {
     }
 
     public String transferSetting(String transferFrom, String transferTo) {
-        String today = DATE_FMT.format(new Date());
+        String today = DATE_FMT.get().format(new Date());
         if (transferFrom.compareTo(today) < 0) {
             return "過去の日付は振替設定できません。";
         }
@@ -203,7 +204,12 @@ public class CalendarService {
             CalendarDao dao = sqlSession.getMapper(CalendarDao.class);
 
             if (holidayId != null && !holidayId.isEmpty()) {
-                int hId = Integer.parseInt(holidayId);
+                int hId;
+                try {
+                    hId = Integer.parseInt(holidayId);
+                } catch (NumberFormatException e) {
+                    return "休日IDの形式が正しくありません。";
+                }
                 Map<String, Object> holiday = dao.findById(hId);
                 if (holiday != null) {
                     holiday.put("holidayType", holidayType);

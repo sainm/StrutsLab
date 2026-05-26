@@ -1,9 +1,9 @@
 package com.strutslab.form.mst;
 
-import org.apache.struts.action.ActionForm;
 import org.apache.struts.upload.FormFile;
+import org.apache.struts.validator.ValidatorForm;
 
-public class EqpForm extends ActionForm {
+public class EqpForm extends ValidatorForm {
     private String equipmentCode;
     private String equipmentName;
     private String equipmentType;

@@ -23,6 +23,7 @@
 
 <html:form action="/ins/plan/wizard" method="post">
 <html:hidden property="step" value="2"/>
+<input type="hidden" name="method" value=""/>
 
 <h2>点検テンプレート選択</h2>
 <table class="form-table">
@@ -61,7 +62,7 @@
 
 <div class="button-area" style="text-align:center;margin-top:16px;">
     <input type="button" value="戻る" class="btn btn-secondary"
-        onclick="location.href='<%= request.getContextPath() %>/ins/plan/wizard.do?step=step1';" style="margin-right:16px;"/>
-    <html:submit property="step" value="進む" styleClass="btn btn-primary"/>
+        onclick="location.href='<%= request.getContextPath() %>/ins/plan/wizard.do?method=step1';" style="margin-right:16px;"/>
+    <input type="submit" value="進む" class="btn btn-primary" onclick="this.form.method.value='step3';"/>
 </div>
 </html:form>

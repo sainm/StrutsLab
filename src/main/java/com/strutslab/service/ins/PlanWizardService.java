@@ -8,10 +8,12 @@ import java.util.Map;
 import org.apache.ibatis.session.SqlSession;
 
 import com.strutslab.dao.ChkItemDao;
+import com.strutslab.dao.EmpDao;
 import com.strutslab.dao.EqpDao;
 import com.strutslab.dao.PlanDao;
 import com.strutslab.db.MyBatisUtil;
 import com.strutslab.dto.ChkTmplDto;
+import com.strutslab.dto.EmpDto;
 import com.strutslab.dto.EqpDto;
 import com.strutslab.dto.PlanDto;
 import com.strutslab.form.ins.PlanWizardForm;
@@ -50,7 +52,7 @@ public class PlanWizardService {
         }
     }
 
-    public void savePlan(PlanWizardForm wf) {
+    public void savePlan(PlanWizardForm wf, String status) {
         try (SqlSession sqlSession = MyBatisUtil.getSqlSessionFactory().openSession()) {
             PlanDao dao = sqlSession.getMapper(PlanDao.class);
 
@@ -59,8 +61,14 @@ public class PlanWizardService {
 
             String fiscalYear;
             if (planDate != null && planDate.length() >= 8) {
-                int yyyy = Integer.parseInt(planDate.substring(0, 4));
-                int mm = Integer.parseInt(planDate.substring(4, 6));
+                int yyyy, mm;
+                try {
+                    yyyy = Integer.parseInt(planDate.substring(0, 4));
+                    mm = Integer.parseInt(planDate.substring(4, 6));
+                } catch (NumberFormatException e) {
+                    yyyy = LocalDate.now().getYear();
+                    mm = LocalDate.now().getMonthValue();
+                }
                 fiscalYear = String.valueOf(mm >= 4 ? yyyy : yyyy - 1);
             } else {
                 int year = LocalDate.now().getYear();
@@ -73,13 +81,20 @@ public class PlanWizardService {
             dto.setTemplateId(wf.getSelectedTmplId());
             dto.setPlannedDate(planDate);
             dto.setTeamCode(wf.getTeamCode());
-            dto.setPersonCode(wf.getPersonCode());
+            dto.setPersonCode(emptyToNull(wf.getPersonCode()));
             dto.setNote(wf.getNote());
-            dto.setStatus("予定");
+            dto.setStatus(status);
             dto.setIsLocked(false);
 
             dao.insert(dto);
             sqlSession.commit();
+        }
+    }
+
+    public List<EmpDto> loadEmployees() {
+        try (SqlSession sqlSession = MyBatisUtil.getSqlSessionFactory().openSession()) {
+            EmpDao dao = sqlSession.getMapper(EmpDao.class);
+            return dao.findAll();
         }
     }
 
@@ -89,5 +104,9 @@ public class PlanWizardService {
             EqpDto eqp = dao.findById(eqpCode);
             return eqp != null ? eqp.getEquipmentType() : null;
         }
+    }
+
+    private static String emptyToNull(String s) {
+        return s != null && s.isEmpty() ? null : s;
     }
 }
