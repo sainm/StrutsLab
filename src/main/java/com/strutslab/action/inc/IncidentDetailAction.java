@@ -1,11 +1,10 @@
 package com.strutslab.action.inc;
 
-import java.sql.Timestamp;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.ibatis.session.SqlSession;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -13,34 +12,26 @@ import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.apache.struts.actions.DispatchAction;
 
-import com.strutslab.dao.IncidentDao;
-import com.strutslab.db.MyBatisUtil;
 import com.strutslab.dto.IncidentDto;
 import com.strutslab.dto.TimelineDto;
 import com.strutslab.form.inc.IncidentForm;
+import com.strutslab.service.inc.IncidentDetailService;
 
 public class IncidentDetailAction extends DispatchAction {
 
-    /**
-     * Default: load incident detail and timeline, display the page.
-     */
+    private final IncidentDetailService service = new IncidentDetailService();
+
     public ActionForward unspecified(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         return loadDetail(mapping, form, request, response);
     }
 
-    /**
-     * Transition: 未了 → 調査中
-     */
     public ActionForward investigate(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         return transition(mapping, form, request, response, "調査中",
                 "調査を開始", null, null);
     }
 
-    /**
-     * Transition: 調査中 → 対応中 (cause required)
-     */
     public ActionForward counter(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         IncidentForm incForm = (IncidentForm) form;
@@ -54,9 +45,6 @@ public class IncidentDetailAction extends DispatchAction {
                 "対応を開始", "cause", incForm.getCause());
     }
 
-    /**
-     * Transition: 対応中 → 完了 (counterDetail required)
-     */
     public ActionForward complete(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         IncidentForm incForm = (IncidentForm) form;
@@ -70,39 +58,26 @@ public class IncidentDetailAction extends DispatchAction {
                 "対応完了", "counterDetail", incForm.getCounterDetail());
     }
 
-    /**
-     * Transition: 完了 → クローズ
-     */
     public ActionForward closeIncident(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         return transition(mapping, form, request, response, "クローズ",
                 "クローズ", null, null);
     }
 
-    /**
-     * Forward to CAPA creation with incident data.
-     */
     public ActionForward capa(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         IncidentForm incForm = (IncidentForm) form;
-        // Set incident data in session for CAPA action to read
         request.getSession().setAttribute("capaIncidentNo", incForm.getIncidentNo());
         return mapping.findForward("capa");
     }
 
-    // ---- Private helpers ----
-
     private ActionForward loadDetail(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
-
         IncidentForm incForm = (IncidentForm) form;
         String incidentNo = request.getParameter("incidentNo");
-
         if (incidentNo == null || incidentNo.isEmpty()) {
-            // Try from form
             incidentNo = incForm.getIncidentNo();
         }
-
         if (incidentNo == null || incidentNo.isEmpty()) {
             ActionMessages errors = new ActionMessages();
             errors.add("incidentNo", new ActionMessage("errors.required", "報告番号"));
@@ -110,25 +85,19 @@ public class IncidentDetailAction extends DispatchAction {
             return mapping.findForward("success");
         }
 
-        try (SqlSession sqlSession = MyBatisUtil.getSqlSessionFactory().openSession()) {
-            IncidentDao dao = sqlSession.getMapper(IncidentDao.class);
-
-            IncidentDto dto = dao.findById(incidentNo);
-            if (dto == null) {
-                ActionMessages errors = new ActionMessages();
-                errors.add("incidentNo", new ActionMessage("errors.record", incidentNo));
-                saveErrors(request, errors);
-                return mapping.findForward("success");
-            }
-
-            // Populate form from DTO
-            dtoToForm(dto, incForm);
-
-            // Load timeline
-            java.util.List<TimelineDto> timeline = dao.getTimeline(incidentNo);
-            request.setAttribute("timeline", timeline);
-            request.setAttribute("incident", dto);
+        IncidentDto dto = service.findById(incidentNo);
+        if (dto == null) {
+            ActionMessages errors = new ActionMessages();
+            errors.add("incidentNo", new ActionMessage("errors.record", incidentNo));
+            saveErrors(request, errors);
+            return mapping.findForward("success");
         }
+
+        dtoToForm(dto, incForm);
+
+        List<TimelineDto> timeline = service.getTimeline(incidentNo);
+        request.setAttribute("timeline", timeline);
+        request.setAttribute("incident", dto);
 
         return mapping.findForward("success");
     }
@@ -137,13 +106,11 @@ public class IncidentDetailAction extends DispatchAction {
             HttpServletRequest request, HttpServletResponse response,
             String newStatus, String actionContent,
             String fieldToUpdate, String fieldValue) throws Exception {
-
         IncidentForm incForm = (IncidentForm) form;
         String incidentNo = incForm.getIncidentNo();
         if (incidentNo == null || incidentNo.isEmpty()) {
             incidentNo = request.getParameter("incidentNo");
         }
-
         if (incidentNo == null || incidentNo.isEmpty()) {
             ActionMessages errors = new ActionMessages();
             errors.add("incidentNo", new ActionMessage("errors.required", "報告番号"));
@@ -151,54 +118,18 @@ public class IncidentDetailAction extends DispatchAction {
             return mapping.findForward("success");
         }
 
-        try (SqlSession sqlSession = MyBatisUtil.getSqlSessionFactory().openSession()) {
-            IncidentDao dao = sqlSession.getMapper(IncidentDao.class);
+        String user = (String) request.getSession().getAttribute("loginUser");
+        if (user == null) user = "system";
 
-            IncidentDto dto = dao.findById(incidentNo);
-            if (dto == null) {
-                ActionMessages errors = new ActionMessages();
-                errors.add("incidentNo", new ActionMessage("errors.record", incidentNo));
-                saveErrors(request, errors);
-                return mapping.findForward("success");
-            }
+        service.transition(incidentNo, newStatus, fieldToUpdate, fieldValue, user, actionContent);
 
-            String oldStatus = dto.getStatus();
+        IncidentDto dto = service.findById(incidentNo);
+        dtoToForm(dto, incForm);
 
-            // Update status
-            dto.setStatus(newStatus);
+        List<TimelineDto> timelineList = service.getTimeline(incidentNo);
+        request.setAttribute("timeline", timelineList);
+        request.setAttribute("incident", dto);
 
-            // Update optional field
-            if ("cause".equals(fieldToUpdate)) {
-                dto.setCause(fieldValue);
-            } else if ("counterDetail".equals(fieldToUpdate)) {
-                dto.setCounterDetail(fieldValue);
-            }
-
-            dao.update(dto);
-
-            // Add timeline entry
-            TimelineDto timeline = new TimelineDto();
-            timeline.setIncidentNo(incidentNo);
-            timeline.setActionDatetime(new Timestamp(System.currentTimeMillis()));
-            String user = (String) request.getSession().getAttribute("loginUser");
-            timeline.setActionUser(user != null ? user : "system");
-            timeline.setActionContent(actionContent);
-            timeline.setStatusFrom(oldStatus);
-            timeline.setStatusTo(newStatus);
-            dao.insertTimeline(timeline);
-
-            sqlSession.commit();
-
-            // Refresh form from updated DTO
-            dtoToForm(dto, incForm);
-
-            // Reload timeline
-            java.util.List<TimelineDto> timelineList = dao.getTimeline(incidentNo);
-            request.setAttribute("timeline", timelineList);
-            request.setAttribute("incident", dto);
-        }
-
-        // Determine forward name based on method
         String methodName = request.getParameter("method");
         if (methodName != null && !methodName.isEmpty()) {
             return mapping.findForward(methodName);

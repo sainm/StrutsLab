@@ -5,7 +5,7 @@
 <%@ page import="java.util.List,
                  com.strutslab.dto.ExecResultDto,
                  com.strutslab.dto.ExecItemResultDto,
-                 com.strutslab.form.ins.ExecForm" %>
+                 com.strutslab.form.ins.ExecForm, com.strutslab.util.HtmlUtil" %>
 <%
     ExecResultDto result = (ExecResultDto) request.getAttribute("execResult");
     List<ExecItemResultDto> items = (List<ExecItemResultDto>) request.getAttribute("execItems");
@@ -24,7 +24,7 @@
     }
 %>
 <html:form action="/ins/exec/detail" method="post">
-<input type="hidden" name="resultId" value="<%= result != null ? result.getResultId() : 0 %>"/>
+<input type="hidden" name="resultId" value="<%= HtmlUtil.escape(result != null ? result.getResultId() : 0) %>"/>
 
 <app:sectionHeader title="点検結果詳細" anchorId="execDetail"/>
 
@@ -35,33 +35,33 @@
 <table class="form-table">
     <tr>
         <th>ステータス</th>
-        <td><span class="badge <%= statusClass %>"><%= statusDisplay %></span></td>
+        <td><span class="badge <%= HtmlUtil.escape(statusClass) %>"><%= HtmlUtil.escape(statusDisplay) %></span></td>
         <th>設備名</th>
-        <td><%= result.getEquipmentName() != null ? result.getEquipmentName() : "" %></td>
+        <td><%= HtmlUtil.escape(result.getEquipmentName() != null ? result.getEquipmentName() : "") %></td>
     </tr>
     <tr>
         <th>設備コード</th>
-        <td><%= result.getEquipmentCode() != null ? result.getEquipmentCode() : "" %></td>
+        <td><%= HtmlUtil.escape(result.getEquipmentCode() != null ? result.getEquipmentCode() : "") %></td>
         <th>点検種別</th>
-        <td><%= result.getInspectionKind() != null ? result.getInspectionKind() : "" %></td>
+        <td><%= HtmlUtil.escape(result.getInspectionKind() != null ? result.getInspectionKind() : "") %></td>
     </tr>
     <tr>
         <th>点検日</th>
-        <td><%= result.getExecutedDate() != null ? result.getExecutedDate() : "" %></td>
+        <td><%= HtmlUtil.escape(result.getExecutedDate() != null ? result.getExecutedDate() : "") %></td>
         <th>点検者</th>
-        <td><%= result.getExecutedBy() != null ? result.getExecutedBy() : "" %></td>
+        <td><%= HtmlUtil.escape(result.getExecutedBy() != null ? result.getExecutedBy() : "") %></td>
     </tr>
     <tr>
         <th>総合判定</th>
-        <td colspan="3"><%= result.getSummaryJudge() != null ? result.getSummaryJudge() : "" %></td>
+        <td colspan="3"><%= HtmlUtil.escape(result.getSummaryJudge() != null ? result.getSummaryJudge() : "") %></td>
     </tr>
     <tr>
         <th>総合所見</th>
-        <td colspan="3"><%= result.getSummaryNote() != null ? result.getSummaryNote() : "" %></td>
+        <td colspan="3"><%= HtmlUtil.escape(result.getSummaryNote() != null ? result.getSummaryNote() : "") %></td>
     </tr>
     <tr>
         <th>次回推奨日</th>
-        <td colspan="3"><%= result.getNextRecommendedDate() != null ? result.getNextRecommendedDate() : "" %></td>
+        <td colspan="3"><%= HtmlUtil.escape(result.getNextRecommendedDate() != null ? result.getNextRecommendedDate() : "") %></td>
     </tr>
 </table>
 </div>
@@ -91,10 +91,10 @@
                 String note = item.getNote() != null ? item.getNote() : "";
 %>
         <tr>
-            <td><%= name %></td>
-            <td><%= judge %></td>
-            <td><%= val %></td>
-            <td><%= note %></td>
+            <td><%= HtmlUtil.escape(name) %></td>
+            <td><%= HtmlUtil.escape(judge) %></td>
+            <td><%= HtmlUtil.escape(val) %></td>
+            <td><%= HtmlUtil.escape(note) %></td>
         </tr>
 <%
             }
@@ -151,7 +151,7 @@
     String msg = (String) request.getAttribute("org.apache.struts.action.ACTION_MESSAGE");
     if (msg != null) {
 %>
-<div class="info-messages"><%= msg %></div>
+<div class="info-messages"><%= HtmlUtil.escape(msg) %></div>
 <%
     }
 %>

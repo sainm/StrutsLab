@@ -1,5 +1,13 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
-<%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
-<h1><tiles:getAsString name="title"/></h1>
-<div class="search-area"><tiles:insert attribute="searchArea"/></div>
-<div class="list-area"><tiles:insert attribute="listArea"/></div>
+<%@ page import="com.strutslab.util.HtmlUtil" %>
+<h1><%= HtmlUtil.escape((String) request.getAttribute("tiles_title")) %></h1>
+<%
+    String _searchArea = (String) request.getAttribute("tiles_searchArea");
+    if (_searchArea != null && !_searchArea.isEmpty()) {
+        request.getRequestDispatcher(_searchArea).include(request, response);
+    }
+    String _listArea = (String) request.getAttribute("tiles_listArea");
+    if (_listArea != null && !_listArea.isEmpty()) {
+        request.getRequestDispatcher(_listArea).include(request, response);
+    }
+%>

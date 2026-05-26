@@ -2,7 +2,7 @@
 <%@ taglib uri="http://struts.apache.org/tags-html" prefix="html" %>
 <%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/tld/app-common.tld" prefix="app" %>
-<%@ page import="java.util.List, com.strutslab.dto.ExecResultDto" %>
+<%@ page import="java.util.List, com.strutslab.dto.ExecResultDto, com.strutslab.util.HtmlUtil" %>
 <%
     List<ExecResultDto> list = (List<ExecResultDto>) request.getAttribute("approvalList");
     if (list == null) list = java.util.Collections.emptyList();
@@ -41,11 +41,11 @@
             String status = dto.getApprovalStatus() != null ? dto.getApprovalStatus() : "";
 %>
         <tr>
-            <td><input type="checkbox" name="selectedItems" value="<%= resultId %>"/></td>
-            <td><a href="<%=request.getContextPath()%>/ins/exec/detail.do?resultId=<%= resultId %>"><%= executedDate %></a></td>
-            <td><%= eqpName %></td>
-            <td><%= executedBy %></td>
-            <td><%= reasonDisplay %></td>
+            <td><input type="checkbox" name="selectedItems" value="<%= HtmlUtil.escape(resultId) %>"/></td>
+            <td><a href="<%=request.getContextPath()%>/ins/exec/detail.do?resultId=<%= HtmlUtil.escape(resultId) %>"><%= HtmlUtil.escape(executedDate) %></a></td>
+            <td><%= HtmlUtil.escape(eqpName) %></td>
+            <td><%= HtmlUtil.escape(executedBy) %></td>
+            <td><%= HtmlUtil.escape(reasonDisplay) %></td>
             <td><app:statusBadge status="<%= status %>"/></td>
         </tr>
 <%
@@ -62,7 +62,7 @@
     String showReject = request.getParameter("showReject");
     String rejectStyle = "true".equals(showReject) ? "" : "display:none;";
 %>
-<div id="rejectReasonArea" style="<%= rejectStyle %>">
+<div id="rejectReasonArea" style="<%= HtmlUtil.escape(rejectStyle) %>">
 <table class="form-table">
     <tr>
         <th>差戻理由 <span class="required">*</span></th>

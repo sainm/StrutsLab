@@ -89,7 +89,7 @@
             inspection_kind,
             (SELECT COALESCE(MAX(sort_order), 0) + 1 FROM inspection_template)
         FROM inspection_template
-        WHERE template_id = #{id}
+        WHERE template_id = #{templateId}
     </insert>
 
     <update id="swapOrder">

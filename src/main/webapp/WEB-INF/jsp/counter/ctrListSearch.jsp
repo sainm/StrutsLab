@@ -1,7 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://struts.apache.org/tags-html" prefix="html" %>
 <%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean" %>
-<%@ page import="com.strutslab.form.counter.CounterSearchForm" %>
+<%@ page import="com.strutslab.form.counter.CounterSearchForm, com.strutslab.util.HtmlUtil" %>
 <%
     CounterSearchForm sf = (CounterSearchForm) request.getAttribute("counterSearchForm");
     if (sf == null) sf = new CounterSearchForm();
@@ -17,15 +17,15 @@
     <tr>
         <th>指示日（開始）</th>
         <td>
-            <input type="text" name="dateFrom" value="<%= dateFrom %>" size="10" maxlength="8" placeholder="YYYYMMDD"/>
+            <input type="text" name="dateFrom" value="<%= HtmlUtil.escape(dateFrom) %>" size="10" maxlength="8" placeholder="YYYYMMDD"/>
         </td>
         <th>指示日（終了）</th>
         <td>
-            <input type="text" name="dateTo" value="<%= dateTo %>" size="10" maxlength="8" placeholder="YYYYMMDD"/>
+            <input type="text" name="dateTo" value="<%= HtmlUtil.escape(dateTo) %>" size="10" maxlength="8" placeholder="YYYYMMDD"/>
         </td>
         <th>担当者</th>
         <td>
-            <input type="text" name="person" value="<%= person %>" size="15" maxlength="30"/>
+            <input type="text" name="person" value="<%= HtmlUtil.escape(person) %>" size="15" maxlength="30"/>
             <input type="button" value="選択" onclick="window.open('<%=request.getContextPath()%>/org/emp/popup.do?target=person', 'empPopup', 'width=600,height=500');"/>
         </td>
     </tr>

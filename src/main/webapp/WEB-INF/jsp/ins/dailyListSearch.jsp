@@ -1,14 +1,14 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://struts.apache.org/tags-html" prefix="html" %>
 <%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean" %>
-<%@ page import="java.util.List, java.util.Map, com.strutslab.form.ins.DailyForm" %>
+<%@ page import="java.util.List, com.strutslab.dto.EmpDto, com.strutslab.form.ins.DailyForm, com.strutslab.util.HtmlUtil" %>
 <%
     DailyForm df = (DailyForm) request.getAttribute("dailyForm");
     if (df == null) df = new DailyForm();
     String targetDate = df.getTargetDate() != null ? df.getTargetDate() : "";
     String personCode = df.getPersonCode() != null ? df.getPersonCode() : "";
     String statusFilter = df.getStatusFilter() != null ? df.getStatusFilter() : "全部";
-    List<Map<String, Object>> empList = (List<Map<String, Object>>) request.getAttribute("empList");
+    List<EmpDto> empList = (List<EmpDto>) request.getAttribute("empList");
 %>
 <html:form action="/ins/daily" method="post">
 <div class="search-form">
@@ -16,7 +16,7 @@
     <tr>
         <th>点検日</th>
         <td>
-            <input type="text" name="targetDate" value="<%= targetDate %>" size="10" maxlength="8" placeholder="YYYYMMDD">
+            <input type="text" name="targetDate" value="<%= HtmlUtil.escape(targetDate) %>" size="10" maxlength="8" placeholder="YYYYMMDD">
         </td>
         <th>担当者</th>
         <td>
@@ -24,13 +24,13 @@
                 <option value="">-- 全て --</option>
 <%
     if (empList != null) {
-        for (Map<String, Object> emp : empList) {
-            String code = (String) emp.get("empNo");
-            String name = (String) emp.get("name");
+        for (EmpDto emp : empList) {
+            String code = emp.getEmpNo();
+            String name = emp.getName();
             if (code == null) continue;
             String selected = code.equals(personCode) ? "selected" : "";
 %>
-                <option value="<%= code %>" <%= selected %>><%= name %></option>
+                <option value="<%= HtmlUtil.escape(code) %>" <%= HtmlUtil.escape(selected) %>><%= HtmlUtil.escape(name) %></option>
 <%
         }
     }

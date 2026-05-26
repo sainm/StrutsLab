@@ -5,7 +5,7 @@ public class PlanDto {
     private String fiscalYear;
     private String equipmentCode;
     private String equipmentName;
-    private int templateId;
+    private Integer templateId;
     private String plannedDate;
     private String teamCode;
     private String personCode;
@@ -21,8 +21,8 @@ public class PlanDto {
     public void setEquipmentCode(String v) { this.equipmentCode = v; }
     public String getEquipmentName() { return equipmentName; }
     public void setEquipmentName(String v) { this.equipmentName = v; }
-    public int getTemplateId() { return templateId; }
-    public void setTemplateId(int v) { this.templateId = v; }
+    public Integer getTemplateId() { return templateId; }
+    public void setTemplateId(Integer v) { this.templateId = v; }
     public String getPlannedDate() { return plannedDate; }
     public void setPlannedDate(String v) { this.plannedDate = v; }
     public String getTeamCode() { return teamCode; }

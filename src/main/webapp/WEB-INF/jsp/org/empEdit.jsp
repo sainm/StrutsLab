@@ -2,6 +2,7 @@
 <%@ taglib uri="http://struts.apache.org/tags-html" prefix="html" %>
 <%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean" %>
 <%@ taglib uri="http://struts.apache.org/tags-logic" prefix="logic" %>
+<%@ page import="com.strutslab.util.HtmlUtil" %>
 <%
     com.strutslab.form.org.EmpForm empForm = (com.strutslab.form.org.EmpForm) request.getAttribute("empForm");
     boolean isEdit = empForm != null && empForm.getEmpNo() != null && !empForm.getEmpNo().isEmpty();
@@ -12,7 +13,7 @@
     if (errMsg != null) {
 %>
     <div style="color:#c33;background:#fcc;padding:8px;margin-bottom:12px;border:1px solid #c33;">
-        <%= errMsg %>
+        <%= HtmlUtil.escape(errMsg) %>
     </div>
 <%
     }
@@ -59,7 +60,7 @@
         <th>部署</th>
         <td>
             <html:text property="deptCode" readonly="true" style="width:120px;background:#eee;"/>
-            <span id="deptNameDisplay"><%= empForm != null && empForm.getDeptName() != null ? empForm.getDeptName() : "" %></span>
+            <span id="deptNameDisplay"><%= HtmlUtil.escape(empForm != null && empForm.getDeptName() != null ? empForm.getDeptName() : "") %></span>
             <input type="button" value="選択" onclick="window.open('<%=ctx%>/org/dept/popup.do','deptPopup','width=800,height=600,scrollbars=yes');"/>
         </td>
     </tr>
@@ -129,8 +130,8 @@
         <td><html:text property="loginId" style="width:150px;"/></td>
     </tr>
     <tr>
-        <th>パスワード <%= isEdit ? "" : "<span style=\"color:#c33;\">*</span>" %></th>
-        <td><html:password property="password" style="width:150px;"/> <%= isEdit ? "（変更時のみ入力）" : "" %></td>
+        <th>パスワード <%= HtmlUtil.escape(isEdit ? "" : "<span style=\"color:#c33;\">*</span>") %></th>
+        <td><html:password property="password" style="width:150px;"/> <%= HtmlUtil.escape(isEdit ? "（変更時のみ入力）" : "") %></td>
     </tr>
     <tr>
         <th>パスワード（確認）</th>

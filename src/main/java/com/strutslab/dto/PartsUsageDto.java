@@ -13,8 +13,6 @@ public class PartsUsageDto {
     private String purpose;
     private String usedBy;
     private String orderNo;
-    private String note;
-
     public Integer getUsageId() { return usageId; }
     public void setUsageId(Integer v) { this.usageId = v; }
     public String getPartCode() { return partCode; }
@@ -39,6 +37,9 @@ public class PartsUsageDto {
     public void setUsedBy(String v) { this.usedBy = v; }
     public String getOrderNo() { return orderNo; }
     public void setOrderNo(String v) { this.orderNo = v; }
+
+    // Transient field (not in DB, used for discrepancy flag)
+    private String note;
     public String getNote() { return note; }
     public void setNote(String v) { this.note = v; }
 }

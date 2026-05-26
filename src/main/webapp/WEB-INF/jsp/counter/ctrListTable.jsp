@@ -2,16 +2,16 @@
 <%@ taglib uri="http://struts.apache.org/tags-html" prefix="html" %>
 <%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/tld/app-common.tld" prefix="app" %>
-<%@ page import="java.util.List, java.util.Map, com.strutslab.dto.CounterDto" %>
+<%@ page import="java.util.List, java.util.Map, com.strutslab.dto.CounterDto, com.strutslab.util.HtmlUtil" %>
 <%
     List<CounterDto> orderList = (List<CounterDto>) request.getAttribute("orderList");
     if (orderList == null) orderList = java.util.Collections.emptyList();
     Integer totalCount = (Integer) request.getAttribute("totalCount");
     if (totalCount == null) totalCount = 0;
     Map<String, Integer> detailCounts = (Map<String, Integer>) request.getAttribute("detailCounts");
-    if (detailCounts == null) detailCounts = new java.util.HashMap<>();
+    if (detailCounts == null) detailCounts = new java.util.HashMap<String, Integer>();
     Map<String, Integer> completeCounts = (Map<String, Integer>) request.getAttribute("completeCounts");
-    if (completeCounts == null) completeCounts = new java.util.HashMap<>();
+    if (completeCounts == null) completeCounts = new java.util.HashMap<String, Integer>();
 %>
 <div class="list-table-container">
 <form name="counterListForm" method="post" action="<%=request.getContextPath()%>/counter/list.do">
@@ -46,15 +46,15 @@
             int complete = completeCounts.containsKey(orderNoStr) ? completeCounts.get(orderNoStr) : 0;
 %>
         <tr>
-            <td><input type="checkbox" name="selectedItems" value="<%= orderNoStr %>"/></td>
-            <td><a href="<%=request.getContextPath()%>/counter/detail.do?orderNo=<%= orderNoStr %>"><%= orderNoStr %></a></td>
-            <td><%= orderDateStr %></td>
+            <td><input type="checkbox" name="selectedItems" value="<%= HtmlUtil.escape(orderNoStr) %>"/></td>
+            <td><a href="<%=request.getContextPath()%>/counter/detail.do?orderNo=<%= HtmlUtil.escape(orderNoStr) %>"><%= HtmlUtil.escape(orderNoStr) %></a></td>
+            <td><%= HtmlUtil.escape(orderDateStr) %></td>
             <td>
                 <% if (incidentNoStr != null && !incidentNoStr.isEmpty()) { %>
-                    <a href="<%=request.getContextPath()%>/inc/detail.do?incidentNo=<%= incidentNoStr %>"><%= incidentNoStr %></a>
+                    <a href="<%=request.getContextPath()%>/inc/detail.do?incidentNo=<%= HtmlUtil.escape(incidentNoStr) %>"><%= HtmlUtil.escape(incidentNoStr) %></a>
                 <% } %>
             </td>
-            <td><%= priorityStr %></td>
+            <td><%= HtmlUtil.escape(priorityStr) %></td>
             <td style="text-align:center;"><%= total %></td>
             <td style="text-align:center;"><%= complete %>/<%= total %></td>
             <td><app:statusBadge status="<%= statusStr %>"/></td>

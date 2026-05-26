@@ -2,6 +2,7 @@
 <%@ taglib uri="http://struts.apache.org/tags-html" prefix="html" %>
 <%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean" %>
 <%@ taglib uri="http://struts.apache.org/tags-logic" prefix="logic" %>
+<%@ page import="com.strutslab.util.HtmlUtil" %>
 <%
     com.strutslab.form.mst.CheckItemForm form = (com.strutslab.form.mst.CheckItemForm)
         request.getAttribute("chkItemForm");
@@ -11,7 +12,7 @@
 %>
 <% if (errMsg != null) { %>
     <div style="color:#c33;background:#fcc;padding:8px;margin-bottom:12px;border:1px solid #c33;">
-        <%= errMsg %>
+        <%= HtmlUtil.escape(errMsg) %>
     </div>
 <% } %>
 
@@ -70,11 +71,11 @@
     <!-- 大分類 <%= ci + 1 %> -->
     <div class="cat1-row" style="margin-bottom:6px;padding:6px;border:1px solid #ccc;background:#fafafa;">
         <strong>大分類<%= ci + 1 %>:</strong>
-        <html:text property='<%= "cat1Names[" + ci + "]" %>' style="width:200px;"/>
-        <html:hidden property='<%= "cat1Ids[" + ci + "]" %>'/>
+        <html:text property='<%= HtmlUtil.escape("cat1Names[" + ci + "]") %>' style="width:200px;"/>
+        <html:hidden property='<%= HtmlUtil.escape("cat1Ids[" + ci + "]") %>'/>
         <input type="button" value="+中分類追加"
                onclick="document.forms[0].method.value='addCat2';
-                        var inp=document.createElement('input');inp.type='hidden';inp.name='cat1Idx';inp.value='<%= ciStr %>';
+                        var inp=document.createElement('input');inp.type='hidden';inp.name='cat1Idx';inp.value='<%= HtmlUtil.escape(ciStr) %>';
                         document.forms[0].appendChild(inp);document.forms[0].submit();"/>
         <input type="button" value="削除"
                onclick="if(confirm('この大分類を削除しますか？')){/* TODO: server-side delete for cat1 */}" style="color:#c33;"/>
@@ -90,12 +91,12 @@
     <!-- 中分類 <%= ci + 1 %>-<%= cj + 1 %> -->
     <div class="cat2-row" style="margin-left:24px;margin-bottom:4px;padding:4px;border:1px solid #ddd;background:#f5f5f5;">
         <strong>中分類<%= ci + 1 %>-<%= cj + 1 %>:</strong>
-        <html:text property='<%= "cat2Names[" + ci + "][" + cj + "]" %>' style="width:180px;"/>
+        <html:text property='<%= HtmlUtil.escape("cat2Names[" + ci + "][" + cj + "]") %>' style="width:180px;"/>
         <input type="button" value="+項目追加"
                onclick="document.forms[0].method.value='addItem';
                         var f=document.forms[0];
-                        var i1=document.createElement('input');i1.type='hidden';i1.name='cat1Idx';i1.value='<%= ci2Str %>';
-                        var i2=document.createElement('input');i2.type='hidden';i2.name='cat2Idx';i2.value='<%= cjStr %>';
+                        var i1=document.createElement('input');i1.type='hidden';i1.name='cat1Idx';i1.value='<%= HtmlUtil.escape(ci2Str) %>';
+                        var i2=document.createElement('input');i2.type='hidden';i2.name='cat2Idx';i2.value='<%= HtmlUtil.escape(cjStr) %>';
                         f.appendChild(i1);f.appendChild(i2);f.submit();"/>
         <input type="button" value="削除" style="color:#c33;"
                onclick="if(confirm('この中分類を削除しますか？')){/* TODO: server-side delete for cat2 */}"/>
@@ -111,21 +112,21 @@
                         String idxStr = String.valueOf(itemIdx);
 %>
     <div class="item-row" style="margin-left:48px;margin-bottom:2px;padding:2px;">
-        項目<%= ci + 1 %>-<%= cj + 1 %>-<%= (itemIdx + 1) %>:
-        項目名<html:text property='<%= "itemNames[" + idxStr + "]" %>' style="width:150px;"/>
-        判定基準<html:select property='<%= "itemJudgeCriterias[" + idxStr + "]" %>'>
+        項目<%= ci + 1 %>-<%= cj + 1 %>-<%= HtmlUtil.escape((itemIdx + 1)) %>:
+        項目名<html:text property='<%= HtmlUtil.escape("itemNames[" + idxStr + "]") %>' style="width:150px;"/>
+        判定基準<html:select property='<%= HtmlUtil.escape("itemJudgeCriterias[" + idxStr + "]") %>'>
             <html:option value="">--</html:option>
             <html:option value="○のみ">○のみ</html:option>
             <html:option value="○×△">○×△</html:option>
         </html:select>
-        正常範囲<html:text property='<%= "itemNormalRanges[" + idxStr + "]" %>' style="width:80px;"/>
-        単位<html:text property='<%= "itemUnits[" + idxStr + "]" %>' style="width:50px;"/>
-        <html:hidden property='<%= "itemIds[" + idxStr + "]" %>'/>
-        <html:hidden property='<%= "itemCat1Idxs[" + idxStr + "]" %>'/>
-        <html:hidden property='<%= "itemCat2Idxs[" + idxStr + "]" %>'/>
+        正常範囲<html:text property='<%= HtmlUtil.escape("itemNormalRanges[" + idxStr + "]") %>' style="width:80px;"/>
+        単位<html:text property='<%= HtmlUtil.escape("itemUnits[" + idxStr + "]") %>' style="width:50px;"/>
+        <html:hidden property='<%= HtmlUtil.escape("itemIds[" + idxStr + "]") %>'/>
+        <html:hidden property='<%= HtmlUtil.escape("itemCat1Idxs[" + idxStr + "]") %>'/>
+        <html:hidden property='<%= HtmlUtil.escape("itemCat2Idxs[" + idxStr + "]") %>'/>
         <input type="button" value="削除" style="color:#c33;"
                onclick="document.forms[0].method.value='delRow';
-                        var inp=document.createElement('input');inp.type='hidden';inp.name='rowIdx';inp.value='<%= idxStr %>';
+                        var inp=document.createElement('input');inp.type='hidden';inp.name='rowIdx';inp.value='<%= HtmlUtil.escape(idxStr) %>';
                         document.forms[0].appendChild(inp);document.forms[0].submit();"/>
     </div>
 <%

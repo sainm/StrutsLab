@@ -4,6 +4,18 @@
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
          version="3.1">
     <display-name>StrutsLab - 電力設備巡視点検管理システム</display-name>
+    <filter>
+        <filter-name>encodingFilter</filter-name>
+        <filter-class>com.strutslab.filter.EncodingFilter</filter-class>
+        <init-param>
+            <param-name>encoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>encodingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
     <listener>
         <listener-class>com.strutslab.db.DbInitializer</listener-class>
     </listener>

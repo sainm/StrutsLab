@@ -1,6 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://struts.apache.org/tags-html" prefix="html" %>
 <%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean" %>
+<%@ page import="com.strutslab.util.HtmlUtil" %>
 <%
     String incDateFrom = request.getParameter("incDateFrom");
     String incDateTo = request.getParameter("incDateTo");
@@ -24,9 +25,9 @@
 <table class="form-table">
     <tr>
         <th>発生日（From）</th>
-        <td><input type="text" name="incDateFrom" value="<%= incDateFrom %>" size="10" maxlength="10" placeholder="YYYY-MM-DD"/></td>
+        <td><input type="text" name="incDateFrom" value="<%= HtmlUtil.escape(incDateFrom) %>" size="10" maxlength="10" placeholder="YYYY-MM-DD"/></td>
         <th>発生日（To）</th>
-        <td><input type="text" name="incDateTo" value="<%= incDateTo %>" size="10" maxlength="10" placeholder="YYYY-MM-DD"/></td>
+        <td><input type="text" name="incDateTo" value="<%= HtmlUtil.escape(incDateTo) %>" size="10" maxlength="10" placeholder="YYYY-MM-DD"/></td>
     </tr>
     <tr>
         <th>設備種別</th>
@@ -82,9 +83,9 @@
     </tr>
     <tr>
         <th>担当班</th>
-        <td><input type="text" name="team" value="<%= team %>" size="20"/></td>
+        <td><input type="text" name="team" value="<%= HtmlUtil.escape(team) %>" size="20"/></td>
         <th>キーワード</th>
-        <td><input type="text" name="keyword" value="<%= keyword %>" size="20"/></td>
+        <td><input type="text" name="keyword" value="<%= HtmlUtil.escape(keyword) %>" size="20"/></td>
     </tr>
 </table>
 <div class="button-area">
@@ -98,7 +99,7 @@
     String message = (String) request.getAttribute("message");
     if (message != null && !message.isEmpty()) {
 %>
-    <div class="info-message" style="margin-top:8px;color:green;"><%= message %></div>
+    <div class="info-message" style="margin-top:8px;color:green;"><%= HtmlUtil.escape(message) %></div>
 <%
     }
 %>

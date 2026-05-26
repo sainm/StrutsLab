@@ -1,6 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://struts.apache.org/tags-html" prefix="html" %>
 <%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean" %>
+<%@ page import="com.strutslab.util.HtmlUtil" %>
 <%
     String selEqpName = request.getParameter("selectedEqpName") != null ? request.getParameter("selectedEqpName") : "";
     String selTmplName = request.getParameter("selectedTmplName") != null ? request.getParameter("selectedTmplName") : "";
@@ -25,27 +26,27 @@
 <table class="form-table">
     <tr>
         <th>設備</th>
-        <td><%= selEqpName %></td>
+        <td><%= HtmlUtil.escape(selEqpName) %></td>
     </tr>
     <tr>
         <th>点検テンプレート</th>
-        <td><%= selTmplName %></td>
+        <td><%= HtmlUtil.escape(selTmplName) %></td>
     </tr>
     <tr>
         <th>予定日</th>
-        <td><%= planDate %></td>
+        <td><%= HtmlUtil.escape(planDate) %></td>
     </tr>
     <tr>
         <th>担当班</th>
-        <td><%= teamCode %></td>
+        <td><%= HtmlUtil.escape(teamCode) %></td>
     </tr>
     <tr>
         <th>担当者</th>
-        <td><%= personCode %></td>
+        <td><%= HtmlUtil.escape(personCode) %></td>
     </tr>
     <tr>
         <th>備考</th>
-        <td><%= note.isEmpty() ? "&nbsp;" : note %></td>
+        <td><%= HtmlUtil.escape(note.isEmpty() ? "&nbsp;" : note) %></td>
     </tr>
 </table>
 

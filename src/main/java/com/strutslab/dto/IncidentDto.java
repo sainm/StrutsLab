@@ -17,7 +17,7 @@ public class IncidentDto {
     private String incidentDetail;
     private String tmpAction;
     private String tmpActionPerson;
-    private Timestamp tmpActionDate;
+    private String tmpActionDate;
     private String cause;
     private String counterDetail;
     private String status;
@@ -50,8 +50,8 @@ public class IncidentDto {
     public void setTmpAction(String v) { this.tmpAction = v; }
     public String getTmpActionPerson() { return tmpActionPerson; }
     public void setTmpActionPerson(String v) { this.tmpActionPerson = v; }
-    public Timestamp getTmpActionDate() { return tmpActionDate; }
-    public void setTmpActionDate(Timestamp v) { this.tmpActionDate = v; }
+    public String getTmpActionDate() { return tmpActionDate; }
+    public void setTmpActionDate(String v) { this.tmpActionDate = v; }
     public String getCause() { return cause; }
     public void setCause(String v) { this.cause = v; }
     public String getCounterDetail() { return counterDetail; }

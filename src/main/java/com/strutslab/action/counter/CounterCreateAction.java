@@ -1,13 +1,11 @@
 package com.strutslab.action.counter;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.ibatis.session.SqlSession;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -15,17 +13,15 @@ import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.apache.struts.actions.DispatchAction;
 
-import com.strutslab.dao.CounterDao;
-import com.strutslab.db.MyBatisUtil;
 import com.strutslab.dto.CounterDetailDto;
 import com.strutslab.dto.CounterDto;
 import com.strutslab.form.counter.CounterForm;
+import com.strutslab.service.counter.CounterCreateService;
 
 public class CounterCreateAction extends DispatchAction {
 
-    /**
-     * Show the create form. If incidentNo param is present, pre-populate from incident.
-     */
+    private final CounterCreateService service = new CounterCreateService();
+
     public ActionForward unspecified(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         CounterForm cf = (CounterForm) form;
@@ -33,19 +29,13 @@ public class CounterCreateAction extends DispatchAction {
 
         if (incidentNo != null && !incidentNo.isEmpty()) {
             cf.setIncidentNo(incidentNo);
-            // Load incident info to prefill date, etc.
-            try (SqlSession sqlSession = MyBatisUtil.getSqlSessionFactory().openSession()) {
-                // Could load incident details here for display
-                request.setAttribute("incidentNo", incidentNo);
-            }
+            request.setAttribute("incidentNo", incidentNo);
         }
 
-        // Set default order date
         if (cf.getOrderDate() == null || cf.getOrderDate().isEmpty()) {
-            cf.setOrderDate(new SimpleDateFormat("yyyyMMdd").format(new Date()));
+            cf.setOrderDate(service.getDefaultOrderDate());
         }
 
-        // Ensure at least one empty detail row
         if (cf.getDetailCount() == 0) {
             cf.setDetailWorkContents(new String[1]);
             cf.setDetailPersons(new String[1]);
@@ -56,13 +46,9 @@ public class CounterCreateAction extends DispatchAction {
         return mapping.findForward("input");
     }
 
-    /**
-     * Add a row to the detail table.
-     */
     public ActionForward addRow(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         CounterForm cf = (CounterForm) form;
-
         int oldLen = cf.getDetailCount();
         int newLen = oldLen + 1;
 
@@ -86,22 +72,18 @@ public class CounterCreateAction extends DispatchAction {
         return mapping.findForward("addRow");
     }
 
-    /**
-     * Delete a row from the detail table by index.
-     */
     public ActionForward delRow(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         CounterForm cf = (CounterForm) form;
 
-        String idxStr = request.getParameter("index");
         int removeIdx = 0;
+        String idxStr = request.getParameter("index");
         if (idxStr != null) {
             try { removeIdx = Integer.parseInt(idxStr); } catch (NumberFormatException e) { }
         }
 
         int oldLen = cf.getDetailCount();
         if (oldLen <= 1) {
-            // Keep at least one empty row
             ActionMessages errors = new ActionMessages();
             errors.add("detail", new ActionMessage("errors.required", "明細は最低1行必要です。"));
             saveErrors(request, errors);
@@ -132,19 +114,12 @@ public class CounterCreateAction extends DispatchAction {
         return mapping.findForward("delRow");
     }
 
-    /**
-     * Save the counter order.
-     */
     public ActionForward save(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         CounterForm cf = (CounterForm) form;
 
-        // --- Validation ---
         ActionMessages errors = new ActionMessages();
-
-        if (cf.getDetailCount() == 0
-                || cf.getDetailWorkContents() == null
-                || cf.getDetailWorkContents().length == 0) {
+        if (cf.getDetailCount() == 0 || cf.getDetailWorkContents() == null) {
             errors.add("detail", new ActionMessage("errors.required", "明細は最低1行必要です。"));
         } else {
             for (int i = 0; i < cf.getDetailCount(); i++) {
@@ -153,25 +128,9 @@ public class CounterCreateAction extends DispatchAction {
                     errors.add("detailWorkContents",
                             new ActionMessage("errors.required", (i + 1) + "行目の指示内容"));
                 }
-                String person = cf.getDetailPerson(i);
-                if (person == null || person.trim().isEmpty()) {
+                if (isEmpty(cf.getDetailPerson(i))) {
                     errors.add("detailPersons",
                             new ActionMessage("errors.required", (i + 1) + "行目の担当者"));
-                }
-                String deadline = cf.getDetailDeadline(i);
-                if (deadline != null && !deadline.isEmpty()) {
-                    // Check deadline is not past
-                    try {
-                        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-                        Date dl = sdf.parse(deadline);
-                        if (dl.before(new Date())) {
-                            errors.add("detailDeadlines",
-                                    new ActionMessage("errors.required", (i + 1) + "行目の期限が過去日付"));
-                        }
-                    } catch (Exception e) {
-                        errors.add("detailDeadlines",
-                                new ActionMessage("errors.required", (i + 1) + "行目の期限が不正"));
-                    }
                 }
             }
         }
@@ -181,66 +140,36 @@ public class CounterCreateAction extends DispatchAction {
             return mapping.getInputForward();
         }
 
-        // --- Generate order number ---
-        String today = new SimpleDateFormat("yyyyMMdd").format(new Date());
-        String orderNoPrefix = "CTR-" + today + "-";
+        CounterDto header = new CounterDto();
+        header.setIncidentNo(cf.getIncidentNo());
+        header.setOrderDate(cf.getOrderDate());
+        header.setIssuer(cf.getIssuer());
+        header.setOverallDeadline(cf.getOverallDeadline());
+        header.setOverallPriority(cf.getOverallPriority());
 
-        try (SqlSession sqlSession = MyBatisUtil.getSqlSessionFactory().openSession()) {
-            CounterDao dao = sqlSession.getMapper(CounterDao.class);
+        List<CounterDetailDto> details = new ArrayList<>();
+        for (int i = 0; i < cf.getDetailCount(); i++) {
+            CounterDetailDto d = new CounterDetailDto();
+            d.setWorkContent(cf.getDetailWorkContent(i));
+            d.setPersonName(cf.getDetailPerson(i));
+            d.setDeadline(cf.getDetailDeadline(i));
+            d.setPriority(cf.getDetailPriority(i));
+            details.add(d);
+        }
 
-            // Find max sequence for today
-            List<CounterDto> existing = dao.search(new java.util.HashMap<String, Object>() {{
-                put("dateFrom", today);
-                put("dateTo", today);
-            }});
-
-            int maxSeq = 0;
-            for (CounterDto d : existing) {
-                String on = d.getOrderNo();
-                if (on != null && on.startsWith(orderNoPrefix)) {
-                    try {
-                        int seq = Integer.parseInt(on.substring(orderNoPrefix.length()));
-                        if (seq > maxSeq) maxSeq = seq;
-                    } catch (NumberFormatException e) { }
-                }
-            }
-            String orderNo = orderNoPrefix + String.format("%03d", maxSeq + 1);
-
-            // --- Insert header ---
-            CounterDto header = new CounterDto();
-            header.setOrderNo(orderNo);
-            header.setIncidentNo(cf.getIncidentNo());
-            header.setOrderDate(cf.getOrderDate());
-            header.setIssuer(cf.getIssuer());
-            header.setOverallDeadline(cf.getOverallDeadline());
-            header.setOverallPriority(cf.getOverallPriority());
-            header.setStatus("未了");
-            dao.insert(header);
-
-            // --- Insert details ---
-            for (int i = 0; i < cf.getDetailCount(); i++) {
-                CounterDetailDto detail = new CounterDetailDto();
-                detail.setOrderNo(orderNo);
-                detail.setSeqNo(i + 1);
-                detail.setWorkContent(cf.getDetailWorkContent(i));
-                detail.setPersonName(cf.getDetailPerson(i));
-                detail.setDeadline(cf.getDetailDeadline(i));
-                detail.setPriority(cf.getDetailPriority(i));
-                detail.setStatus("未了");
-                dao.insertDetail(detail);
-            }
-
-            sqlSession.commit();
-
-            // Need to re-query with person_code. If person is a name, set personName and leave personCode.
-            // For simplicity, we set personCode from a lookup or leave blank
-            // Update details with person codes if needed
-
+        try {
+            String orderNo = service.save(header, details);
             ActionMessages messages = new ActionMessages();
             messages.add("message", new ActionMessage("label.update", "対応指示を登録しました。番号:" + orderNo));
             saveMessages(request, messages);
+        } catch (RuntimeException e) {
+            errors.add("detail", new ActionMessage("errors.required", e.getMessage()));
+            saveErrors(request, errors);
+            return mapping.getInputForward();
         }
 
         return mapping.findForward("success");
     }
+
+    private boolean isEmpty(String s) { return s == null || s.trim().isEmpty(); }
 }

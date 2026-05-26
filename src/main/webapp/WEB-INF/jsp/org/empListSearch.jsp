@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://struts.apache.org/tags-html" prefix="html" %>
+<%@ page import="com.strutslab.util.HtmlUtil" %>
 <%
     String deptCode = request.getParameter("deptCode");
     String position = request.getParameter("position");
@@ -40,8 +41,8 @@
     <tr>
         <th>入社年月</th>
         <td colspan="3">
-            <input type="text" name="yearFrom" value="<%= yearFrom %>" size="6" maxlength="6" placeholder="YYYYMM"> 〜
-            <input type="text" name="yearTo" value="<%= yearTo %>" size="6" maxlength="6" placeholder="YYYYMM">
+            <input type="text" name="yearFrom" value="<%= HtmlUtil.escape(yearFrom) %>" size="6" maxlength="6" placeholder="YYYYMM"> 〜
+            <input type="text" name="yearTo" value="<%= HtmlUtil.escape(yearTo) %>" size="6" maxlength="6" placeholder="YYYYMM">
         </td>
     </tr>
     <tr>

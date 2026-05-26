@@ -1,6 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://struts.apache.org/tags-html" prefix="html" %>
 <%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean" %>
+<%@ page import="com.strutslab.util.HtmlUtil" %>
 <%
     String errMsg = (String) request.getAttribute("errorMessage");
     String planDate = request.getParameter("planDate") != null ? request.getParameter("planDate") : "";
@@ -9,7 +10,7 @@
     String note = request.getParameter("note") != null ? request.getParameter("note") : "";
 %>
 <% if (errMsg != null) { %>
-    <div style="color:#c33;background:#fcc;padding:8px;margin-bottom:12px;border:1px solid #c33;"><%= errMsg %></div>
+    <div style="color:#c33;background:#fcc;padding:8px;margin-bottom:12px;border:1px solid #c33;"><%= HtmlUtil.escape(errMsg) %></div>
 <% } %>
 
 <!-- Step indicator -->
@@ -30,7 +31,7 @@
     <tr>
         <th>予定日 <span style="color:#c33;">*</span></th>
         <td>
-            <input type="text" name="planDate" value="<%= planDate %>" size="10" maxlength="8" placeholder="YYYYMMDD"/>
+            <input type="text" name="planDate" value="<%= HtmlUtil.escape(planDate) %>" size="10" maxlength="8" placeholder="YYYYMMDD"/>
             <span style="font-size:0.9em;color:#666;margin-left:8px;">※ 西暦8桁 (例: 20260401)</span>
         </td>
     </tr>
@@ -59,7 +60,7 @@
     <tr>
         <th>備考</th>
         <td>
-            <textarea name="note" rows="3" cols="50"><%= note %></textarea>
+            <textarea name="note" rows="3" cols="50"><%= HtmlUtil.escape(note) %></textarea>
         </td>
     </tr>
 </table>

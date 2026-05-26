@@ -2,6 +2,7 @@
 <%@ taglib uri="http://struts.apache.org/tags-html" prefix="html" %>
 <%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean" %>
 <%@ taglib uri="http://struts.apache.org/tags-logic" prefix="logic" %>
+<%@ page import="com.strutslab.util.HtmlUtil" %>
 <%
     com.strutslab.form.org.DeptForm deptForm = (com.strutslab.form.org.DeptForm) request.getAttribute("deptForm");
     boolean isEdit = deptForm != null && deptForm.getDeptCode() != null && !deptForm.getDeptCode().isEmpty();
@@ -12,7 +13,7 @@
     if (errMsg != null) {
 %>
     <div style="color:#c33;background:#fcc;padding:8px;margin-bottom:12px;border:1px solid #c33;">
-        <%= errMsg %>
+        <%= HtmlUtil.escape(errMsg) %>
     </div>
 <%
     }
@@ -20,7 +21,7 @@
     if (warnMsg != null) {
 %>
     <div style="color:#c90;background:#ffe;padding:8px;margin-bottom:12px;border:1px solid #c90;">
-        <%= warnMsg %>
+        <%= HtmlUtil.escape(warnMsg) %>
     </div>
 <%
     }
@@ -51,7 +52,7 @@
         <td>
             <html:text property="parentDeptCode" readonly="true" style="width:120px;background:#eee;"/>
             <html:hidden property="parentDeptName"/>
-            <span id="parentDeptNameDisplay"><%= deptForm != null && deptForm.getParentDeptName() != null ? deptForm.getParentDeptName() : "" %></span>
+            <span id="parentDeptNameDisplay"><%= HtmlUtil.escape(deptForm != null && deptForm.getParentDeptName() != null ? deptForm.getParentDeptName() : "") %></span>
             <input type="button" value="選択" onclick="window.open('<%=ctx%>/org/dept/popup.do','deptPopup','width=800,height=600,scrollbars=yes');"/>
         </td>
     </tr>

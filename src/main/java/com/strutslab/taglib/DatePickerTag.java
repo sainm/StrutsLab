@@ -51,7 +51,17 @@ public class DatePickerTag extends TagSupport {
         return SKIP_BODY;
     }
 
+    @Override
+    public void release() {
+        super.release();
+        this.name = null;
+        this.property = null;
+        this.format = "YYYYMMDD";
+        this.pastDisabled = false;
+    }
+
     private String resolveValue() {
+        if (name == null || property == null || property.isEmpty()) return null;
         // Look for a form bean in page/request/session/application scope
         Object bean = pageContext.findAttribute(name);
         if (bean == null) return null;

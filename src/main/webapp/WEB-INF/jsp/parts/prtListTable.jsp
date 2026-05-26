@@ -1,6 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://struts.apache.org/tags-html" prefix="html" %>
-<%@ page import="java.util.List, com.strutslab.dto.PartsDto" %>
+<%@ page import="java.util.List, com.strutslab.dto.PartsDto, com.strutslab.util.HtmlUtil" %>
 <%
     List<PartsDto> list = (List<PartsDto>) request.getAttribute("partsList");
     if (list == null) list = java.util.Collections.emptyList();
@@ -38,7 +38,9 @@
                 Integer stock = p.getCurrentStock();
                 Integer price = p.getUnitPrice();
                 String supplier = p.getSupplier() != null ? p.getSupplier() : "";
-                String badgeStatus = p.getNote(); // set by action: out/low/ok
+                java.util.Map stockBadgeMap = (java.util.Map) request.getAttribute("stockBadgeMap");
+                String badgeStatus = stockBadgeMap != null ? (String) stockBadgeMap.get(code) : "ok";
+                if (badgeStatus == null) badgeStatus = "ok";
                 String badgeColor = "";
                 String badgeText = "";
                 if ("out".equals(badgeStatus)) { badgeColor = "#c33"; badgeText = "在庫切れ"; }
@@ -46,15 +48,15 @@
                 else { badgeColor = "#090"; badgeText = "十分"; }
     %>
         <tr>
-            <td><a href="<%=ctx%>/parts/save.do?partCode=<%= java.net.URLEncoder.encode(code, "UTF-8") %>"><%= code %></a></td>
-            <td><%= name %></td>
-            <td><%= type %></td>
-            <td><%= unit %></td>
-            <td style="text-align:right;"><%= op != null ? op : "" %></td>
-            <td style="text-align:right;"><%= stock != null ? stock : "0" %></td>
-            <td><span style="display:inline-block;padding:2px 8px;border-radius:4px;color:#fff;background:<%= badgeColor %>;"><%= badgeText %></span></td>
+            <td><a href="<%=ctx%>/parts/save.do?partCode=<%= java.net.URLEncoder.encode(code, "UTF-8") %>"><%= HtmlUtil.escape(code) %></a></td>
+            <td><%= HtmlUtil.escape(name) %></td>
+            <td><%= HtmlUtil.escape(type) %></td>
+            <td><%= HtmlUtil.escape(unit) %></td>
+            <td style="text-align:right;"><%= HtmlUtil.escape(op != null ? String.valueOf(op) : "") %></td>
+            <td style="text-align:right;"><%= HtmlUtil.escape(stock != null ? String.valueOf(stock) : "0") %></td>
+            <td><span style="display:inline-block;padding:2px 8px;border-radius:4px;color:#fff;background:<%= HtmlUtil.escape(badgeColor) %>;"><%= HtmlUtil.escape(badgeText) %></span></td>
             <td style="text-align:right;"><%= price != null ? String.format("%,d", price) : "" %></td>
-            <td><%= supplier %></td>
+            <td><%= HtmlUtil.escape(supplier) %></td>
         </tr>
     <%
             }

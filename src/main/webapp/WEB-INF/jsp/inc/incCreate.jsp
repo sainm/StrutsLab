@@ -2,7 +2,7 @@
 <%@ taglib uri="http://struts.apache.org/tags-html" prefix="html" %>
 <%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/tld/app-common.tld" prefix="app" %>
-<%@ page import="java.util.List, com.strutslab.dto.IncidentDto, com.strutslab.form.inc.IncidentForm" %>
+<%@ page import="java.util.List, com.strutslab.dto.IncidentDto, com.strutslab.form.inc.IncidentForm, com.strutslab.util.HtmlUtil" %>
 <%
     IncidentForm f = (IncidentForm) request.getAttribute("incidentForm");
     if (f == null) f = (IncidentForm) session.getAttribute("incidentForm");
@@ -26,7 +26,7 @@
     List<IncidentDto> similarResults = (List<IncidentDto>) request.getAttribute("similarResults");
 %>
 <html:form action="/inc/create" method="post" enctype="multipart/form-data">
-<input type="hidden" name="fromInspection" value="<%= fromInspection %>"/>
+<input type="hidden" name="fromInspection" value="<%= HtmlUtil.escape(fromInspection) %>"/>
 
 <%-- Block 1: Incident Information --%>
 <app:sectionHeader title="① 発生情報" anchorId="block1"/>
@@ -34,19 +34,19 @@
 <table class="form-table">
     <tr>
         <th>発生日時 <span class="required">*</span></th>
-        <td><input type="text" name="incidentDateTime" value="<%= incidentDateTime %>" size="16" maxlength="16" placeholder="YYYY-MM-DD HH:mm"/></td>
+        <td><input type="text" name="incidentDateTime" value="<%= HtmlUtil.escape(incidentDateTime) %>" size="16" maxlength="16" placeholder="YYYY-MM-DD HH:mm"/></td>
         <th>発見者</th>
-        <td><input type="text" name="finder" value="<%= finder %>" size="20"/></td>
+        <td><input type="text" name="finder" value="<%= HtmlUtil.escape(finder) %>" size="20"/></td>
     </tr>
     <tr>
         <th>設備コード <span class="required">*</span></th>
         <td>
-            <input type="text" name="equipmentCode" value="<%= equipmentCode %>" size="20" id="eqpCode"/>
+            <input type="text" name="equipmentCode" value="<%= HtmlUtil.escape(equipmentCode) %>" size="20" id="eqpCode"/>
             <input type="button" value="設備検索" class="btn btn-small btn-secondary"
                 onclick="window.open('<%=request.getContextPath()%>/mst/eqp/list.do?popup=true','eqpPopup','width=800,height=600')"/>
         </td>
         <th>設備名</th>
-        <td><input type="text" name="equipmentName" value="<%= equipmentName %>" size="30" readonly="readonly" style="background:#f5f5f5;"/></td>
+        <td><input type="text" name="equipmentName" value="<%= HtmlUtil.escape(equipmentName) %>" size="30" readonly="readonly" style="background:#f5f5f5;"/></td>
     </tr>
     <tr>
         <th>天候</th>
@@ -97,11 +97,11 @@
     </tr>
     <tr>
         <th>異常部位</th>
-        <td colspan="3"><input type="text" name="incidentPart" value="<%= incidentPart %>" size="60"/></td>
+        <td colspan="3"><input type="text" name="incidentPart" value="<%= HtmlUtil.escape(incidentPart) %>" size="60"/></td>
     </tr>
     <tr>
         <th>異常内容詳細 <span class="required">*</span></th>
-        <td colspan="3"><textarea name="incidentDetail" rows="5" cols="60"><%= incidentDetail %></textarea></td>
+        <td colspan="3"><textarea name="incidentDetail" rows="5" cols="60"><%= HtmlUtil.escape(incidentDetail) %></textarea></td>
     </tr>
     <tr>
         <th>添付ファイル</th>
@@ -147,11 +147,11 @@
             String sst = dto.getStatus() != null ? dto.getStatus() : "";
     %>
         <tr>
-            <td><a href="<%=request.getContextPath()%>/inc/detail.do?incidentNo=<%= java.net.URLEncoder.encode(sno, "UTF-8") %>" target="_blank"><%= sno %></a></td>
-            <td><%= sdt %></td>
-            <td><%= sen %></td>
-            <td><%= sit %></td>
-            <td><%= sip %></td>
+            <td><a href="<%=request.getContextPath()%>/inc/detail.do?incidentNo=<%= java.net.URLEncoder.encode(sno, "UTF-8") %>" target="_blank"><%= HtmlUtil.escape(sno) %></a></td>
+            <td><%= HtmlUtil.escape(sdt) %></td>
+            <td><%= HtmlUtil.escape(sen) %></td>
+            <td><%= HtmlUtil.escape(sit) %></td>
+            <td><%= HtmlUtil.escape(sip) %></td>
             <td><app:statusBadge status="<%= ssv %>"/></td>
             <td><app:statusBadge status="<%= sst %>"/></td>
         </tr>
@@ -177,13 +177,13 @@
 <table class="form-table">
     <tr>
         <th>暫定処置内容</th>
-        <td colspan="3"><textarea name="tmpAction" rows="3" cols="60"><%= tmpAction %></textarea></td>
+        <td colspan="3"><textarea name="tmpAction" rows="3" cols="60"><%= HtmlUtil.escape(tmpAction) %></textarea></td>
     </tr>
     <tr>
         <th>処置担当者</th>
-        <td><input type="text" name="tmpActionPerson" value="<%= tmpActionPerson %>" size="20"/></td>
+        <td><input type="text" name="tmpActionPerson" value="<%= HtmlUtil.escape(tmpActionPerson) %>" size="20"/></td>
         <th>処置日</th>
-        <td><input type="text" name="tmpActionDate" value="<%= tmpActionDate %>" size="10" maxlength="10" placeholder="YYYY-MM-DD"/></td>
+        <td><input type="text" name="tmpActionDate" value="<%= HtmlUtil.escape(tmpActionDate) %>" size="10" maxlength="10" placeholder="YYYY-MM-DD"/></td>
     </tr>
 </table>
 </div>
@@ -202,7 +202,7 @@
 <%
     if (message != null && !message.isEmpty()) {
 %>
-<div class="info-message" style="margin-top:12px;color:green;"><%= message %></div>
+<div class="info-message" style="margin-top:12px;color:green;"><%= HtmlUtil.escape(message) %></div>
 <%
     }
     if (request.getAttribute("org.apache.struts.action.ERROR") != null) {

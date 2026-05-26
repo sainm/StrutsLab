@@ -3,7 +3,7 @@
 <%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/tld/app-common.tld" prefix="app" %>
 <%@ page import="com.strutslab.dto.ExecResultDto,
-                 com.strutslab.form.ins.ExecForm" %>
+                 com.strutslab.form.ins.ExecForm, com.strutslab.util.HtmlUtil" %>
 <%
     ExecResultDto planInfo = (ExecResultDto) request.getAttribute("planInfo");
     ExecForm ef = (ExecForm) request.getAttribute("execForm");
@@ -21,29 +21,29 @@
     String personCode = planInfo != null ? planInfo.getPersonCode() : "";
 %>
 <html:form action="/ins/exec/input" method="post" enctype="multipart/form-data">
-<input type="hidden" name="planId" value="<%= planId %>"/>
-<input type="hidden" name="resultId" value="<%= resultId %>"/>
+<input type="hidden" name="planId" value="<%= HtmlUtil.escape(planId) %>"/>
+<input type="hidden" name="resultId" value="<%= HtmlUtil.escape(resultId) %>"/>
 
 <app:sectionHeader title="点検設備情報" anchorId="equipmentInfo"/>
 <div class="form-section">
 <table class="form-table">
     <tr>
         <th>設備名</th>
-        <td><%= eqpName %></td>
+        <td><%= HtmlUtil.escape(eqpName) %></td>
         <th>設備コード</th>
-        <td><%= eqpCode %></td>
+        <td><%= HtmlUtil.escape(eqpCode) %></td>
     </tr>
     <tr>
         <th>点検種別</th>
-        <td><%= inspKind %></td>
+        <td><%= HtmlUtil.escape(inspKind) %></td>
         <th>点検テンプレート</th>
-        <td><%= tmplName %></td>
+        <td><%= HtmlUtil.escape(tmplName) %></td>
     </tr>
     <tr>
         <th>担当者</th>
-        <td><%= personCode %></td>
+        <td><%= HtmlUtil.escape(personCode) %></td>
         <th>点検日</th>
-        <td><input type="text" name="executedDate" value="<%= executedDate %>" size="10" maxlength="8"/></td>
+        <td><input type="text" name="executedDate" value="<%= HtmlUtil.escape(executedDate) %>" size="10" maxlength="8"/></td>
     </tr>
 </table>
 </div>
@@ -70,7 +70,7 @@
     </tr>
     <tr>
         <th>総合所見</th>
-        <td><textarea name="summaryNote" rows="4" cols="60"><%= summaryNote %></textarea></td>
+        <td><textarea name="summaryNote" rows="4" cols="60"><%= HtmlUtil.escape(summaryNote) %></textarea></td>
     </tr>
 </table>
 </div>
@@ -83,7 +83,7 @@
     if ("ABNORMAL".equals(summaryJudge)) {
 %>
     <input type="button" value="異常報告へ" class="btn btn-danger"
-        onclick="location.href='<%=request.getContextPath()%>/inc/create.do?planId=<%= planId %>'"/>
+        onclick="location.href='<%=request.getContextPath()%>/inc/create.do?planId=<%= HtmlUtil.escape(planId) %>'"/>
 <%
     }
 %>

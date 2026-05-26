@@ -1,6 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://struts.apache.org/tags-html" prefix="html" %>
-<%@ page import="java.util.List, java.util.Map" %>
+<%@ page import="java.util.List, java.util.Map, com.strutslab.util.HtmlUtil" %>
 <%
     String ctx = request.getContextPath();
     List<Map<String, Object>> completionMatrix = (List<Map<String, Object>>) request.getAttribute("completionMatrix");
@@ -24,8 +24,8 @@
     <tr>
         <th>対象期間</th>
         <td>
-            <input type="text" name="dateFrom" value="<%= dateFrom %>" size="6" maxlength="6" placeholder="YYYYMM"> 〜
-            <input type="text" name="dateTo" value="<%= dateTo %>" size="6" maxlength="6" placeholder="YYYYMM">
+            <input type="text" name="dateFrom" value="<%= HtmlUtil.escape(dateFrom) %>" size="6" maxlength="6" placeholder="YYYYMM"> 〜
+            <input type="text" name="dateTo" value="<%= HtmlUtil.escape(dateTo) %>" size="6" maxlength="6" placeholder="YYYYMM">
         </td>
         <th>設備種別</th>
         <td>
@@ -41,7 +41,7 @@
     <tr>
         <th>担当チーム</th>
         <td>
-            <input type="text" name="team" value="<%= team %>" size="20">
+            <input type="text" name="team" value="<%= HtmlUtil.escape(team) %>" size="20">
         </td>
         <td colspan="2"></td>
     </tr>
@@ -61,8 +61,8 @@
 <%
     } else {
         // Group by equipment type and month
-        java.util.Map<String, java.util.Map<String, Map<String, Object>>> matrix = new java.util.LinkedHashMap<>();
-        java.util.Set<String> months = new java.util.LinkedHashSet<>();
+        java.util.Map<String, java.util.Map<String, Map<String, Object>>> matrix = new java.util.LinkedHashMap<String, java.util.Map<String, Map<String, Object>>>();
+        java.util.Set<String> months = new java.util.LinkedHashSet<String>();
         for (Map<String, Object> row : completionMatrix) {
             String eqpType = (String) row.get("equipmentType");
             String month = (String) row.get("month");
@@ -76,7 +76,7 @@
         <tr>
             <th>設備種別</th>
             <% for (String m : months) { %>
-                <th style="text-align:center;"><%= m.length() >= 6 ? m.substring(4) : m %></th>
+                <th style="text-align:center;"><%= HtmlUtil.escape(m.length() >= 6 ? m.substring(4) : m) %></th>
             <% } %>
         </tr>
     </thead>
@@ -85,7 +85,7 @@
         for (java.util.Map.Entry<String, java.util.Map<String, Map<String, Object>>> entry : matrix.entrySet()) {
     %>
         <tr>
-            <td><%= entry.getKey() %></td>
+            <td><%= HtmlUtil.escape(entry.getKey()) %></td>
             <%
                 for (String m : months) {
                     Map<String, Object> cell = entry.getValue().get(m);
@@ -93,7 +93,7 @@
                     double rateVal = 0;
                     try { rateVal = Double.parseDouble(rate); } catch (Exception e) {}
             %>
-                <td style="text-align:right;<%= rateVal < 95.0 ? "color:red;font-weight:bold;" : "" %>"><%= rate %>%</td>
+                <td style="text-align:right;<%= HtmlUtil.escape(rateVal < 95.0 ? "color:red;font-weight:bold;" : "") %>"><%= HtmlUtil.escape(rate) %>%</td>
             <% } %>
         </tr>
     <% } %>
@@ -112,9 +112,9 @@
 <%
     } else {
         // Cross-tab: month x type
-        java.util.Map<String, java.util.Map<String, Object>> crossMap = new java.util.LinkedHashMap<>();
-        java.util.Set<String> crossMonths = new java.util.LinkedHashSet<>();
-        java.util.Set<String> crossTypes = new java.util.LinkedHashSet<>();
+        java.util.Map<String, java.util.Map<String, Object>> crossMap = new java.util.LinkedHashMap<String, java.util.Map<String, Object>>();
+        java.util.Set<String> crossMonths = new java.util.LinkedHashSet<String>();
+        java.util.Set<String> crossTypes = new java.util.LinkedHashSet<String>();
         for (Map<String, Object> row : crossTab) {
             String month = (String) row.get("month");
             String type = (String) row.get("incidentType");
@@ -129,16 +129,16 @@
         <tr>
             <th>月</th>
             <% for (String t : crossTypes) { %>
-                <th style="text-align:center;"><%= t %></th>
+                <th style="text-align:center;"><%= HtmlUtil.escape(t) %></th>
             <% } %>
         </tr>
     </thead>
     <tbody>
     <% for (String m : crossMonths) { %>
         <tr>
-            <td><%= m %></td>
+            <td><%= HtmlUtil.escape(m) %></td>
             <% for (String t : crossTypes) { %>
-                <td style="text-align:right;"><%= crossMap.get(m).getOrDefault(t, "") %></td>
+                <td style="text-align:right;"><%= HtmlUtil.escape(String.valueOf(crossMap.get(m).getOrDefault(t, ""))) %></td>
             <% } %>
         </tr>
     <% } %>
@@ -173,11 +173,11 @@
         for (Map<String, Object> row : ranking) {
     %>
         <tr>
-            <td style="text-align:center;"><%= rank++ %></td>
-            <td><%= row.get("equipmentCode") %></td>
-            <td><%= row.get("equipmentName") %></td>
-            <td><%= row.get("equipmentType") %></td>
-            <td style="text-align:right;font-weight:bold;"><%= row.get("incidentCount") %></td>
+            <td style="text-align:center;"><%= HtmlUtil.escape(String.valueOf(rank++)) %></td>
+            <td><%= HtmlUtil.escape(String.valueOf(row.get("equipmentCode"))) %></td>
+            <td><%= HtmlUtil.escape(String.valueOf(row.get("equipmentName"))) %></td>
+            <td><%= HtmlUtil.escape(String.valueOf(row.get("equipmentType"))) %></td>
+            <td style="text-align:right;font-weight:bold;"><%= HtmlUtil.escape(String.valueOf(row.get("incidentCount"))) %></td>
         </tr>
     <% } %>
     </tbody>
@@ -188,7 +188,7 @@
 
 <div style="text-align:center;margin-top:16px;">
     <input type="button" value="CSV出力" class="btn btn-primary"
-        onclick="location.href='<%=ctx%>/report/summary.do?csv=true&dateFrom=<%= dateFrom %>&dateTo=<%= dateTo %>'"/>
+        onclick="location.href='<%=ctx%>/report/summary.do?csv=true&dateFrom=<%= HtmlUtil.escape(dateFrom) %>&dateTo=<%= HtmlUtil.escape(dateTo) %>'"/>
     <input type="button" value="印刷用表示" class="btn btn-secondary"
         onclick="window.open('<%=ctx%>/report/print.do?...','printWin','width=900,height=700');"/>
 </div>

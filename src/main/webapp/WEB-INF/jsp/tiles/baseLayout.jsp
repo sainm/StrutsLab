@@ -1,6 +1,13 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean" %>
+<%@ page import="com.strutslab.util.HtmlUtil" %>
+<tiles:useAttribute name="title" id="tiles_title" scope="request" ignore="true"/>
+<tiles:useAttribute name="searchArea" id="tiles_searchArea" scope="request" ignore="true"/>
+<tiles:useAttribute name="listArea" id="tiles_listArea" scope="request" ignore="true"/>
+<tiles:useAttribute name="formArea" id="tiles_formArea" scope="request" ignore="true"/>
+<tiles:useAttribute name="wizardSteps" id="tiles_wizardSteps" scope="request" ignore="true"/>
+<tiles:useAttribute name="wizardContent" id="tiles_wizardContent" scope="request" ignore="true"/>
 <!DOCTYPE html>
 <html lang="ja">
 <head>

@@ -12,10 +12,13 @@ public interface ExecDao {
     ExecResultDto findById(int resultId);
     List<ExecItemResultDto> findItemsByResultId(int resultId);
     List<ExecResultDto> findPendingApprovals(Map<String, Object> params);
-    void updateApprovalStatus(int resultId, String status, String rejectReason);
+    void updateApprovalStatus(@Param("param1") int resultId, @Param("param2") String status, @Param("param3") String rejectReason);
     void bulkApprove(int[] resultIds);
     void bulkReject(@Param("resultIds") int[] resultIds, @Param("reason") String reason);
     int countPendingApprovals(Map<String, Object> params);
     void updateResult(ExecResultDto r);
     void deleteItemResults(int resultId);
+
+    ExecResultDto findPlanById(int planId);
+    List<ExecResultDto> findByDate(Map<String, Object> params);
 }

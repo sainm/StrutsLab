@@ -60,10 +60,10 @@
     <insert id="insert">
         INSERT INTO employees (emp_no, name, name_kana, birth_date, join_date,
             dept_code, position, assign_date, inspection_rank, inspection_cert_date,
-            inspection_cert_expire, login_id, password_hash, is_locked)
+            inspection_cert_expire, login_id, password_hash, password_salt, is_locked)
         VALUES (#{empNo}, #{name}, #{nameKana}, #{birthDate}, #{joinDate},
             #{deptCode}, #{position}, #{assignDate}, #{inspectionRank}, #{inspectionCertDate},
-            #{inspectionCertExpire}, #{loginId}, #{passwordHash}, #{isLocked})
+            #{inspectionCertExpire}, #{loginId}, #{passwordHash}, #{passwordSalt}, #{isLocked})
     </insert>
 
     <update id="update">

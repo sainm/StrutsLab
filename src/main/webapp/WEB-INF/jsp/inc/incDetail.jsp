@@ -2,7 +2,7 @@
 <%@ taglib uri="http://struts.apache.org/tags-html" prefix="html" %>
 <%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/tld/app-common.tld" prefix="app" %>
-<%@ page import="com.strutslab.dto.IncidentDto, com.strutslab.form.inc.IncidentForm" %>
+<%@ page import="com.strutslab.dto.IncidentDto, com.strutslab.form.inc.IncidentForm, com.strutslab.util.HtmlUtil" %>
 <%
     IncidentDto inc = (IncidentDto) request.getAttribute("incident");
     IncidentForm f = (IncidentForm) request.getAttribute("incidentForm");
@@ -32,26 +32,26 @@
     boolean showCounterDetail = "対応中".equals(status);
 %>
 <html:form action="/inc/detail" method="post">
-<input type="hidden" name="incidentNo" value="<%= incidentNo %>"/>
+<input type="hidden" name="incidentNo" value="<%= HtmlUtil.escape(incidentNo) %>"/>
 
 <%-- Block 1: Incident Information (Readonly) --%>
 <app:sectionHeader title="① 発生情報" anchorId="block1"/>
 <div class="form-section">
 <table class="form-table">
     <tr>
-        <th>報告番号</th><td><%= incidentNo %></td>
+        <th>報告番号</th><td><%= HtmlUtil.escape(incidentNo) %></td>
         <th>ステータス</th><td><app:statusBadge status="<%= status %>"/></td>
     </tr>
     <tr>
-        <th>発生日時</th><td><%= incidentDateTime %></td>
-        <th>発見者</th><td><%= finder %></td>
+        <th>発生日時</th><td><%= HtmlUtil.escape(incidentDateTime) %></td>
+        <th>発見者</th><td><%= HtmlUtil.escape(finder) %></td>
     </tr>
     <tr>
-        <th>設備コード</th><td><%= equipmentCode %></td>
-        <th>設備名</th><td><%= equipmentName %></td>
+        <th>設備コード</th><td><%= HtmlUtil.escape(equipmentCode) %></td>
+        <th>設備名</th><td><%= HtmlUtil.escape(equipmentName) %></td>
     </tr>
     <tr>
-        <th>天候</th><td><%= weather %></td>
+        <th>天候</th><td><%= HtmlUtil.escape(weather) %></td>
         <th>気温（℃）</th><td><%= tempStr %></td>
     </tr>
 </table>
@@ -62,15 +62,15 @@
 <div class="form-section">
 <table class="form-table">
     <tr>
-        <th>異常種別</th><td><%= incidentType %></td>
+        <th>異常種別</th><td><%= HtmlUtil.escape(incidentType) %></td>
         <th>重大度</th><td><app:statusBadge status="<%= severity %>"/></td>
     </tr>
     <tr>
-        <th>異常部位</th><td colspan="3"><%= incidentPart %></td>
+        <th>異常部位</th><td colspan="3"><%= HtmlUtil.escape(incidentPart) %></td>
     </tr>
     <tr>
         <th>異常内容詳細</th>
-        <td colspan="3"><pre style="white-space:pre-wrap;margin:0;"><%= incidentDetail %></pre></td>
+        <td colspan="3"><pre style="white-space:pre-wrap;margin:0;"><%= HtmlUtil.escape(incidentDetail) %></pre></td>
     </tr>
     <tr>
         <th>添付ファイル</th>
@@ -83,7 +83,7 @@
                         for (java.io.File af : files) {
                             String fileName = af.getName();
             %>
-                <a href="<%=request.getContextPath()%>/attachments/inc/<%= incidentNo %>/<%= fileName %>" target="_blank"><%= fileName %></a><br/>
+                <a href="<%=request.getContextPath()%>/attachments/inc/<%= HtmlUtil.escape(incidentNo) %>/<%= HtmlUtil.escape(fileName) %>" target="_blank"><%= HtmlUtil.escape(fileName) %></a><br/>
             <%
                         }
                     } else {
@@ -108,11 +108,11 @@
 <table class="form-table">
     <tr>
         <th>暫定処置内容</th>
-        <td colspan="3"><pre style="white-space:pre-wrap;margin:0;"><%= tmpAction %></pre></td>
+        <td colspan="3"><pre style="white-space:pre-wrap;margin:0;"><%= HtmlUtil.escape(tmpAction) %></pre></td>
     </tr>
     <tr>
-        <th>処置担当者</th><td><%= tmpActionPerson %></td>
-        <th>処置日</th><td><%= tmpActionDate %></td>
+        <th>処置担当者</th><td><%= HtmlUtil.escape(tmpActionPerson) %></td>
+        <th>処置日</th><td><%= HtmlUtil.escape(tmpActionDate) %></td>
     </tr>
 </table>
 </div>
@@ -126,7 +126,7 @@
 <table class="form-table">
     <tr>
         <th>原因 <span class="required">*</span></th>
-        <td><textarea name="cause" rows="4" cols="60"><%= cause %></textarea></td>
+        <td><textarea name="cause" rows="4" cols="60"><%= HtmlUtil.escape(cause) %></textarea></td>
     </tr>
 </table>
 </div>
@@ -143,7 +143,7 @@
 <table class="form-table">
     <tr>
         <th>対応内容 <span class="required">*</span></th>
-        <td><textarea name="counterDetail" rows="4" cols="60"><%= counterDetail %></textarea></td>
+        <td><textarea name="counterDetail" rows="4" cols="60"><%= HtmlUtil.escape(counterDetail) %></textarea></td>
     </tr>
 </table>
 </div>

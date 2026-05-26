@@ -1,14 +1,14 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://struts.apache.org/tags-html" prefix="html" %>
 <%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean" %>
-<%@ page import="java.util.List, com.strutslab.dto.ChkTmplDto" %>
+<%@ page import="java.util.List, com.strutslab.dto.ChkTmplDto, com.strutslab.util.HtmlUtil" %>
 <%
     List<ChkTmplDto> list = (List<ChkTmplDto>) request.getAttribute("templateList");
     if (list == null) list = java.util.Collections.emptyList();
     String contextPath = request.getContextPath();
 %>
 <div class="list-table-container">
-<form name="chkItemListForm" method="post" action="<%=contextPath%>/mst/chkItem/list.do">
+<form name="chkItemListForm" method="post" action="<%= HtmlUtil.escape(contextPath) %>/mst/chkitem/list.do">
 <table class="list-table">
     <thead>
         <tr>
@@ -36,18 +36,18 @@
                 String updDate = tmpl.getLastUpdateDate() != null ? tmpl.getLastUpdateDate() : "";
     %>
         <tr>
-            <td><a href="<%=contextPath%>/mst/chkItem/edit.do?templateId=<%= tid %>"><%= name %></a></td>
-            <td><%= eqType %></td>
-            <td><%= inspKind %></td>
-            <td style="text-align:right;"><%= itemCnt %></td>
-            <td><%= updDate %></td>
+            <td><a href="<%= HtmlUtil.escape(contextPath) %>/mst/chkitem/edit.do?templateId=<%= HtmlUtil.escape(tid) %>"><%= HtmlUtil.escape(name) %></a></td>
+            <td><%= HtmlUtil.escape(eqType) %></td>
+            <td><%= HtmlUtil.escape(inspKind) %></td>
+            <td style="text-align:right;"><%= HtmlUtil.escape(itemCnt) %></td>
+            <td><%= HtmlUtil.escape(updDate) %></td>
             <td>
                 <input type="button" value="コピー" class="btn btn-small"
-                    onclick="location.href='<%=contextPath%>/mst/chkItem/list.do?copy=<%= tid %>'"/>
+                    onclick="location.href='<%= HtmlUtil.escape(contextPath) %>/mst/chkitem/list.do?copy=<%= HtmlUtil.escape(tid) %>'"/>
                 <input type="button" value="▲" class="btn btn-small"
-                    onclick="location.href='<%=contextPath%>/mst/chkItem/list.do?moveUp=<%= tid %>'"/>
+                    onclick="location.href='<%= HtmlUtil.escape(contextPath) %>/mst/chkitem/list.do?moveUp=<%= HtmlUtil.escape(tid) %>'"/>
                 <input type="button" value="▼" class="btn btn-small"
-                    onclick="location.href='<%=contextPath%>/mst/chkItem/list.do?moveDown=<%= tid %>'"/>
+                    onclick="location.href='<%= HtmlUtil.escape(contextPath) %>/mst/chkitem/list.do?moveDown=<%= HtmlUtil.escape(tid) %>'"/>
             </td>
         </tr>
     <%
@@ -63,7 +63,7 @@
 <!-- Action Buttons -->
 <div class="button-area">
     <input type="button" value="新規テンプレート" class="btn btn-success"
-        onclick="location.href='<%=contextPath%>/mst/chkItem/edit.do?method=new'"/>
+        onclick="location.href='<%= HtmlUtil.escape(contextPath) %>/mst/chkitem/edit.do?method=new'"/>
 </div>
 </form>
 </div>

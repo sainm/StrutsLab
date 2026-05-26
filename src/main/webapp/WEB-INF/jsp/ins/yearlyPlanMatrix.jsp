@@ -1,7 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://struts.apache.org/tags-html" prefix="html" %>
 <%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean" %>
-<%@ page import="java.util.List, java.util.Map, com.strutslab.dto.EqpDto, com.strutslab.dto.PlanCellDto" %>
+<%@ page import="java.util.List, java.util.Map, com.strutslab.dto.EqpDto, com.strutslab.dto.PlanCellDto, com.strutslab.util.HtmlUtil" %>
 <%
     List<EqpDto> eqpList = (List<EqpDto>) request.getAttribute("eqpList");
     if (eqpList == null) eqpList = new java.util.ArrayList<EqpDto>();
@@ -20,7 +20,7 @@
 <%
     for (String m : months) {
 %>
-            <th><%= m %></th>
+            <th><%= HtmlUtil.escape(m) %></th>
 <%
     }
 %>
@@ -39,7 +39,7 @@
             Map<Integer, PlanCellDto> monthMap = yearlyMatrix.get(code);
 %>
         <tr>
-            <td style="white-space:nowrap;font-weight:bold;"><%= name %></td>
+            <td style="white-space:nowrap;font-weight:bold;"><%= HtmlUtil.escape(name) %></td>
 <%
             for (int mn : monthNums) {
                 PlanCellDto cell = (monthMap != null) ? monthMap.get(mn) : null;
@@ -47,8 +47,8 @@
                 int actual = (cell != null) ? cell.getActualCount() : 0;
                 boolean alert = actual < planned;
 %>
-            <td class="<%= alert ? "cell-warning" : "" %>" style="<%= alert ? "background:#fcc;" : "" %>text-align:center;">
-                計画:<%= planned %> 実績:<%= actual %>
+            <td class="<%= HtmlUtil.escape(alert ? "cell-warning" : "") %>" style="<%= HtmlUtil.escape(alert ? "background:#fcc;" : "") %>text-align:center;">
+                計画:<%= HtmlUtil.escape(planned) %> 実績:<%= HtmlUtil.escape(actual) %>
             </td>
 <%
             }
@@ -63,10 +63,10 @@
 
 <div class="button-area">
     <input type="button" value="CSV出力" class="btn btn-primary"
-        onclick="location.href='<%= ctx %>/ins/yearly/plan.do?csv=true'"/>
+        onclick="location.href='<%= ctx %>/ins/plan/yearly.do?csv=true'"/>
     <input type="button" value="計画ロック" class="btn btn-warning"
-        onclick="if(confirm('この年度の計画をロックしますか？')){location.href='<%= ctx %>/ins/yearly/plan.do?lock=true';}"/>
+        onclick="if(confirm('この年度の計画をロックしますか？')){location.href='<%= ctx %>/ins/plan/yearly.do?lock=true';}"/>
     <input type="button" value="ロック解除" class="btn btn-secondary"
-        onclick="if(confirm('ロックを解除しますか？')){location.href='<%= ctx %>/ins/yearly/plan.do?unlock=true';}"/>
+        onclick="if(confirm('ロックを解除しますか？')){location.href='<%= ctx %>/ins/plan/yearly.do?unlock=true';}"/>
 </div>
 </div>

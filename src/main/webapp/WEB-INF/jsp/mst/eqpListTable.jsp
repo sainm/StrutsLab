@@ -1,7 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://struts.apache.org/tags-html" prefix="html" %>
 <%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean" %>
-<%@ page import="java.util.List, com.strutslab.dto.EqpDto" %>
+<%@ page import="java.util.List, com.strutslab.dto.EqpDto, com.strutslab.util.HtmlUtil" %>
 <%
     List<EqpDto> list = (List<EqpDto>) request.getAttribute("eqpList");
     if (list == null) list = java.util.Collections.emptyList();
@@ -38,14 +38,14 @@
                 String dept = eqp.getLocationAddress() != null ? eqp.getLocationAddress() : "";
     %>
         <tr>
-            <td><input type="checkbox" name="selectedItems" value="<%= code %>"/></td>
-            <td><a href="<%=request.getContextPath()%>/mst/eqp/edit.do?equipmentCode=<%= java.net.URLEncoder.encode(code, "UTF-8") %>"><%= code %></a></td>
-            <td><%= name %></td>
-            <td><%= type %></td>
-            <td><%= voltage %></td>
-            <td><%= install %></td>
-            <td><%= rank %></td>
-            <td><%= dept %></td>
+            <td><input type="checkbox" name="selectedItems" value="<%= HtmlUtil.escape(code) %>"/></td>
+            <td><a href="<%=request.getContextPath()%>/mst/eqp/edit.do?equipmentCode=<%= java.net.URLEncoder.encode(code, "UTF-8") %>"><%= HtmlUtil.escape(code) %></a></td>
+            <td><%= HtmlUtil.escape(name) %></td>
+            <td><%= HtmlUtil.escape(type) %></td>
+            <td><%= HtmlUtil.escape(voltage) %></td>
+            <td><%= HtmlUtil.escape(install) %></td>
+            <td><%= HtmlUtil.escape(rank) %></td>
+            <td><%= HtmlUtil.escape(dept) %></td>
         </tr>
     <%
             }

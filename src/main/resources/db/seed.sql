@@ -10,10 +10,10 @@ INSERT INTO departments (dept_code, dept_name, parent_dept_code, dept_level, dep
 ('TOKYO-SHINJUKU', '新宿出張所', 'KANTO-TOKYO', 4, '出張所', '20100101');
 
 -- Sample employees
-INSERT INTO employees (emp_no, name, name_kana, dept_code, position, login_id, password_hash, inspection_rank) VALUES
-('EMP-0001', '山田 太郎', 'ヤマダ タロウ', 'TOHOKU-MIYAGI', '係長', 'yamada', 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3', 'A'),
-('EMP-0002', '佐藤 花子', 'サトウ ハナコ', 'KANTO-TOKYO', '主任', 'sato', 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3', 'B'),
-('EMP-0003', '鈴木 一郎', 'スズキ イチロウ', 'TOHOKU-FUKUSHIMA', '一般', 'suzuki', 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3', 'C');
+INSERT INTO employees (emp_no, name, name_kana, dept_code, position, login_id, password_hash, password_salt, inspection_rank) VALUES
+('EMP-0001', '山田 太郎', 'ヤマダ タロウ', 'TOHOKU-MIYAGI', '係長', 'yamada', '28a7185e01a03280da0e99172381167ff1f196dc680fe7ec92557b809afffc2c', 'a1b2c3d4e5f6a7b8', 'A'),
+('EMP-0002', '佐藤 花子', 'サトウ ハナコ', 'KANTO-TOKYO', '主任', 'sato', '28a7185e01a03280da0e99172381167ff1f196dc680fe7ec92557b809afffc2c', 'a1b2c3d4e5f6a7b8', 'B'),
+('EMP-0003', '鈴木 一郎', 'スズキ イチロウ', 'TOHOKU-FUKUSHIMA', '一般', 'suzuki', '28a7185e01a03280da0e99172381167ff1f196dc680fe7ec92557b809afffc2c', 'a1b2c3d4e5f6a7b8', 'C');
 
 -- Sample equipment
 INSERT INTO equipment (equipment_code, equipment_name, equipment_type, voltage_level, maintenance_rank, status) VALUES

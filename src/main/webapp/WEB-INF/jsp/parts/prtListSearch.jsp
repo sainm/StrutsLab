@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://struts.apache.org/tags-html" prefix="html" %>
+<%@ page import="com.strutslab.util.HtmlUtil" %>
 <%
     String equipmentType = request.getParameter("equipmentType");
     String partType = request.getParameter("partType");
@@ -48,7 +49,7 @@
             </select>
         </td>
         <th>キーワード</th>
-        <td><input type="text" name="keyword" value="<%= keyword %>" size="20" placeholder="部品コード/部品名"></td>
+        <td><input type="text" name="keyword" value="<%= HtmlUtil.escape(keyword) %>" size="20" placeholder="部品コード/部品名"></td>
     </tr>
 </table>
 <div class="button-area">

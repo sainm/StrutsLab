@@ -2,7 +2,7 @@
 <%@ taglib uri="http://struts.apache.org/tags-html" prefix="html" %>
 <%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/tld/app-common.tld" prefix="app" %>
-<%@ page import="java.util.List, com.strutslab.dto.IncidentDto" %>
+<%@ page import="java.util.List, com.strutslab.dto.IncidentDto, com.strutslab.util.HtmlUtil" %>
 <%
     List<IncidentDto> list = (List<IncidentDto>) request.getAttribute("incidentList");
     if (list == null) list = java.util.Collections.emptyList();
@@ -40,14 +40,14 @@
                 String team = dto.getTmpActionPerson() != null ? dto.getTmpActionPerson() : "";
     %>
         <tr>
-            <td><input type="checkbox" name="selectedItems" value="<%= incidentNo %>"/></td>
-            <td><a href="<%=request.getContextPath()%>/inc/detail.do?incidentNo=<%= java.net.URLEncoder.encode(incidentNo, "UTF-8") %>"><%= incidentNo %></a></td>
-            <td><%= dt %></td>
-            <td><%= eqpName %></td>
-            <td><%= incType %></td>
+            <td><input type="checkbox" name="selectedItems" value="<%= HtmlUtil.escape(incidentNo) %>"/></td>
+            <td><a href="<%=request.getContextPath()%>/inc/detail.do?incidentNo=<%= java.net.URLEncoder.encode(incidentNo, "UTF-8") %>"><%= HtmlUtil.escape(incidentNo) %></a></td>
+            <td><%= HtmlUtil.escape(dt) %></td>
+            <td><%= HtmlUtil.escape(eqpName) %></td>
+            <td><%= HtmlUtil.escape(incType) %></td>
             <td><app:statusBadge status="<%= sev %>"/></td>
             <td><app:statusBadge status="<%= st %>"/></td>
-            <td><%= team %></td>
+            <td><%= HtmlUtil.escape(team) %></td>
         </tr>
     <%
             }

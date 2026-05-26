@@ -14,6 +14,7 @@ public class EmpDto {
     private String inspectionCertExpire;
     private String loginId;
     private String passwordHash;
+    private String passwordSalt;
     private Boolean isLocked;
 
     public String getEmpNo() { return empNo; }
@@ -42,6 +43,8 @@ public class EmpDto {
     public void setLoginId(String v) { this.loginId = v; }
     public String getPasswordHash() { return passwordHash; }
     public void setPasswordHash(String v) { this.passwordHash = v; }
+    public String getPasswordSalt() { return passwordSalt; }
+    public void setPasswordSalt(String v) { this.passwordSalt = v; }
     public Boolean getIsLocked() { return isLocked; }
     public void setIsLocked(Boolean v) { this.isLocked = v; }
 }

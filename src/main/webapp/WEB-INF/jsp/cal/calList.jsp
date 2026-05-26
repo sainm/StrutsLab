@@ -1,6 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://struts.apache.org/tags-html" prefix="html" %>
-<%@ page import="java.util.List, java.util.Map" %>
+<%@ page import="java.util.List, java.util.Map, com.strutslab.util.HtmlUtil" %>
 <%
     String ctx = request.getContextPath();
     String year = (String) request.getAttribute("year");
@@ -9,28 +9,19 @@
     }
     List<Map<String, Object>> months = (List<Map<String, Object>>) request.getAttribute("months");
     if (months == null) months = java.util.Collections.emptyList();
-
-    // Color map for holiday types
-    String getColor(String type) {
-        if ("法定休日".equals(type)) return "#fcc";
-        if ("会社指定休日".equals(type)) return "#cce";
-        if ("点検停止".equals(type)) return "#ffa";
-        if ("振替休日".equals(type)) return "#cfc";
-        return "#fff";
-    }
 %>
 
 <%
     String errMsg = (String) request.getAttribute("errorMessage");
     if (errMsg != null) {
 %>
-    <div style="color:#c33;background:#fcc;padding:8px;margin-bottom:12px;border:1px solid #c33;"><%= errMsg %></div>
+    <div style="color:#c33;background:#fcc;padding:8px;margin-bottom:12px;border:1px solid #c33;"><%= HtmlUtil.escape(errMsg) %></div>
 <%
     }
     String successMsg = (String) request.getAttribute("successMessage");
     if (successMsg != null) {
 %>
-    <div style="color:#090;background:#dfd;padding:8px;margin-bottom:12px;border:1px solid:#090;"><%= successMsg %></div>
+    <div style="color:#090;background:#dfd;padding:8px;margin-bottom:12px;border:1px solid:#090;"><%= HtmlUtil.escape(successMsg) %></div>
 <%
     }
 %>
@@ -98,12 +89,12 @@
                                 String dateStr = (String) cell.get("dateStr");
                                 String hid = cell.get("holidayId") != null ? String.valueOf(cell.get("holidayId")) : "";
                             %>
-                                onclick="location.href='<%=ctx%>/cal/save.do?holidayId=<%= hid %>&dateStr=<%= dateStr %>'"
+                                onclick="location.href='<%=ctx%>/cal/save.do?holidayId=<%= HtmlUtil.escape(hid) %>&dateStr=<%= HtmlUtil.escape(dateStr) %>'"
                             <% } %>>
                             <% if (cell.get("day") != null) { %>
                                 <div style="font-weight:bold;"><%= cell.get("day") %></div>
                                 <% if (cell.get("holidayName") != null) { %>
-                                    <div style="font-size:9px;"><%= cell.get("holidayName") %></div>
+                                    <div style="font-size:9px;"><%= HtmlUtil.escape((String) cell.get("holidayName")) %></div>
                                 <% } %>
                             <% } %>
                         </td>

@@ -1,6 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://struts.apache.org/tags-html" prefix="html" %>
-<%@ page import="java.util.List, com.strutslab.dto.PartsUsageDto" %>
+<%@ page import="java.util.List, com.strutslab.dto.PartsUsageDto, com.strutslab.util.HtmlUtil" %>
 <%
     List<PartsUsageDto> list = (List<PartsUsageDto>) request.getAttribute("usageList");
     if (list == null) list = java.util.Collections.emptyList();
@@ -41,15 +41,15 @@
                 boolean discrepancy = u.getNote() != null && "在庫数不整合".equals(u.getNote());
     %>
         <tr<% if (discrepancy) { %> style="background:#fcc;"<% } %>>
-            <td><%= date %></td>
-            <td><%= code %></td>
-            <td><%= name %></td>
-            <td><%= eqp %></td>
-            <td style="text-align:right;"><%= qty %></td>
-            <td style="text-align:right;"><%= sb != null ? sb : "" %></td>
-            <td style="text-align:right;"><%= sa != null ? sa : "" %></td>
-            <td><%= purpose %></td>
-            <td><%= usedBy %></td>
+            <td><%= HtmlUtil.escape(date) %></td>
+            <td><%= HtmlUtil.escape(code) %></td>
+            <td><%= HtmlUtil.escape(name) %></td>
+            <td><%= HtmlUtil.escape(eqp) %></td>
+            <td style="text-align:right;"><%= HtmlUtil.escape(qty) %></td>
+            <td style="text-align:right;"><%= HtmlUtil.escape(sb != null ? sb : "") %></td>
+            <td style="text-align:right;"><%= HtmlUtil.escape(sa != null ? sa : "") %></td>
+            <td><%= HtmlUtil.escape(purpose) %></td>
+            <td><%= HtmlUtil.escape(usedBy) %></td>
         </tr>
     <%
             }

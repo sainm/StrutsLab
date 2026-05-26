@@ -1,13 +1,14 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://struts.apache.org/tags-html" prefix="html" %>
 <%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean" %>
+<%@ page import="com.strutslab.util.HtmlUtil" %>
 <%
     String equipmentType = request.getParameter("equipmentType");
     String inspectionKind = request.getParameter("inspectionKind");
     if (equipmentType == null) equipmentType = "";
     if (inspectionKind == null) inspectionKind = "";
 %>
-<html:form action="/mst/chkItem/list" method="post">
+<html:form action="/mst/chkitem/list" method="post">
 <div class="search-form">
 <table class="form-table">
     <tr>

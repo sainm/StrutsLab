@@ -2,7 +2,7 @@
 <%@ taglib uri="http://struts.apache.org/tags-html" prefix="html" %>
 <%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/tld/app-common.tld" prefix="app" %>
-<%@ page import="java.util.List, com.strutslab.dto.ExecResultDto" %>
+<%@ page import="java.util.List, com.strutslab.dto.ExecResultDto, com.strutslab.util.HtmlUtil" %>
 <%
     List<ExecResultDto> list = (List<ExecResultDto>) request.getAttribute("dailyList");
     if (list == null) list = java.util.Collections.emptyList();
@@ -36,11 +36,11 @@
             int resultId = dto.getResultId();
 %>
         <tr>
-            <td><a href="<%=request.getContextPath()%>/ins/exec/input.do?planId=<%= planId %><%= resultId > 0 ? "&resultId=" + resultId : "" %>"><%= eqpName %></a></td>
-            <td><%= inspKind %></td>
-            <td><%= plannedTime %></td>
+            <td><a href="<%=request.getContextPath()%>/ins/exec/input.do?planId=<%= HtmlUtil.escape(planId) %><%= HtmlUtil.escape(resultId > 0 ? "&resultId=" + resultId : "") %>"><%= HtmlUtil.escape(eqpName) %></a></td>
+            <td><%= HtmlUtil.escape(inspKind) %></td>
+            <td><%= HtmlUtil.escape(plannedTime) %></td>
             <td><app:statusBadge status="<%= status %>"/></td>
-            <td><%= person %></td>
+            <td><%= HtmlUtil.escape(person) %></td>
         </tr>
 <%
         }

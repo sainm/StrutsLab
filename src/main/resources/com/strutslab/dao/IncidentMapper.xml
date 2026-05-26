@@ -178,7 +178,7 @@
 
     <select id="generateIncidentNo" resultType="string">
         SELECT CONCAT('INC-', DATE_FORMAT(CURRENT_DATE, '%Y%m%d'), '-', LPAD(
-            (SELECT COALESCE(MAX(CAST(SUBSTRING(incident_no, 15) AS UNSIGNED)), 0) + 1
+            (SELECT COALESCE(MAX(CAST(SUBSTRING(incident_no, 14) AS UNSIGNED)), 0) + 1
              FROM incidents
              WHERE incident_no LIKE CONCAT('INC-', DATE_FORMAT(CURRENT_DATE, '%Y%m%d'), '-%')), 3, '0'))
     </select>

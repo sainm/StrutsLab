@@ -13,7 +13,7 @@
         <result property="why5" column="why5"/>
         <result property="countermeasure" column="countermeasure"/>
         <result property="verifyMethod" column="verify_method"/>
-        <result property="verifyDate" column="verify_date"/>
+        <result property="verifyDate" column="verify_deadline"/>
         <result property="status" column="status"/>
     </resultMap>
 
@@ -21,7 +21,7 @@
     <insert id="insert" useGeneratedKeys="true" keyProperty="capaId" keyColumn="capa_id">
         INSERT INTO capa_reports (
             incident_no, why1, why2, why3, why4, why5,
-            countermeasure, verify_method, verify_date, status
+            countermeasure, verify_method, verify_deadline, status
         ) VALUES (
             #{incidentNo}, #{why1}, #{why2}, #{why3}, #{why4}, #{why5},
             #{countermeasure}, #{verifyMethod}, #{verifyDate}, #{status}

@@ -103,7 +103,7 @@ CREATE TABLE incidents (
     incident_datetime TIMESTAMP NOT NULL,
     finder VARCHAR(50) NOT NULL,
     equipment_code VARCHAR(20) NOT NULL,
-    weather VARCHAR(5),
+    weather VARCHAR(10),
     temperature INT,
     incident_type VARCHAR(10) NOT NULL,
     severity VARCHAR(5) NOT NULL,
@@ -216,6 +216,7 @@ CREATE TABLE employees (
     inspection_cert_expire VARCHAR(8),
     login_id VARCHAR(50) NOT NULL UNIQUE,
     password_hash VARCHAR(64) NOT NULL,
+    password_salt VARCHAR(32) NOT NULL,
     is_locked BOOLEAN NOT NULL DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP

@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
+<%@ page import="com.strutslab.util.HtmlUtil" %>
 <!DOCTYPE html>
 <html lang="ja">
 <head>

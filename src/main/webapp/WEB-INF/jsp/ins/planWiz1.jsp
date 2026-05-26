@@ -1,7 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://struts.apache.org/tags-html" prefix="html" %>
 <%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean" %>
-<%@ page import="java.util.List, com.strutslab.dto.EqpDto" %>
+<%@ page import="java.util.List, com.strutslab.dto.EqpDto, com.strutslab.util.HtmlUtil" %>
 <%
     List<EqpDto> eqpList = (List<EqpDto>) request.getAttribute("eqpList");
     if (eqpList == null) eqpList = new java.util.ArrayList<EqpDto>();
@@ -10,7 +10,7 @@
     String errMsg = (String) request.getAttribute("errorMessage");
 %>
 <% if (errMsg != null) { %>
-    <div style="color:#c33;background:#fcc;padding:8px;margin-bottom:12px;border:1px solid #c33;"><%= errMsg %></div>
+    <div style="color:#c33;background:#fcc;padding:8px;margin-bottom:12px;border:1px solid #c33;"><%= HtmlUtil.escape(errMsg) %></div>
 <% } %>
 
 <!-- Step indicator -->
@@ -39,7 +39,7 @@
         String name = eqp.getEquipmentName() != null ? eqp.getEquipmentName() : "";
         String type = eqp.getEquipmentType() != null ? eqp.getEquipmentType() : "";
 %>
-                <option value="<%= code %>" <%= code.equals(selCode) ? "selected" : "" %>><%= code %> - <%= name %> (<%= type %>)</option>
+                <option value="<%= HtmlUtil.escape(code) %>" <%= code.equals(selCode) ? "selected" : "" %>><%= HtmlUtil.escape(code) %> - <%= HtmlUtil.escape(name) %> (<%= HtmlUtil.escape(type) %>)</option>
 <%
     }
 %>

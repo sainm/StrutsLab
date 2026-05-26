@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://struts.apache.org/tags-html" prefix="html" %>
+<%@ page import="com.strutslab.util.HtmlUtil" %>
 <%
     String dateFrom = request.getParameter("dateFrom");
     String dateTo = request.getParameter("dateTo");
@@ -16,8 +17,8 @@
     <tr>
         <th>期間</th>
         <td>
-            <input type="text" name="dateFrom" value="<%= dateFrom %>" size="8" maxlength="8" placeholder="YYYYMMDD"> 〜
-            <input type="text" name="dateTo" value="<%= dateTo %>" size="8" maxlength="8" placeholder="YYYYMMDD">
+            <input type="text" name="dateFrom" value="<%= HtmlUtil.escape(dateFrom) %>" size="8" maxlength="8" placeholder="YYYYMMDD"> 〜
+            <input type="text" name="dateTo" value="<%= HtmlUtil.escape(dateTo) %>" size="8" maxlength="8" placeholder="YYYYMMDD">
         </td>
     </tr>
     <tr>
@@ -33,7 +34,7 @@
             </select>
         </td>
         <th>部品コード</th>
-        <td><input type="text" name="partCode" value="<%= partCode %>" size="15"></td>
+        <td><input type="text" name="partCode" value="<%= HtmlUtil.escape(partCode) %>" size="15"></td>
     </tr>
 </table>
 <div class="button-area">

@@ -1,6 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://struts.apache.org/tags-html" prefix="html" %>
 <%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean" %>
+<%@ page import="com.strutslab.util.HtmlUtil" %>
 <%
     String fiscalYear = request.getParameter("fiscalYear");
     String equipmentType = request.getParameter("equipmentType");
@@ -10,7 +11,7 @@
     if (team == null) team = "";
     String ctx = request.getContextPath();
 %>
-<html:form action="/ins/yearly/plan" method="post">
+<html:form action="/ins/plan/yearly" method="post">
 <div class="search-form">
 <table class="form-table">
     <tr>

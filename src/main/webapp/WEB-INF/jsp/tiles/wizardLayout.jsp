@@ -1,5 +1,9 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
-<%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
-<h1><tiles:getAsString name="title"/></h1>
-<div class="wizard-steps"><tiles:insert attribute="wizardSteps" ignore="true"/></div>
-<tiles:insert attribute="wizardContent"/>
+<%@ page import="com.strutslab.util.HtmlUtil" %>
+<h1><%= HtmlUtil.escape((String) request.getAttribute("tiles_title")) %></h1>
+<%
+    String _wizContent = (String) request.getAttribute("tiles_wizardContent");
+    if (_wizContent != null && !_wizContent.isEmpty()) {
+        request.getRequestDispatcher(_wizContent).include(request, response);
+    }
+%>

@@ -1,6 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://struts.apache.org/tags-html" prefix="html" %>
-<%@ page import="java.util.List, com.strutslab.dto.EmpDto" %>
+<%@ page import="java.util.List, com.strutslab.dto.EmpDto, com.strutslab.util.HtmlUtil" %>
 <%
     List<EmpDto> list = (List<EmpDto>) request.getAttribute("empList");
     if (list == null) list = java.util.Collections.emptyList();
@@ -38,14 +38,14 @@
                 boolean isExpired = expire.length() == 8 && expire.compareTo(new java.text.SimpleDateFormat("yyyyMMdd").format(new java.util.Date())) < 0;
     %>
         <tr>
-            <td><input type="checkbox" name="qualifications" value="<%= no %>"/></td>
-            <td><a href="<%=ctx%>/org/emp/save.do?empNo=<%= java.net.URLEncoder.encode(no, "UTF-8") %>"><%= no %></a></td>
-            <td><%= name %></td>
-            <td><%= dept %></td>
-            <td><%= pos %></td>
+            <td><input type="checkbox" name="qualifications" value="<%= HtmlUtil.escape(no) %>"/></td>
+            <td><a href="<%=ctx%>/org/emp/save.do?empNo=<%= java.net.URLEncoder.encode(no, "UTF-8") %>"><%= HtmlUtil.escape(no) %></a></td>
+            <td><%= HtmlUtil.escape(name) %></td>
+            <td><%= HtmlUtil.escape(dept) %></td>
+            <td><%= HtmlUtil.escape(pos) %></td>
             <td>-</td>
-            <td <% if (isExpired) { %>style="color:red;font-weight:bold;"<% } %>><%= expire %></td>
-            <td><%= isLocked ? "ロック中" : "有効" %></td>
+            <td <% if (isExpired) { %>style="color:red;font-weight:bold;"<% } %>><%= HtmlUtil.escape(expire) %></td>
+            <td><%= HtmlUtil.escape(isLocked ? "ロック中" : "有効") %></td>
         </tr>
     <%
             }

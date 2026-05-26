@@ -70,12 +70,25 @@ public class EqpTreeSelectTag extends TagSupport {
         return SKIP_BODY;
     }
 
+    @Override
+    public void release() {
+        super.release();
+        this.name = null;
+        this.property = null;
+    }
+
     private void renderOption(StringBuilder sb, EqpDto dto, int depth) {
-        sb.append("<option value=\"").append(dto.getEquipmentCode()).append("\">");
+        sb.append("<option value=\"").append(escapeHtml(dto.getEquipmentCode())).append("\">");
         for (int i = 0; i < depth; i++) {
             sb.append("&nbsp;&nbsp;");
         }
-        sb.append(dto.getEquipmentCode()).append(" - ").append(dto.getEquipmentName());
+        sb.append(escapeHtml(dto.getEquipmentCode())).append(" - ").append(escapeHtml(dto.getEquipmentName()));
         sb.append("</option>");
+    }
+
+    private String escapeHtml(String s) {
+        if (s == null) return "";
+        return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+                .replace("\"", "&quot;").replace("'", "&#39;");
     }
 }

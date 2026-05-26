@@ -1,4 +1,5 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page import="com.strutslab.util.HtmlUtil" %>
 <ul>
     <li><a href="<%=request.getContextPath()%>/login.do">メインメニュー</a></li>
 </ul>

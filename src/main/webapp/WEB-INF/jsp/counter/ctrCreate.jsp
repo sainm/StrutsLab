@@ -2,7 +2,7 @@
 <%@ taglib uri="http://struts.apache.org/tags-html" prefix="html" %>
 <%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/tld/app-common.tld" prefix="app" %>
-<%@ page import="com.strutslab.form.counter.CounterForm" %>
+<%@ page import="com.strutslab.form.counter.CounterForm, com.strutslab.util.HtmlUtil" %>
 <%
     CounterForm cf = (CounterForm) request.getAttribute("counterForm");
     if (cf == null) cf = new CounterForm();
@@ -26,32 +26,32 @@
 <table class="form-table">
     <tr>
         <th>指示番号</th>
-        <td><strong><%= orderNo %></strong></td>
+        <td><strong><%= HtmlUtil.escape(orderNo) %></strong></td>
         <th>関連異常報告</th>
         <td>
             <% if (incidentNo != null && !incidentNo.isEmpty()) { %>
-                <a href="<%=request.getContextPath()%>/inc/detail.do?incidentNo=<%= incidentNo %>"><%= incidentNo %></a>
+                <a href="<%=request.getContextPath()%>/inc/detail.do?incidentNo=<%= HtmlUtil.escape(incidentNo) %>"><%= HtmlUtil.escape(incidentNo) %></a>
             <% } else { %>
-                <input type="text" name="incidentNo" value="<%= incidentNo %>" size="15" maxlength="20"/>
+                <input type="text" name="incidentNo" value="<%= HtmlUtil.escape(incidentNo) %>" size="15" maxlength="20"/>
             <% } %>
         </td>
     </tr>
     <tr>
         <th>指示日 <span class="required">*</span></th>
         <td>
-            <input type="text" name="orderDate" value="<%= orderDate %>" size="10" maxlength="8" placeholder="YYYYMMDD"/>
+            <input type="text" name="orderDate" value="<%= HtmlUtil.escape(orderDate) %>" size="10" maxlength="8" placeholder="YYYYMMDD"/>
             <input type="button" value="📅" onclick="showDatePicker(this, 'orderDate')"/>
         </td>
         <th>指示者 <span class="required">*</span></th>
         <td>
-            <input type="text" name="issuer" value="<%= issuer %>" size="20" maxlength="50"/>
+            <input type="text" name="issuer" value="<%= HtmlUtil.escape(issuer) %>" size="20" maxlength="50"/>
             <input type="button" value="選択" onclick="window.open('<%=request.getContextPath()%>/org/emp/popup.do?target=issuer', 'empPopup', 'width=600,height=500');"/>
         </td>
     </tr>
     <tr>
         <th>期限 <span class="required">*</span></th>
         <td>
-            <input type="text" name="overallDeadline" value="<%= overallDeadline %>" size="10" maxlength="8" placeholder="YYYYMMDD"/>
+            <input type="text" name="overallDeadline" value="<%= HtmlUtil.escape(overallDeadline) %>" size="10" maxlength="8" placeholder="YYYYMMDD"/>
             <input type="button" value="📅" onclick="showDatePicker(this, 'overallDeadline')"/>
         </td>
         <th>優先度 <span class="required">*</span></th>
@@ -95,14 +95,14 @@
         <tr>
             <td style="text-align:center;"><%= i + 1 %></td>
             <td>
-                <input type="text" name="detailWorkContents[<%= i %>]" value="<%= wc %>" size="40" maxlength="200"/>
+                <input type="text" name="detailWorkContents[<%= i %>]" value="<%= HtmlUtil.escape(wc) %>" size="40" maxlength="200"/>
             </td>
             <td>
-                <input type="text" name="detailPersons[<%= i %>]" value="<%= person %>" size="15" maxlength="30"/>
+                <input type="text" name="detailPersons[<%= i %>]" value="<%= HtmlUtil.escape(person) %>" size="15" maxlength="30"/>
                 <input type="button" value="選択" onclick="openEmpPopup(<%= i %>);"/>
             </td>
             <td>
-                <input type="text" name="detailDeadlines[<%= i %>]" value="<%= dl %>" size="10" maxlength="8" placeholder="YYYYMMDD"/>
+                <input type="text" name="detailDeadlines[<%= i %>]" value="<%= HtmlUtil.escape(dl) %>" size="10" maxlength="8" placeholder="YYYYMMDD"/>
                 <input type="button" value="📅" onclick="showDatePicker(this, 'detailDeadlines[<%= i %>]')"/>
             </td>
             <td>

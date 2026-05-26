@@ -1,4 +1,9 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
-<%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
-<h1><tiles:getAsString name="title"/></h1>
-<tiles:insert attribute="formArea"/>
+<%@ page import="com.strutslab.util.HtmlUtil" %>
+<h1><%= HtmlUtil.escape((String) request.getAttribute("tiles_title")) %></h1>
+<%
+    String _formArea = (String) request.getAttribute("tiles_formArea");
+    if (_formArea != null && !_formArea.isEmpty()) {
+        request.getRequestDispatcher(_formArea).include(request, response);
+    }
+%>

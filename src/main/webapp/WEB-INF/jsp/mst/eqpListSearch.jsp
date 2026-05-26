@@ -1,6 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://struts.apache.org/tags-html" prefix="html" %>
 <%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean" %>
+<%@ page import="com.strutslab.util.HtmlUtil" %>
 <%
     String equipmentType = request.getParameter("equipmentType");
     String voltageLevel = request.getParameter("voltageLevel");
@@ -46,8 +47,8 @@
     <tr>
         <th>設置年</th>
         <td colspan="3">
-            <input type="text" name="yearFrom" value="<%= yearFrom %>" size="6" maxlength="7" placeholder="YYYY-MM"> 〜
-            <input type="text" name="yearTo" value="<%= yearTo %>" size="6" maxlength="7" placeholder="YYYY-MM">
+            <input type="text" name="yearFrom" value="<%= HtmlUtil.escape(yearFrom) %>" size="6" maxlength="7" placeholder="YYYY-MM"> 〜
+            <input type="text" name="yearTo" value="<%= HtmlUtil.escape(yearTo) %>" size="6" maxlength="7" placeholder="YYYY-MM">
         </td>
     </tr>
     <tr>
@@ -63,7 +64,7 @@
         </td>
         <th>担当部署</th>
         <td>
-            <input type="text" name="deptName" value="<%= deptName %>" size="20">
+            <input type="text" name="deptName" value="<%= HtmlUtil.escape(deptName) %>" size="20">
         </td>
     </tr>
 </table>

@@ -1,4 +1,5 @@
 <%@ page contentType="text/html; charset=UTF-8" isErrorPage="true" %>
+<%@ page import="com.strutslab.util.HtmlUtil" %>
 <!DOCTYPE html>
 <html lang="ja">
 <head>

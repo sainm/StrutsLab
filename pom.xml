@@ -127,6 +127,7 @@
                 <configuration>
                     <port>8080</port>
                     <path>/StrutsLab</path>
+                    <uriEncoding>UTF-8</uriEncoding>
                 </configuration>
             </plugin>
         </plugins>

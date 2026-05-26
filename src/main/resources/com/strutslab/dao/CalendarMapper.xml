@@ -47,8 +47,7 @@
             holiday_type = #{holidayType},
             holiday_name = #{holidayName},
             is_transfer = #{isTransfer},
-            transfer_date = #{transferDate},
-            updated_at = CURRENT_TIMESTAMP
+            transfer_date = #{transferDate}
         WHERE holiday_id = #{holidayId}
     </update>
 

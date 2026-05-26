@@ -94,8 +94,16 @@ public class IndexedRowTag extends TagSupport {
         return SKIP_BODY;
     }
 
+    @Override
+    public void release() {
+        super.release();
+        this.index = 0;
+        this.prefix = null;
+        this.bean = null;
+    }
+
     private String getBeanProperty(Object bean, String prop) {
-        if (bean == null) return null;
+        if (bean == null || prop == null || prop.isEmpty()) return null;
         try {
             String getter = "get" + Character.toUpperCase(prop.charAt(0)) + prop.substring(1);
             Method m = bean.getClass().getMethod(getter);

@@ -2,6 +2,7 @@
 <%@ taglib uri="http://struts.apache.org/tags-html" prefix="html" %>
 <%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean" %>
 <%@ taglib uri="http://struts.apache.org/tags-logic" prefix="logic" %>
+<%@ page import="com.strutslab.util.HtmlUtil" %>
 <%
     com.strutslab.form.mst.EqpForm eqpForm = (com.strutslab.form.mst.EqpForm) request.getAttribute("eqpForm");
     boolean isEdit = eqpForm != null && eqpForm.getEquipmentCode() != null && !eqpForm.getEquipmentCode().isEmpty();
@@ -12,7 +13,7 @@
     if (errMsg != null) {
 %>
     <div style="color:#c33;background:#fcc;padding:8px;margin-bottom:12px;border:1px solid #c33;">
-        <%= errMsg %>
+        <%= HtmlUtil.escape(errMsg) %>
     </div>
 <%
     }

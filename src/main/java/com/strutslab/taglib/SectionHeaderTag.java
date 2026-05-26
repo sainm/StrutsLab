@@ -31,6 +31,13 @@ public class SectionHeaderTag extends TagSupport {
         return SKIP_BODY;
     }
 
+    @Override
+    public void release() {
+        super.release();
+        this.title = null;
+        this.anchorId = null;
+    }
+
     private String escapeHtml(String s) {
         if (s == null) return "";
         return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")

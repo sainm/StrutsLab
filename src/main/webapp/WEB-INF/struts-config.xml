@@ -96,6 +96,11 @@
             <forward name="success" path="chkitem.list.tiles"/>
             <forward name="edit" path="chkitem.edit.tiles"/>
         </action>
+        <action path="/mst/chkitem/edit" type="com.strutslab.action.mst.CheckItemSaveAction"
+                name="chkItemForm" scope="request" validate="false"
+                parameter="method">
+            <forward name="success" path="chkitem.edit.tiles"/>
+        </action>
         <action path="/mst/chkitem/save" type="com.strutslab.action.mst.CheckItemSaveAction"
                 name="chkItemForm" scope="request" validate="true"
                 parameter="method" input="/WEB-INF/jsp/mst/chkItemEdit.jsp">
